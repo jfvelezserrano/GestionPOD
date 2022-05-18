@@ -1,0 +1,384 @@
+<app-navbar></app-navbar>
+<main class="container-fluid contenido-todo col-md-10 offset-md-1">
+    <div class="row">
+
+    <section class="col-12 col-md-4 col-xl-3">
+        <div class="sticky mx-4 mx-md-0 mb-4 mb-md-0">
+
+        <div class="pt-1">
+            <h3><b>Filtrar</b></h3>
+        </div>
+
+        <div class="border-top py-2 my-2 ml-3">
+            <span class="titulo-seccion">Ocupación</span>
+            <form>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_libre">
+                <label class="form-check-label lbl-filtrar" for="cbx_libre">Libre</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_colision">
+                <label class="form-check-label lbl-filtrar" for="cbx_colision">Colisión</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_conflicto">
+                <label class="form-check-label lbl-filtrar" for="cbx_conflicto">Conflicto</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_completa">
+                <label class="form-check-label lbl-filtrar" for="cbx_completa">Completa</label>
+            </div>
+            </form>
+        </div>
+
+        <div class="border-top py-2 my-2 ml-3">
+            <span class="titulo-seccion">Cuatrimestre</span>
+            <form>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_q1">
+                <label class="form-check-label lbl-filtrar" for="cbx_q1">Primero</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_q2">
+                <label class="form-check-label lbl-filtrar" for="cbx_q2">Segundo</label>
+            </div>
+            </form>
+        </div>
+
+        <div class="border-top py-2 my-2 ml-3">
+            <span class="titulo-seccion">Turno</span>
+            <form>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_tarde">
+                <label class="form-check-label lbl-filtrar" for="cbx_tarde">Tarde</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_manana">
+                <label class="form-check-label lbl-filtrar" for="cbx_manana">Mañana</label>
+            </div>
+            </form>
+        </div>
+
+        <div class="border-top py-2 my-2 ml-3">
+            <form>
+            <div class="form-group">
+                <label for="inputGrado" class="form-label titulo-seccion">Titulación</label>
+                <input type="text" class="form-control" list="grados" id="inputGrado" placeholder="Seleccione uno...">
+                <datalist id="grados">
+                <option value="Grado Ingeniería del Software">
+                <option value="Grado Ingeniería Informática">
+                <option value="Grado de Matemáticas">
+                <option value="Grado Ingeniería de Computadores">
+                <option value="Grado Ingeniería Industrial">
+                </datalist>
+            </div>
+            </form>
+        </div>
+
+        <div class="border-top py-2 my-2 ml-3">
+            <span class="titulo-seccion">Cambios de docentes</span>
+            <form>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_1cambio">
+                <label class="form-check-label lbl-filtrar" for="cbx_1cambio">1</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_2cambios">
+                <label class="form-check-label lbl-filtrar" for="cbx_2cambios">2</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_3cambios">
+                <label class="form-check-label lbl-filtrar" for="cbx_3cambios">3</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_4cambios">
+                <label class="form-check-label lbl-filtrar" for="cbx_4cambios">4</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cbx_5cambiosomas">
+                <label class="form-check-label lbl-filtrar" for="cbx_5cambiosomas">5 o más</label>
+            </div>
+            </form>
+        </div>
+
+        <div class="border-top py-2 my-2 ml-3">
+            <form>
+            <div class="form-group">
+                <label for="inputDocentes" class="form-label titulo-seccion">Docentes</label>
+                <input type="text" class="form-control" list="docentes" id="inputDocentes" placeholder="Seleccione uno...">
+                <datalist id="docentes">
+                <option value="Juan Rodríguez Martínez">
+                <option value="Marta López Martín">
+                <option value="Eva Soriano Ocaña">
+                <option value="Adrián Hernández Ramirez">
+                <option value="Silvia Perez Roma">
+                </datalist>
+            </div>
+            </form>
+        </div>
+
+        </div>
+    </section>
+
+    <section class="col-12 col-md-8 col-xl-9">
+        <div class="row">
+
+        <div class="col-12 d-flex justify-content-between">
+            <span>Mostrando 6 resultados</span>
+            <div>
+            <button type="button" onclick="generarCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
+            <span class="d-md-none d-lg-inline"><small>Ordenar por </small></span>
+            <select class="form-select-sm desplegable-buscador">
+                <option selected value="1">Asignatura</option>
+                <option value="2">Carga </option>
+            </select>
+            </div>
+        </div>
+
+        <div class="col-12 contenido-asignaturas">
+            <div class="row row-cols-1 row-cols-xl-2 g-4">
+
+                <div class="col">
+                <div class="card card-asignatura-conflicto h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura conflicto">Conflicto horario</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><b class="color-conflicto">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-conflicto">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-conflicto"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col">
+                <div class="card card-asignatura-completa h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura completa justify-content-center">Completa</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><b class="color-completa">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-completa">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-completa"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col">
+                <div class="card card-asignatura-colision h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><b class="color-colision">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-colision">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-colision"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col">
+                <div class="card card-asignatura-libre h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura libre justify-content-center">Libre</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><b class="color-libre">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-libre">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col">
+                <div class="card card-asignatura-colision h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><b class="color-colision">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-colision">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-colision"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col">
+                <div class="card card-asignatura-libre h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura libre justify-content-center">Libre</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><small class="text-muted"> Aún no hay profesores asignados</small><br></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col">
+                <div class="card card-asignatura-libre h-100 w-100 shadow">
+                    <div class="card-body contenido-cards">
+                    <ul class="list-group list-group-flush carta-asignatura">
+                        <li class="list-group-item detalles1">
+                        <div>
+                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
+                            <small class="truncar estado-asignatura libre justify-content-center">Libre</small>
+                            </h6>
+                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
+                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                        </div>
+                        </li>
+                        <li class="list-group-item detalles2">
+                        <p class="card-text"><b class="color-libre">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-libre">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        </li>
+                        <li class="list-group-item detalles3">
+                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                    <div class="row justify-content-end">
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </section>
+    
+    </div>
+</main>
+<app-scroll-up></app-scroll-up>

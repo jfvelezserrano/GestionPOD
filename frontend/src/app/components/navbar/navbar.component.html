@@ -1,0 +1,58 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="asignaturas.html">
+          <img src="assets/images/URJC-Logo.jpg" width="175" height="87" class="d-inline-block align-top" alt="Logo URJC">
+        </a>
+        <span class="navbar-brand mb-0 h1">Gestión POD</span>
+
+      
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+          <ul class="navbar-nav me-auto text-center mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="asignaturas.html">Asignaturas</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="estadisticas.html">Estadísticas</a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="nav-eleccion" role="button" data-toggle="dropdown" aria-expanded="false">
+                Elección
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="nav-eleccion">
+                <li><a class="dropdown-item" href="eleccionMisAsignaturas.html">Mis Asignaturas</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="eleccionMisEstadisticas.html">Mis Estadísticas</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                Administrador
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                <li><a class="dropdown-item" href="pods-admin.html">PODs</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="gestion-altas-admin.html">Gestión Altas</a></li>
+              </ul>
+            </li>
+
+          </ul>
+          <div class="nav navbar-nav truncar">
+            <a class="nav-item nav-link align-self-center"><i class="fas fa-user-alt fa-sm blanco d-lg-none"></i>a.merinom.2017</a> 
+            <a class="nav-item nav-link align-self-center" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg rojo"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="seccion-actual text-center">
+    <h3 class="font-weight-bold">Asignaturas</h3>
+    <h5 class="font-weight-light">Gestión POD > Asignaturas</h5>
+  </div>

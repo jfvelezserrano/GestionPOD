@@ -1,0 +1,34 @@
+<div id="loginScreen">
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid d-flex justify-content-start">
+        <span class="navbar-brand">
+          <img src="assets/images/URJC-Logo.jpg" width="175" height="86" class="d-inline-block align-top" alt="Logo URJC">
+        </span>
+        <span class="navbar-brand mb-0 h1">Gestión POD</span>
+      </div>
+    </nav>
+</header>
+<main>
+    <div class="page-login">
+        <form #loginTeacher="ngForm" (ngSubmit)="onSubmit(loginTeacher)" class="login mx-auto p-5 my-5 text-white">
+        <div class="form-group">
+            <h1 id="tituloLogin">Gestión POD</h1>
+            <div class="input">
+              <i class="fa fa-user icon-login"></i>
+              <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Correo electrónico"
+              #email="ngModel" name="email" [(ngModel)]="emailTeacher" required
+              pattern="^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$">
+              <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched"></i>
+            </div>
+        </div>
+        <div class="container-fluid contenedor-acceso">
+            <div class="row justify-content-between">
+            <p class="text-center my-auto col-7">¿Problemas de acceso?</p>
+            <button type="submit" class="btn mx-auto my-md-0 col-4 boton-general tema-urjc-rojo" [disabled]="!loginTeacher.form.valid">Acceder</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</main>
+</div>
