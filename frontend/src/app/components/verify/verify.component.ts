@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-verify',
   templateUrl: './verify.component.html',
   styleUrls: ['./verify.component.css'],
-  providers: [LoginService]
+  providers: [LoginService, LocalStorageService]
 })
 export class VerifyComponent implements OnInit {
 
@@ -14,24 +15,22 @@ export class VerifyComponent implements OnInit {
   public code:any;
 
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router,
-    private _loginService: LoginService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private loginService: LoginService,
+    private localStorageService: LocalStorageService,
   ) {
   }
 
   ngOnInit(): void {
-    this._route.params.subscribe((params:Params) => {
+    this.route.params.subscribe((params:Params) => {
       this.code = params['code'];
     });
-    this._loginService.verify(this.code).subscribe(
-      response => {
-        localStorage.setItem('teacher', JSON.stringify(response));
+    this.loginService.verify(this.code).subscribe(
+      (response) => {
+        this.localStorageService.setInLocalStorage("teacher", response);
         this.status = "success";
-        this._router.navigate(['/subjects']);
-      },
-      error => {
-        this.status = "error";
+        this.router.navigate(['/subjects']);
       }
     );
   }

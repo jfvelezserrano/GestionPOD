@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { LoginService } from 'src/app/services/login.service';
 
 
@@ -12,21 +13,18 @@ import { LoginService } from 'src/app/services/login.service';
 export class NavbarComponent implements OnInit {
 
   constructor(
-    private _loginService: LoginService,
-    private _router: Router,
-    private _route: ActivatedRoute) { }
+    private loginService: LoginService,
+    private localStorageService: LocalStorageService,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
 
   logout() {
-    this._loginService.logout().subscribe(
+    this.loginService.logout().subscribe(
       response => {
-        localStorage.removeItem("teacher");
-        this._router.navigate(['/']);
-      },
-      error => {
-        console.log(<any>error);
+        this.localStorageService.removeLocalStorage("teacher");
+        this.router.navigate(['/']);
       }
     );
   }

@@ -1,7 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { catchError, map, Observable, of} from 'rxjs';
+import { CanActivate, Router} from '@angular/router';
 import { LoginService } from '../services/login.service';
 
 @Injectable({
@@ -9,20 +7,19 @@ import { LoginService } from '../services/login.service';
 })
 export class AdminGuard implements CanActivate {
   constructor(
-    private _router: Router,
-    private _loginService: LoginService
+    private router: Router,
+    private loginService: LoginService
 ) {
 
 }
 
 canActivate(){
-  let teacher = this._loginService.getTeacherLogged();
-
+  let teacher:any = this.loginService.getTeacherLogged();
 
   if (teacher && teacher.name && teacher.roles.includes("ADMIN")) {
       return true;
   } else {
-      this._router.navigate(['/subjects']);
+      this.router.navigate(['/subjects']);
       return false;
   }
 }

@@ -20,6 +20,8 @@ public class MailBoxService {
     private final int minCode = 10000000;
     private final int maxCode = 99999999;
 
+    private CodesEmail codesEmail = CodesEmail.getCodeEmail();
+
     @Autowired
     private JavaMailSender emailSender;
 
@@ -52,6 +54,8 @@ public class MailBoxService {
     }
 
     public Long generateCodeEmail(){
+        this.codesEmail.removeAllExpiredCodes();
+
         Long randomNumber = (long)Math.floor(minCode + (Math.random() * maxCode));
 
         while(getCodesEmails().existsCode(randomNumber)){
@@ -61,7 +65,6 @@ public class MailBoxService {
         return Long.valueOf(randomNumber);
     }
 
-    private CodesEmail codesEmail = CodesEmail.getCodeEmail();
 
     public void addCodeEmail(Long code, String email, String ip){
         this.codesEmail.addCode(code, email, ip);

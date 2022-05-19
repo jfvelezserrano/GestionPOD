@@ -1,53 +1,61 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, Observable } from 'rxjs';
-import { Teacher } from '../models/teacher';
-import { LoginRequest } from '../models/login-request';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { LocalStorageService } from './localstorage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class LoginService {
-  public teacher:any;
-  private _roleTeacherLogged: any;
   public csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
   public httpOptionsCookiesCSRF = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json', 'X-XSRF-TOKEN': this.csrfToken }),
+    headers: new HttpHeaders({ 'X-XSRF-TOKEN': this.csrfToken }),
     withCredentials: true
   };
 
   public httpOptionsCookies = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     withCredentials: true
   };
 
   constructor(
-      private _http: HttpClient
+      private http: HttpClient,
+      private localStorageService: LocalStorageService
   ) {
   }
 
   access(email:string): Observable<any> {
-      return this._http.post(environment.urlApi + "/access", email, this.httpOptionsCookiesCSRF);
+      return this.http.post(environment.urlApi + "/access", email, this.httpOptionsCookiesCSRF).pipe(			
+        catchError(error => this.handleError(error))
+      );
   }
 
   verify(code:number): Observable<any> {
-      return this._http.get(environment.urlApi + "/verify/" + code, this.httpOptionsCookies);
+      return this.http.get(environment.urlApi + "/verify/" + code, this.httpOptionsCookies).pipe(			
+        catchError(error => this.handleError(error))
+      );
     }
 
-  getTeacherLogged() {
-    let teacher = JSON.parse(localStorage.getItem('teacher') || '{}');
+  logout() {
+    return this.http.get(environment.urlApi + "/logout", this.httpOptionsCookies);
+  }
 
-    if (teacher && teacher != null && teacher != undefined && teacher != 'undefined') {
+  getTeacherLogged() {
+    let teacher = this.localStorageService.getInLocalStorage("teacher");
+
+    if (teacher && teacher != null && teacher != undefined) {
         return teacher;
     } else {
         return null;
     }
   }
 
-  logout() {
-    return this._http.get(environment.urlApi + "/logout", this.httpOptionsCookiesCSRF);
+  private handleError(error: HttpErrorResponse) {
+    if (error.status != 0) {
+      console.error(`${error.status}, el error es: `, error.error);
+    }
+    return throwError(() => new Error('Algo no ha ido bien, pruebe más tarde'));
   }
 }

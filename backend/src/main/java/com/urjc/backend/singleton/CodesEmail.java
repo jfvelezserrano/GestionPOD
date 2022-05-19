@@ -4,12 +4,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class CodesEmail {
-    Map<Long, List<String>> map = new HashMap<Long, List<String>>();
+    ConcurrentHashMap<Long, List<String>> map = new ConcurrentHashMap<Long, List<String>>();
 
     private static CodesEmail codesEmail;
-
 
     public  static CodesEmail getCodeEmail() {
 
@@ -20,7 +21,7 @@ public class CodesEmail {
         return codesEmail;
     }
 
-    public Map<Long, List<String>> getMap() {
+    public ConcurrentHashMap<Long, List<String>> getMap() {
         return map;
     }
 
@@ -51,18 +52,16 @@ public class CodesEmail {
         return this.codesEmail.getMap().get(code).get(0);
     }
 
-    public String getIpByCode(Integer code){
-        return this.codesEmail.getMap().get(code).get(1);
-    }
-
     public String getDateExpirationByCode(Long code){
         return this.codesEmail.getMap().get(code).get(2);
     }
 
     public void removeAllExpiredCodes(){
-        for (Long key : map.keySet()) {
-            if (isDateExpired(getDateExpirationByCode(key))) {
-                map.remove(key);
+        Iterator<Long> iterator = map.keySet().iterator();
+        while (iterator.hasNext()) {
+            Long code = iterator.next();
+            if (isDateExpired(getDateExpirationByCode(code))) {
+                removeCode(code);
             }
         }
     }
@@ -75,7 +74,7 @@ public class CodesEmail {
 
     private boolean isDateExpired(String dateCodeEmail){
 
-        boolean isExpired = true;
+        boolean isExpired;
         try {
             Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(dateCodeEmail);
 
@@ -91,12 +90,11 @@ public class CodesEmail {
     }
 
     private String getDateExpiration(){
-        Calendar currentTimeNow = Calendar.getInstance();
-        currentTimeNow.add(Calendar.MINUTE, 5);
-        Date dateExpiration = currentTimeNow.getTime();
 
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        return dateFormat.format(dateExpiration);
+        Date date = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
+
+        return dateFormat.format(date);
     }
 }

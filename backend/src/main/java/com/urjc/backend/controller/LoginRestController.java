@@ -3,7 +3,7 @@ package com.urjc.backend.controller;
 import com.urjc.backend.model.EmailRequestResponse;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.security.JWT;
-import com.urjc.backend.security.UserRepositoryAuthProvider;
+import com.urjc.backend.security.AuthenticateProvider;
 import com.urjc.backend.service.MailBoxService;
 import com.urjc.backend.service.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -25,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginRestController {
     //private static final Logger log = LoggerFactory.getLogger(LoginRestController.class);
 
-    private final UserRepositoryAuthProvider authenticationManager;
+    private final AuthenticateProvider authenticationManager;
 
     @Autowired
     private MailBoxService mailBoxService;
@@ -34,7 +37,7 @@ public class LoginRestController {
     private TeacherService teacherService;
 
 
-    @PostMapping(value = "/access",  produces = "application/json;charset=UTF-8")
+    @PostMapping(value = "/access")
     public ResponseEntity<String> sendEmailLogin(@RequestBody EmailRequestResponse loginRequest, HttpServletRequest request) {
 
         try {
@@ -57,7 +60,7 @@ public class LoginRestController {
 
     }
 
-    @GetMapping(value = "/verify/{code}",  produces = "application/json;charset=UTF-8")
+    @GetMapping(value = "/verify/{code}")
     public ResponseEntity<Teacher> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
 
        if(mailBoxService.getCodesEmails().isCorrect(code, request.getRemoteAddr())){

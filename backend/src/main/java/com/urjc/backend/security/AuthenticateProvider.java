@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class UserRepositoryAuthProvider implements AuthenticationProvider {
+public class AuthenticateProvider implements AuthenticationProvider {
 
     @Autowired
     private TeacherRepository teacherService;

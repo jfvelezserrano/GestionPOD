@@ -7,7 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SubjectsComponent implements OnInit {
 
-  constructor() { }
+  public pageTitle:any;
+
+  constructor(
+  ) {
+    this.pageTitle = 'Asignaturas';
+  }
 
   ngOnInit(): void {
   }

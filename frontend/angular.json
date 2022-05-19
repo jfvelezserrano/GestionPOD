@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["lodash", "crypto-js/enc-utf8", "crypto-js/aes"],
             "outputPath": "dist/frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
