@@ -12,6 +12,9 @@ import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
 import { ScrollUpComponent } from './components/scroll-up/scroll-up.component';
 import { VerifyComponent } from './components/verify/verify.component';
+import { CountdownModule } from 'ngx-countdown';
+import { ErrorIntercept } from './interceptors/error.interceptor';
+import { ErrorComponent } from './components/error/error.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,8 @@ import { VerifyComponent } from './components/verify/verify.component';
     SubjectsComponent,
     FooterComponent,
     ScrollUpComponent,
-    VerifyComponent
+    VerifyComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -29,9 +33,13 @@ import { VerifyComponent } from './components/verify/verify.component';
     FormsModule,
     RouterModule,
     HttpClientModule,
-    HttpClientXsrfModule
+    HttpClientXsrfModule,
+    CountdownModule
   ],
-  providers: [AppRoutingProviders],
+  providers: [AppRoutingProviders, 
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorIntercept, multi: true}
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

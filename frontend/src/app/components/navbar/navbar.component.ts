@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { LoginService } from 'src/app/services/login.service';
 
 
@@ -12,21 +10,24 @@ import { LoginService } from 'src/app/services/login.service';
 })
 export class NavbarComponent implements OnInit {
 
+  public teacher:any;
+
   constructor(
     private loginService: LoginService,
-    private localStorageService: LocalStorageService,
     private router: Router) { }
 
   ngOnInit(): void {
   }
 
+  ngDoCheck() {
+    this.teacher = this.loginService.getTeacherLogged();
+  }
+
   logout() {
     this.loginService.logout().subscribe(
       response => {
-        this.localStorageService.removeLocalStorage("teacher");
-        this.router.navigate(['/']);
+        this.router.navigate(['']);
       }
     );
   }
-
 }

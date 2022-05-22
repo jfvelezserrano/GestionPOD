@@ -1,0 +1,11 @@
+<div id="background-error" *ngIf="status">
+    <div  class="background-black-opacity">
+        <div class="content text-center p-5">
+            <h1 class="status-error">{{status}}</h1>
+            <p class="ooups">Ooups</p>
+            <h2 class="message-error">{{message}}</h2>
+
+            <button routerLink="" routerLinkActive="active" type="button" class="btn mx-2 mt-5 col-4 boton-general tema-urjc-rojo">Ir a Inicio</button>
+        </div>
+    </div>
+</div>

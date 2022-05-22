@@ -27,35 +27,25 @@ export class LoginService {
   }
 
   access(email:string): Observable<any> {
-      return this.http.post(environment.urlApi + "/access", email, this.httpOptionsCookiesCSRF).pipe(			
-        catchError(error => this.handleError(error))
-      );
+      return this.http.post(environment.urlApi + "/access", email, this.httpOptionsCookiesCSRF);
   }
 
   verify(code:number): Observable<any> {
-      return this.http.get(environment.urlApi + "/verify/" + code, this.httpOptionsCookies).pipe(			
-        catchError(error => this.handleError(error))
-      );
+      return this.http.get(environment.urlApi + "/verify/" + code, this.httpOptionsCookies);
     }
 
   logout() {
+    this.localStorageService.removeLocalStorage("teacher");
     return this.http.get(environment.urlApi + "/logout", this.httpOptionsCookies);
   }
 
   getTeacherLogged() {
     let teacher = this.localStorageService.getInLocalStorage("teacher");
 
-    if (teacher && teacher != null && teacher != undefined) {
+    if (teacher && teacher != undefined && teacher != null) {
         return teacher;
     } else {
         return null;
     }
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.status != 0) {
-      console.error(`${error.status}, el error es: `, error.error);
-    }
-    return throwError(() => new Error('Algo no ha ido bien, pruebe más tarde'));
   }
 }

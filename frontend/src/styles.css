@@ -22,6 +22,7 @@
     --azul-claro-transparente:rgba(213, 248, 245, 0.61);
     --fuente-color: rgb(73, 73, 75);
     --azul-oscuro:rgb(35, 67, 250);
+    --error:rgb(255, 60, 0);
 }
 
 .seccion-actual{
@@ -306,29 +307,16 @@ i{
 .icon-login{
     padding: 10px;
     margin:0%;
-    background: rgb(141, 139, 139);
+    background: rgb(136, 136, 136);
     border-top-left-radius: 11%;
     border-bottom-left-radius: 11%;
     color: white;
     text-align: center;
 }
 
-.icon-login-error{
-    padding: 10px;
-    margin:0%;
-    color: var(--colision);
-    text-align: center;
-}
-
 .navbar{
     border-bottom: 10px solid red;
     background-color: black;
-}
-
-.login{
-    position: relative;
-    background: rgba(107, 107, 107, 0.541);
-    max-width: 450px;
 }
 
 .page-login{
@@ -368,15 +356,6 @@ html, body {
 
 .titulo-asignaturas  {
     font-size:x-large;
-}
-
-#loginScreen{
-    background-image: url("assets/images/universidadURJC.jpg");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    height:100%;
 }
 
 article {
@@ -737,7 +716,8 @@ input:hover, textarea:hover{
 input:focus{
     color: var(--gris);
     outline: none !important;
-    border: 2px solid var(--gris);
+    border: 2px solid var(--gris) !important;
+    box-shadow: none !important;
 }
 
 label span{

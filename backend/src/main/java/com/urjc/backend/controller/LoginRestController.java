@@ -44,7 +44,7 @@ public class LoginRestController {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), null);
             authenticationManager.authenticate(authentication);
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Usuario no encontrado" ,HttpStatus.NOT_FOUND);
         }
 
         String ip = request.getRemoteAddr();
@@ -56,12 +56,12 @@ public class LoginRestController {
         if(mailBoxService.sendEmail(randomeCode)){
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Algo ha salido mal", HttpStatus.BAD_REQUEST);
 
     }
 
     @GetMapping(value = "/verify/{code}")
-    public ResponseEntity<Teacher> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Object> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
 
        if(mailBoxService.getCodesEmails().isCorrect(code, request.getRemoteAddr())){
             String email = mailBoxService.getCodesEmails().getEmailByCode(code);
@@ -80,6 +80,6 @@ public class LoginRestController {
 
            return new ResponseEntity<>(teacher,HttpStatus.OK);
         }
-       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       return new ResponseEntity<>("Código de verificación no encontrado", HttpStatus.NOT_FOUND);
     }
 }

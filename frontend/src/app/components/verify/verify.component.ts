@@ -27,12 +27,11 @@ export class VerifyComponent implements OnInit {
       this.code = params['code'];
     });
     this.loginService.verify(this.code).subscribe(
-      (response) => {
+      response => {
         this.localStorageService.setInLocalStorage("teacher", response);
         this.status = "success";
-        this.router.navigate(['/subjects']);
+        this.router.navigate(['subjects']);
       }
     );
   }
-
 }

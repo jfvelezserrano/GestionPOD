@@ -1,0 +1,35 @@
+import { Component, OnInit } from '@angular/core';
+import { LoginService } from 'src/app/services/login.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-error',
+  templateUrl: './error.component.html',
+  styleUrls: ['./error.component.css']
+})
+export class ErrorComponent implements OnInit {
+
+  public pageTitle: any;
+  public status:any;
+  public message:any;
+
+  constructor(
+    private router: Router
+  ) {
+    this.pageTitle = 'Error';
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation && navigation.extras.state){
+      const state = navigation.extras.state as {
+        status: number,
+        message: string
+      }
+
+      this.status = state.status;
+      this.message = state.message;
+    }
+  }
+
+
+  ngOnInit(): void {
+  }
+}

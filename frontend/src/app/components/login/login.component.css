@@ -1,0 +1,64 @@
+.icon-login-error{
+    padding: 10px;
+    margin:0%;
+    color: var(--error);
+    position: absolute;
+    right: 3px;
+    top: calc(50% - 1.1em);
+}
+
+.login{
+    position: relative;
+    background: rgba(201, 200, 200, 0.541);
+    max-width: 450px;
+}
+
+#background-login{
+  background-image: url("src/assets/images/universidadURJC.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  height:100%;
+}
+
+.background-black-opacity{
+  height:100%;
+  background-color: rgba(22, 22, 22, 0.39);
+}
+
+ 
+.custom-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.border-error{
+    background-color:var(--colision-claro);
+    border: 0.11em solid var(--error);
+}
+
+/* From uiverse.io by @mrhyddenn */
+.progress-loader {
+    background: var(--blanco);
+    height: 5px;
+  }
+  
+  .progress {
+    content: '';
+    width: 0px;
+    height: 5px;
+    background: var(--rojo);
+    transition: 1s;
+    animation: loading 300s normal;
+  }
+  
+  @keyframes loading {
+    0% {
+      width: 0%;
+    }
+  
+    100% {
+      width: 100%;
+    }
+  }

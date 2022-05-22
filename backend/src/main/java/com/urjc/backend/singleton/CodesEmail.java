@@ -7,7 +7,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import java.util.List;
+
 public class CodesEmail {
+
     ConcurrentHashMap<Long, List<String>> map = new ConcurrentHashMap<Long, List<String>>();
 
     private static CodesEmail codesEmail;
@@ -28,8 +31,9 @@ public class CodesEmail {
     public Boolean isCorrect(Long code, String ip) {
         if(existsCode(code)){
             List<String> values = map.get(code);
+            Boolean hola = values.get(1).equals(ip);
 
-            return (values.get(1) == ip && !isDateExpired(values.get(2)));
+            return (values.get(1).equals(ip) && !isDateExpired(values.get(2)));
         }
         return false;
     }
@@ -76,11 +80,13 @@ public class CodesEmail {
 
         boolean isExpired;
         try {
-            Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(dateCodeEmail);
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            Date date = dateFormat.parse(dateCodeEmail);
 
-            Date currentTimeNow = Calendar.getInstance().getTime();
+            Date currentDate = new Date();
 
-            isExpired = date.before(currentTimeNow);
+            isExpired = date.before(currentDate);
+
         } catch (ParseException e) {
             e.printStackTrace();
             isExpired = true;

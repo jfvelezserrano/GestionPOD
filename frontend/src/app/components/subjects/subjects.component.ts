@@ -14,7 +14,6 @@ export class SubjectsComponent implements OnInit {
     this.pageTitle = 'Asignaturas';
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
 }
