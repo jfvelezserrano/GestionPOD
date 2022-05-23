@@ -46,20 +46,6 @@
         </div>
 
         <div class="border-top py-2 my-2 ml-3">
-            <span class="titulo-seccion">Turno</span>
-            <form>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_tarde">
-                <label class="form-check-label lbl-filtrar" for="cbx_tarde">Tarde</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_manana">
-                <label class="form-check-label lbl-filtrar" for="cbx_manana">Mañana</label>
-            </div>
-            </form>
-        </div>
-
-        <div class="border-top py-2 my-2 ml-3">
             <form>
             <div class="form-group">
                 <label for="inputGrado" class="form-label titulo-seccion">Titulación</label>
@@ -76,27 +62,15 @@
         </div>
 
         <div class="border-top py-2 my-2 ml-3">
-            <span class="titulo-seccion">Cambios de docentes</span>
+            <span class="titulo-seccion">Turno</span>
             <form>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_1cambio">
-                <label class="form-check-label lbl-filtrar" for="cbx_1cambio">1</label>
+                <input class="form-check-input" type="checkbox" id="cbx_tarde">
+                <label class="form-check-label lbl-filtrar" for="cbx_tarde">Tarde</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_2cambios">
-                <label class="form-check-label lbl-filtrar" for="cbx_2cambios">2</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_3cambios">
-                <label class="form-check-label lbl-filtrar" for="cbx_3cambios">3</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_4cambios">
-                <label class="form-check-label lbl-filtrar" for="cbx_4cambios">4</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_5cambiosomas">
-                <label class="form-check-label lbl-filtrar" for="cbx_5cambiosomas">5 o más</label>
+                <input class="form-check-input" type="checkbox" id="cbx_manana">
+                <label class="form-check-label lbl-filtrar" for="cbx_manana">Mañana</label>
             </div>
             </form>
         </div>
@@ -139,14 +113,14 @@
             <div class="row row-cols-1 row-cols-xl-2 g-4">
 
                 <div class="col">
-                <div class="card card-asignatura-conflicto h-100 w-100 shadow">
+                <div class="card card-asignatura-colision h-100 w-100 shadow">
                     <div class="card-body contenido-cards">
                     <ul class="list-group list-group-flush carta-asignatura">
                         <li class="list-group-item detalles1">
                         <div>
                             <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
                             <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura conflicto">Conflicto horario</small>
+                            <small class="truncar estado-asignatura colision">Conflicto horario</small>
                             </h6>
                             <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
                             <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
@@ -156,8 +130,8 @@
                         </div>
                         </li>
                         <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-conflicto">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-conflicto">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
+                        <p class="card-text"><b class="color-colision">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
+                            <b class="color-colision">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
                         </li>
                         <li class="list-group-item detalles3">
                         <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
@@ -166,7 +140,7 @@
                     </div>
                     <div class="card-footer text-muted">
                     <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-conflicto"><i class="fa fa-eye fa-lg"></i></button>
+                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-colision"><i class="fa fa-eye fa-lg"></i></button>
                     </div>
                     </div>
                 </div>
@@ -283,6 +257,8 @@
                             <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
                             <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
                             <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
+                            <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
+                            
                             </h6>
                             <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
                             <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>

@@ -43,9 +43,9 @@
             </li>
 
           </ul>
-          <div class="nav navbar-nav truncar">
-            <a class="nav-item nav-link align-self-center"><i class="fas fa-user-alt fa-sm blanco d-lg-none"></i>{{teacher?.email}}</a> 
-            <a class="nav-item nav-link align-self-center" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg rojo"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
+          <div class="nav navbar-nav truncar" *ngIf="email">
+            <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm blanco d-lg-none"></i>{{email}}</span> 
+            <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg rojo"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
           </div>
         </div>
       </div>

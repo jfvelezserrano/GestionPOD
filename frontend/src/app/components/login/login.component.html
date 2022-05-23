@@ -21,13 +21,13 @@
                     <div class="custom-wrapper">
                       <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Correo electrónico"
                       #email="ngModel" name="email" [(ngModel)]="emailTeacher" required email [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
-                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched"></i>
+                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" title="Email inválido"></i>
                     </div>
                   </div>
               </div>
               <div class="container-fluid contenedor-acceso">
                   <div class="row justify-content-between">
-                  <p class="text-center my-auto col-7">¿Problemas de acceso?</p>
+                  <span type="button" class="text-center my-auto col-7" data-bs-toggle="modal" data-bs-target="#modalAccessProblems">¿Problemas de acceso?</span>
                   <button type="submit" class="btn mx-auto my-md-0 col-4 boton-general tema-urjc-rojo" [disabled]="!loginTeacher.form.valid || status == 'sentCode'">Acceder</button>
                   </div>
               </div>
@@ -44,5 +44,36 @@
           </div>
         </div>
     </main>
+  </div>
+</div>
+
+<div class="modal fade" id="modalAccessProblems" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3 px-4">
+              <h5 class="modal-title" id="titleModal2"><b>Problemas de acceso</b></h5>
+
+              <ul class="list-group list-group-flush carta-asignatura ">
+                <li class="list-group-item">
+                  Para poder acceder a la aplicación de Gestión POD de la URJC tiene que estar dado de alta en el próximo curso académico.
+                </li>
+                <li class="list-group-item">
+                  Compruebe que el email introducido está escrito correctamente.
+                </li>
+                <li class="list-group-item">
+                  Si considera que hay algún problema, contacte con el administrador de la aplicación.
+                </li>
+              </ul>
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" data-bs-dismiss="modal" class="btn mx-auto boton-general tema-urjc-azul">Entendido</button>
+            </div>
+          </div>
+      </div>
   </div>
 </div>

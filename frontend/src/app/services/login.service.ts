@@ -40,12 +40,16 @@ export class LoginService {
   }
 
   getTeacherLogged() {
-    let teacher = this.localStorageService.getInLocalStorage("teacher");
+    try{
+      let teacher = this.localStorageService.getInLocalStorage("teacher");
 
-    if (teacher && teacher != undefined && teacher != null) {
-        return teacher;
-    } else {
-        return null;
+      if (teacher && teacher != undefined && teacher != null) {
+          return teacher;
+      } else {
+          return null;
+      }
+    }catch(e){
+      return null;
     }
   }
 }

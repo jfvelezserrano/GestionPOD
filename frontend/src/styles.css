@@ -216,13 +216,28 @@ hr {
     box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
 }
 
-.boton-general.tema-urjc-rojo{
+.boton-general.tema-urjc-rojo {
     background-image: linear-gradient(to right, var(--gris-oscuro) , var(--gris-oscuro), var(--colision) , var(--colision));
     box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
 }
 
 .boton-general.tema-urjc-azul {
     background-image: linear-gradient(to right, var(--gris-oscuro) , var(--gris-oscuro) , var(--libre) , var(--libre));
+    box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
+}
+
+.boton-general.tema-conflicto:focus {
+    background-color: linear-gradient(to right, var(--conflicto) , var(--conflicto), var(--conflicto), var(--conflicto));
+    box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
+}
+
+.boton-general.tema-urjc-rojo:focus {
+    background-image: linear-gradient(to right, var(--colision) , var(--colision), var(--colision) , var(--colision));
+    box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
+}
+
+.boton-general.tema-urjc-azul:focus {
+    background-image: linear-gradient(to right, var(--libre) , var(--libre) , var(--libre) , var(--libre));
     box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
 }
 
@@ -520,6 +535,8 @@ span{
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 3px;
+    margin-right: 3px;
+    margin-left: 3px;
 }
 
 .truncar{

@@ -11,6 +11,7 @@ import { LoginService } from 'src/app/services/login.service';
 export class NavbarComponent implements OnInit {
 
   public teacher:any;
+  public email:any;
 
   constructor(
     private loginService: LoginService,
@@ -21,6 +22,9 @@ export class NavbarComponent implements OnInit {
 
   ngDoCheck() {
     this.teacher = this.loginService.getTeacherLogged();
+    if(this.teacher){
+      this.email = this.teacher.email.substr(0, this.teacher.email.indexOf('@')); 
+    }
   }
 
   logout() {

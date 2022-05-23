@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { LoginService } from '../../services/login.service';
 import { CountdownComponent, CountdownEvent } from 'ngx-countdown';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../services/localstorage.service';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
@@ -26,7 +25,6 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private localStorageService: LocalStorageService,
     private router: Router
 
   ) {
@@ -34,7 +32,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.localStorageService.getInLocalStorage("teacher") != null){
+    if(this.loginService.getTeacherLogged() != null){
       this.router.navigate(['subjects']);
     }
 
@@ -82,7 +80,7 @@ export class LoginComponent implements OnInit {
 
   checkLocalStorage(){
     console.log("check");
-    if(this.localStorageService.getInLocalStorage("teacher") != null){
+    if(this.loginService.getTeacherLogged() != null){
       this.subscription && this.subscription.unsubscribe();
       window.location.reload();
     }
