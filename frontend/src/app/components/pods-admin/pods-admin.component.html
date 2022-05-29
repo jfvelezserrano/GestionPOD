@@ -1,0 +1,91 @@
+<app-navbar></app-navbar>
+<main class="container-fluid contenido-principal">
+    <div class="row">
+
+    <section class="sidebar col-12 col-xl-4 mb-5">
+        <div class="sticky-top">
+
+        <div class="pt-1">
+            <h3><b>Añadir POD</b></h3>
+        </div>
+
+        <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
+
+            <div class="mb-3">
+            <label for="curso" class="form-label titulo-seccion">Curso</label>
+            <input required #course="ngModel" ngModel name="course" type="text" class="form-control" autocomplete="course">
+            </div>
+
+            <div class="mb-3">
+            <label for="asignaturas-file" class="form-label titulo-seccion">Asignaturas CSV</label>
+            <input required #fileSubjects ngModel name="fileSubjects" class="form-control" ngf-max-size="1MB" type="file" accept=".csv">
+            </div>
+
+            <div class="mb-3">
+            <label for="profesores-file" class="form-label titulo-seccion">Profesores CSV</label>
+            <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="1MB" type="file" accept=".csv">
+            </div>
+
+            <div class="d-flex justify-content-center pt-3">
+            <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!createPODform.form.valid">Añadir</button>
+        </div>
+        </form>
+
+        </div>
+    </section>
+
+    <section class="col-12 col-xl-8">
+        <div class="row">
+
+            <div class="col-12 d-flex justify-content-between">
+                <span>Mostrando {{pods.length}} resultados</span>
+                <div>
+                <span><small>Ordenar por </small></span>
+                <select class="form-select-sm desplegable-buscador">
+                    <option selected value="1">Curso</option>
+                    <option value="2">Departamento </option>
+                </select>
+                </div>
+            </div>
+
+            <div class="col-12 contenido-asignaturas" *ngIf="pods.length != 0">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-4">
+
+                    <div class="col" *ngFor="let pod of pods">
+                        <div class="card card-asignatura-libre h-100 w-100 shadow">
+                            <div class="row g-0">
+                                <div class="col">
+                                    <div class="card-body">
+                                    <ul class="list-group list-group-flush carta-asignatura border-0">
+                                        <li class="list-group-item border-0">
+                                        <div>
+                                            <h4 class="card-title"><b>{{pod.name}}</b></h4>
+                                        </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                        <div class="row justify-content-end">
+                                            <a [routerLink]="['/pods', pod.id, 'subjects']" type="button" title=" CSV Asignaturas" class="col-1 m-2 btn boton-asignatura-libre"><i class="fa fa-book-open fa-lg"></i></a>
+                                            <a [routerLink]="['/pods', pod.id, 'teachers']" type="button" title="CSV Profesores" class="col-1 m-2 btn boton-asignatura-libre"><i class="fa fa-user-alt fa-lg"></i></a>
+                                        </div>
+                                        </li></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center no-data" *ngIf="pods.length == 0">
+                <p><i class="fa-regular fa-2xl fa-folder-open"></i></p>
+                <p>No hay PODs aún</p>
+            </div>
+
+        </div>
+    </section>
+    
+    </div>
+</main>
+<app-scroll-up></app-scroll-up>
+
+

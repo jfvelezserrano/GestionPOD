@@ -1,5 +1,6 @@
 package com.urjc.backend.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.model.EmailRequestResponse;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.security.JWT;
@@ -28,6 +29,9 @@ import org.slf4j.LoggerFactory;
 public class LoginRestController {
     //private static final Logger log = LoggerFactory.getLogger(LoginRestController.class);
 
+    interface TeacherLogin extends Teacher.Base, Teacher.Roles {
+    }
+
     private final AuthenticateProvider authenticationManager;
 
     @Autowired
@@ -38,7 +42,7 @@ public class LoginRestController {
 
 
     @PostMapping(value = "/access")
-    public ResponseEntity<String> sendEmailLogin(@RequestBody EmailRequestResponse loginRequest, HttpServletRequest request) {
+    public ResponseEntity<?> sendEmailLogin(@RequestBody EmailRequestResponse loginRequest, HttpServletRequest request) {
 
         try {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), null);
@@ -53,15 +57,18 @@ public class LoginRestController {
 
         mailBoxService.addCodeEmail(randomeCode, loginRequest.getEmail(), ip);
 
-        if(mailBoxService.sendEmail(randomeCode)){
-            return new ResponseEntity<>(HttpStatus.OK);
+        Teacher teacher = teacherService.findByEmailCurrentCourse(loginRequest.getEmail());
+
+        if(mailBoxService.sendEmail(randomeCode, teacher)){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>("Algo ha salido mal", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Algo ha salido mal en el inicio de sesión", HttpStatus.BAD_REQUEST);
 
     }
 
+    @JsonView(TeacherLogin.class)
     @GetMapping(value = "/verify/{code}")
-    public ResponseEntity<Object> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
 
        if(mailBoxService.getCodesEmails().isCorrect(code, request.getRemoteAddr())){
             String email = mailBoxService.getCodesEmails().getEmailByCode(code);
@@ -75,7 +82,7 @@ public class LoginRestController {
             cookie.setHttpOnly(true);
             cookie.setDomain("");
             cookie.setPath("/");
-            cookie.setMaxAge(60 * 60);
+            cookie.setMaxAge(60 * 60 * 24);
             response.addCookie(cookie);
 
            return new ResponseEntity<>(teacher,HttpStatus.OK);

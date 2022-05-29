@@ -1,6 +1,9 @@
 package com.urjc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -10,61 +13,218 @@ import javax.validation.constraints.NotEmpty;
 @Table(name = "subject")
 public class Subject {
 
+    public interface Base {
+    }
+
+    @JsonView(Base.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Basic(optional = false)
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Se debe completar el codigo")
+    @JsonView(Base.class)
     @Column(nullable = false)
-    private Long code;
+    private String code;
 
-    @NotEmpty(message = "Se debe completar el nombre")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String name;
 
-    @NotEmpty(message = "Se debe completar la titulacion")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String title;
 
-    @NotEmpty(message = "Se deben completar las horas totales")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private Integer totalHours;
 
-    @NotEmpty(message = "Se debe completar el campus")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String campus;
 
-    @NotEmpty(message = "Se debe completar el año")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private Integer year;
 
-    @NotEmpty(message = "Se debe completar el cuatrimestre")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String quarter;
 
-    @NotEmpty(message = "Se debe completar el tipo")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String type;
 
-    @NotEmpty(message = "Se debe completar el turno")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String turn;
 
-    @NotEmpty(message = "Se debe completar el grupo")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String career;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Column(unique = true, nullable = false)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<POD> pods;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subject")
     @Column(unique = true, nullable = false)
     private Set<CourseSubject> courseSubjects;
 
+    @JsonView(Base.class)
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> assitanceCareers;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Schedule> schedules;
+    @JsonView(Base.class)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "subject_id")
+    private List<Schedule> schedules;
+
+    public Subject(){}
+
+    public Subject(String code, String name, String title, Integer totalHours, String campus, Integer year,
+                   String quarter, String type, String turn, String career) {
+        this.code = code;
+        this.name = name;
+        this.title = title;
+        this.totalHours = totalHours;
+        this.campus = campus;
+        this.year = year;
+        this.quarter = quarter;
+        this.type = type;
+        this.turn = turn;
+        this.career = career;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) { this.id = id; }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getTotalHours() {
+        return totalHours;
+    }
+
+    public void setTotalHours(Integer totalHours) {
+        this.totalHours = totalHours;
+    }
+
+    public String getCampus() {
+        return campus;
+    }
+
+    public void setCampus(String campus) {
+        this.campus = campus;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getQuarter() {
+        return quarter;
+    }
+
+    public void setQuarter(String quarter) {
+        this.quarter = quarter;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTurn() {
+        return turn;
+    }
+
+    public void setTurn(String turn) {
+        this.turn = turn;
+    }
+
+    public String getCareer() {
+        return career;
+    }
+
+    public void setCareer(String career) {
+        this.career = career;
+    }
+
+    public Set<POD> getPods() {
+        return pods;
+    }
+
+    public void setPods(Set<POD> pods) {
+        this.pods = pods;
+    }
+
+    public Set<CourseSubject> getCourseSubjects() { return courseSubjects; }
+
+    public void setCourseSubjects(Set<CourseSubject> courseSubjects) { this.courseSubjects = courseSubjects; }
+
+    public List<String> getAssitanceCareers() {
+        return assitanceCareers;
+    }
+
+    public void setAssitanceCareers(List<String> assitanceCareers) {
+        this.assitanceCareers = assitanceCareers;
+    }
+
+    public List<Schedule> getSchedules() { return schedules; }
+
+    public void setSchedules(List<Schedule> schedules) { this.schedules = schedules; }
+
+    public void setSchedulesByString(String schedules) {
+        if(!schedules.equals("")) {
+            String[] values = schedules.split(", ");
+            List<Schedule> schedulesSet = new ArrayList<>();
+
+            for (String value : values) {
+                value = value.replaceAll("[()-]", "");
+                value = value.replace(" ", "");
+
+                Schedule schedule = new Schedule(value.charAt(0), value.substring(1, 6), value.substring(6));
+                schedulesSet.add(schedule);
+            }
+            setSchedules(schedulesSet);
+        }
+    }
+
+    public void setAssistanceCareersByString(String assistanceCareer) {
+        if(!assistanceCareer.equals("")) {
+            List<String> values = List.of(assistanceCareer.split(", "));
+            this.assitanceCareers = values;
+        }
+    }
 }

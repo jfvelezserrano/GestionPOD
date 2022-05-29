@@ -15,6 +15,9 @@ import { VerifyComponent } from './components/verify/verify.component';
 import { CountdownModule } from 'ngx-countdown';
 import { ErrorIntercept } from './interceptors/error.interceptor';
 import { ErrorComponent } from './components/error/error.component';
+import { PodsAdminComponent } from './components/pods-admin/pods-admin.component';
+import { AdminSubjectsComponent } from './components/admin-subjects/admin-subjects.component';
+import { AdminTeachersComponent } from './components/admin-teachers/admin-teachers.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import { ErrorComponent } from './components/error/error.component';
     FooterComponent,
     ScrollUpComponent,
     VerifyComponent,
-    ErrorComponent
+    ErrorComponent,
+    PodsAdminComponent,
+    AdminSubjectsComponent,
+    AdminTeachersComponent
   ],
   imports: [
     BrowserModule,

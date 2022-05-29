@@ -10,7 +10,7 @@ export class LocalStorageService {
 
   constructor() { 
     ls.config.encrypt = true;
-    ls.config.ttl = 60*60;
+    ls.config.ttl = 60 * 60 * 24;
     ls.config.secret = 'iuhdfHDFISWENoihpfe89423of98239hoi89UHsdfsdfJOAHE98fas2U30RPFW90dfsdf8203Iosujef0sdfsd4r2o3';
     ls.config.encrypter = (data:any, secret:any):string => AES.encrypt(JSON.stringify(data), secret).toString();
     ls.config.decrypter = (data:any, secret:any) => {

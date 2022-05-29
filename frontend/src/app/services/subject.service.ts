@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class TeacherService {
+export class SubjectService {
 
   public csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
@@ -24,7 +24,7 @@ export class TeacherService {
     private http: HttpClient
   ) { }
 
-  getTeachersByPOD(id:any){
-    return this.http.get(environment.urlApi + "/pods/" + id + "/teachers", this.httpOptionsCookiesCSRF);
+  getSubjectsByPOD(id:any){
+    return this.http.get(environment.urlApi + "/pods/" + id + "/subjects", this.httpOptionsCookiesCSRF);
   }
 }

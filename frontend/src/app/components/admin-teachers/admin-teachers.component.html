@@ -1,0 +1,162 @@
+<app-navbar></app-navbar>
+  <main class="container-fluid">
+    <div class="row">
+      
+      <div class="col py-3">  
+
+        <section class="col-12 col-md-10 offset-md-1 margen-top-contenido">
+          <div class="row">
+
+            <div class="col-12 d-flex justify-content-between">
+              <span>Mostrando {{teachers.length}} resultados</span>
+              <div>
+                <button type="button" title="Añadir asignatura" class="btn boton" data-bs-toggle="modal" data-bs-target="#modalAnadirAsignatura"><i class="fa fa-plus fa-sm"></i></button>
+
+                <div class="modal fade" id="modalAnadirAsignatura" role="dialog">
+                  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                                <h5 class="modal-title" id="titleModal"><b>Añadir Nueva Asignatura</b></h5>
+                                
+                                <fieldset>
+                                  <legend>Identificación</legend>
+                                  <div class="row">
+                                    <div class="form-group col-12">
+                                        <label for="inputNombre" class="form-label titulo-seccion">Nombre</label>
+                                        <input type="text" class="form-control" id="inputNombre" placeholder="Nombre de la asignatura">
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="inputApellido1" class="form-label titulo-seccion">Primer Apellido</label>
+                                        <input type="text" class="form-control" id="inputApellido1" placeholder="Apellido 1">
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="inputApellido2" class="form-label titulo-seccion">Segundo Apellido</label>
+                                        <input type="text" class="form-control" id="inputApellido2" placeholder="Apellido 2">
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="inputEmail" class="form-label titulo-seccion">Correo Electrónico</label>
+                                        <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                                    </div>
+                                  </div>
+                                </fieldset>
+
+                                <div class="modal-footer">
+                                  <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Añadir</button>
+                              </div>
+                            </form>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+
+                <span><small>Ordenar por </small></span>
+                <select class="form-select-sm desplegable-buscador">
+                  <option selected value="1">Nombre</option>
+                  <option value="2">Email </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="modal fade" id="alerta-editar-asignatura" role="dialog">
+              <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                          <h5 class="modal-title" id="titleModal"><b>Editar Juan Martínez Ramos</b></h5>
+                          
+                          <fieldset>
+                            <legend>Identificación</legend>
+                            <div class="row">
+                              <div class="form-group col-12">
+                                  <label for="inputNombreEditar" class="form-label titulo-seccion">Nombre</label>
+                                  <input type="text" class="form-control" id="inputNombreEditar" placeholder="Nombre de la asignatura">
+                              </div>
+                              <div class="form-group col-12">
+                                  <label for="inputApellido1Editar" class="form-label titulo-seccion">Primer Apellido</label>
+                                  <input type="text" class="form-control" id="inputApellido1Editar" placeholder="Apellido 1">
+                              </div>
+                              <div class="form-group col-12">
+                                  <label for="inputApellido2Editar" class="form-label titulo-seccion">Segundo Apellido</label>
+                                  <input type="text" class="form-control" id="inputApellido2Editar" placeholder="Apellido 2">
+                              </div>
+                              <div class="form-group col-12">
+                                  <label for="inputEmailEditar" class="form-label titulo-seccion">Correo Electrónico</label>
+                                  <input type="email" class="form-control" id="inputEmailEditar" placeholder="Email">
+                              </div>
+                            </div>
+                          </fieldset>
+
+                          <div class="modal-footer">
+                            <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Editar</button>
+                          </div>
+                        </form>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="alerta-eliminar-asignatura" role="dialog">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="mb-3 px-4 centrar">
+                          <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+                          <h5 class="modal-title" id="titleModal3"><b>Eliminar a jgjg</b></h5>
+                          <a>¿Desea realmente eliminar al docente ytyu del Plan Docente Actual?</a>
+                        </div>
+                        <div class="modal-footer">
+                          <button (click)="deleteTeacherInPod()" class="btn mx-auto boton-general tema-urjc-rojo">Eliminar</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="col-12 contenido-asignaturas">
+              <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+                
+                <div class="col"  *ngFor="let teacher of teachers">
+                    <div class="card card-asignatura-libre h-100 w-100 shadow">
+                      <div class="row g-0">
+                        <div class="col">
+                          <div class="card-body">
+                            <ul class="list-group list-group-flush carta-asignatura border-0">
+                              <li class="list-group-item border-0">
+                                <div>
+                                  <h4 class="card-title"><b>{{teacher.name}}</b></h4>
+                                  <h6 class="card-subtitle mb-2 text-muted">{{teacher.email}}</h6>
+                                </div>
+                              </li>
+                              <li class="list-group-item">
+                                <div class="row justify-content-end">
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#alerta-eliminar-asignatura" title="Eliminar" class="col-1 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
+                                </div>
+                              </li></ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+  </div>
+
+  </main>
+  <app-scroll-up></app-scroll-up>

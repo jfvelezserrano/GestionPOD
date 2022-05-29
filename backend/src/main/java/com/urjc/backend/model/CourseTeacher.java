@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "courseTeacher")
 public class CourseTeacher {
     @EmbeddedId
-    CourseTeacherKey id;
+    CourseTeacherKey id = new CourseTeacherKey();
 
     @ManyToOne
     @MapsId("courseId")
@@ -25,4 +25,62 @@ public class CourseTeacher {
     private Integer originalHours;
 
     private String observation;
+
+    public CourseTeacher() {}
+
+    public CourseTeacher(Course course, Teacher teacher, Integer correctedHours, Integer originalHours, String observation) {
+        this.course = course;
+        this.teacher = teacher;
+        this.correctedHours = correctedHours;
+        this.originalHours = originalHours;
+        this.observation = observation;
+    }
+
+    public CourseTeacherKey getId() {
+        return id;
+    }
+
+    public void setId(CourseTeacherKey id) {
+        this.id = id;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public Integer getCorrectedHours() {
+        return correctedHours;
+    }
+
+    public void setCorrectedHours(Integer correctedHours) {
+        this.correctedHours = correctedHours;
+    }
+
+    public Integer getOriginalHours() {
+        return originalHours;
+    }
+
+    public void setOriginalHours(Integer originalHours) {
+        this.originalHours = originalHours;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
+    }
 }

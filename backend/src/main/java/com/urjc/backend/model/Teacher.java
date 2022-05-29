@@ -1,37 +1,46 @@
 package com.urjc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
 @Table(name = "teacher")
 public class Teacher{
 
+    public interface Base {
+    }
+
+    public interface Roles {
+    }
+
+    @JsonView(Base.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", orphanRemoval = true, fetch = FetchType.EAGER)
     @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher")
     @Column(unique = true, nullable = false)
     private Set<CourseTeacher> courseTeachers;
 
-    @NotEmpty(message = "Se debe completar el rol")
+    @JsonView(Roles.class)
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    @NotEmpty(message = "Se debe completar el nombre")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String name;
 
+    @JsonView(Base.class)
     @Email
-    @NotEmpty(message = "Se debe completar el email")
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -42,6 +51,7 @@ public class Teacher{
     }
 
     public Teacher() {}
+
 
     public List<String> getRoles() {
         return roles;
@@ -66,7 +76,6 @@ public class Teacher{
     public void setCourseTeachers(Set<CourseTeacher> courseTeachers) {
         this.courseTeachers = courseTeachers;
     }
-
 
     public String getName() {
         return name;

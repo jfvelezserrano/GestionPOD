@@ -1,5 +1,6 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.model.Teacher;
 import com.urjc.backend.singleton.CodesEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -29,17 +30,17 @@ public class MailBoxService {
     private TemplateEngine templateEngine;
 
 
-    public boolean sendEmail(Long randomCode){
+    public boolean sendEmail(Long randomCode, Teacher teacher){
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            helper.setTo("a.merinom.2017@alumnos.urjc.es");
+            helper.setTo(teacher.getEmail());
             helper.setFrom("aliciamerinomartinez99@outlook.com");
             helper.setSubject("Acceso a la Gestión POD URJC");
 
             Map<String, Object> variables = new HashMap<>();
-            variables.put("nameTeacher", "Alicia Merino Martínez");
+            variables.put("nameTeacher", teacher.getName());
             variables.put("code", randomCode);
 
             String templateGenerated = this.templateEngine.process("messageMail", new Context(Locale.getDefault(), variables));

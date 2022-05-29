@@ -4,6 +4,7 @@ import com.urjc.backend.model.Teacher;
 import com.urjc.backend.service.TeacherService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -24,33 +26,39 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String token = WebUtils.getCookie(request, "token").getValue();
-            if (StringUtils.hasText(token) &&(JWT.isCorrect(token)) && (!JWT.isTokenExpired(token))){
-                Claims claims = JWT.decodeJWT(token);
-                if (claims.get("authorities") != null && claims.getSubject() != null) {
-                    Teacher teacher = teacherService.findByEmailCurrentCourse(claims.getSubject());
-                    if(teacher == null){
-                        SecurityContextHolder.clearContext();
+
+            Cookie cookie = WebUtils.getCookie(request, "token");
+            if(cookie != null) {
+                String token = cookie.getValue();
+                if (StringUtils.hasText(token) && (JWT.isCorrect(token)) && (!JWT.isTokenExpired(token))) {
+                    Claims claims = JWT.decodeJWT(token);
+                    if (claims.get("authorities") != null && claims.getSubject() != null) {
+                        Teacher teacher = teacherService.findByEmailCurrentCourse(claims.getSubject());
+                        if (teacher == null) {
+                            SecurityContextHolder.clearContext();
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        } else {
+                            Authentication authentication = JWT.getAuthentication(claims);
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            filterChain.doFilter(request, response);
+                        }
                     } else {
-                        Authentication authentication = JWT.getAuthentication(claims);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        SecurityContextHolder.clearContext();
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
                 } else {
                     SecurityContextHolder.clearContext();
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
-            } else {
+            }else {
                 SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
-            filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return "/api/access".equals(path) || path.startsWith("/api/verify/") || "/api/login".equals(path);
+        return "/api/access".equals(path) || path.startsWith("/api/verify/");
     }
 }

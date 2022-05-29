@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 public class POD {
 
     @EmbeddedId
-    PODKey id;
+    PODKey id = new PODKey();
 
     @ManyToOne
     @MapsId("subjectId")
@@ -24,7 +24,6 @@ public class POD {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @NotEmpty(message = "Se deben completar las horas escogidas")
     @Column(nullable = false)
     private Integer chosenHours;
 

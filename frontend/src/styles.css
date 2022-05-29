@@ -893,9 +893,17 @@ td:first-child{
     margin-bottom: 7px;
 }
 
-/*@media(max-width:991px){
-    .graficos-mis-estadisticas{
-        grid-template-columns: 1fr;
-        height: auto;
-    }
-}*/
+.no-data {
+    font-weight: 100;
+    font-size: 25px;
+    line-height: 1;
+    margin-top: 200px;
+    opacity: 0.85;
+    color: rgba(10, 0, 0, 0.767);
+}
+
+.no-data i {
+    margin-bottom: 40px;
+    opacity: 0.85;
+    color: rgba(10, 0, 0, 0.767);
+}

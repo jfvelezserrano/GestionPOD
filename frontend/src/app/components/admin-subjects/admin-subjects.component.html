@@ -1,0 +1,447 @@
+<app-navbar></app-navbar>
+  <main class="container-fluid">
+    <div class="row">
+      
+      <div class="col py-3">  
+
+        <section class="col-12 col-md-10 offset-md-1 margen-top-contenido">
+          <div class="row">
+
+            <div class="col-12 d-flex justify-content-between">
+              <span>Mostrando {{subjects.length}} resultados</span>
+              <div>
+                <button type="button" title="Añadir asignatura" class="btn boton" data-bs-toggle="modal" data-bs-target="#modalAnadirAsignatura"><i class="fa fa-plus fa-sm"></i></button>
+
+                <div class="modal fade" id="modalAnadirAsignatura" role="dialog">
+                  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                                <h5 class="modal-title" id="titleModal"><b>Añadir Nueva Asignatura</b></h5>
+                                
+                                <fieldset>
+                                  <legend>Identificación</legend>
+                                  <div class="row">
+                                    <div class="form-group col-lg-8">
+                                      <label for="inputNombre" class="form-label titulo-seccion">Nombre</label>
+                                      <input type="text" class="form-control" id="inputNombre" placeholder="Nombre de la asignatura">
+                                    </div>
+                                    <div class="form-group col-lg-4">
+                                      <label for="inputId" class="form-label titulo-seccion">Identificador</label>
+                                      <input type="number" class="form-control" id="inputId" placeholder="Id">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="inputGrado" class="form-label titulo-seccion">Grado</label>
+                                      <input type="text" class="form-control" list="grados" id="inputGrado" placeholder="Titulación">
+                                      <datalist id="grados">
+                                        <option value="Grado Ingeniería del Software">
+                                        <option value="Grado Ingeniería Informática">
+                                        <option value="Grado de Matemáticas">
+                                        <option value="Grado Ingeniería de Computadores">
+                                        <option value="Grado Ingeniería Industrial">
+                                      </datalist>
+                                    </div>
+                                  </div>
+                                </fieldset>
+
+                                <fieldset>
+                                  <legend>Datos</legend>
+                                  <div class="row">
+                                    <div class="form-group col-lg-4">
+                                      <label for="inputHoras" class="form-label titulo-seccion">Horas</label>
+                                      <input type="number" class="form-control" id="inputHoras" placeholder="HH">
+                                    </div>
+                                    
+                                    <div class="form-group col-lg-4">
+                                      <label for="inputCampus" class="form-label titulo-seccion">Campus</label>
+                                      <input type="text" class="form-control" list="campus" id="inputCampus" placeholder="Campus">
+                                      <datalist id="campus">
+                                        <option value="Móstoles">
+                                        <option value="Fuenlabrada">
+                                        <option value="Madrid">
+                                        <option value="Alcorcón">
+                                        <option value="Aranjuez">
+                                      </datalist>
+                                    </div>
+
+                                    <div class="form-group col-lg-4">
+                                      <label for="inputCurso" class="form-label titulo-seccion">Curso</label>
+                                      <input type="text" class="form-control" list="cursos" id="inputCurso" placeholder="Curso">
+                                      <datalist id="cursos">
+                                        <option value="Curso 1">
+                                        <option value="Curso 2">
+                                        <option value="Curso 3">
+                                        <option value="Curso 4">
+                                        <option value="Curso 5">
+                                      </datalist>
+                                    </div>
+
+                                    <div class="form-group col-lg-5">
+                                      <label for="inputCuatrimestre" class="form-label titulo-seccion">Cuatrimestre</label>
+                                      <input type="text" class="form-control" list="cuatrimestres" id="inputCuatrimestre" placeholder="Cuatrimestre">
+                                      <datalist id="cuatrimestres">
+                                        <option value="Cuatrimestre 1">
+                                        <option value="Cuatrimestre 2">
+                                        <option value="Anual">
+                                      </datalist>
+                                    </div>
+                                    
+
+                                    <div class="form-group col-lg-7">
+                                      <label for="inputTipo" class="form-label titulo-seccion">Tipo</label>
+                                      <input type="text" class="form-control" list="tipos" id="inputTipo" placeholder="Tipo">
+                                      <datalist id="tipos">
+                                        <option value="Optativa">
+                                        <option value="Obligatoria">
+                                        <option value="Formación Básica Común">
+                                        <option value="Formación Básica de Rama">
+                                      </datalist>
+                                    </div>
+                                  </div>
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Horario</legend>
+                                    <div class="form-group centrar">
+                                      <label for="groupTurnos" class="titulo-seccion">Turnos</label>
+                                      <div id="groupTurnos">
+                                        <input type="radio" name="select" id="opcion-manana" checked>
+                                        <input type="radio" name="select" id="opcion-tarde">
+                                          <label for="opcion-manana" class="opcion opcion-manana">
+                                            <span>Turno Mañana</span>
+                                            </label>
+                                          <label for="opcion-tarde" class="opcion opcion-tarde">
+                                            <span>Turno Tarde</span>
+                                          </label>
+                                      </div>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="form-group col-lg-5">
+                                        <label for="inputDiasSemana" class="titulo-seccion">Día</label>
+                                        <input type="text" class="form-control" list="diasSemana" id="inputDiasSemana" placeholder="Día de la semana">
+                                        <datalist id="diasSemana">
+                                          <option value="Lunes">
+                                          <option value="Martes">
+                                          <option value="Miércoles">
+                                          <option value="Jueves">
+                                          <option value="Viernes"></option>
+                                        </datalist>
+                                      </div>
+                                      <div class="form-group col-lg-3">
+                                        <label for="horasHorarioInicio" class="titulo-seccion">Hora Inicio</label>
+                                        <input type="time" class="form-control" name="horasHorarioInicio" id="horasHorarioInicio">
+                                      </div>
+                                      <div class="form-group col-lg-3">
+                                        <label for="horasHorarioFin" class="titulo-seccion">Hora Fin</label>
+                                        <input type="time" class="form-control" name="horasHorarioFin" id="horasHorarioFin">
+                                      </div>
+                                      <div class="form-group col-lg-1" style="padding-top: 21px;">
+                                        <button style="border-radius: 50% !important;" type="button" title="Añadir asignatura" class="btn boton"><i class="fa fa-plus"></i></button>
+                                      </div>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset>
+                                  <legend>Grupos</legend>
+                                  <div class="row">
+                                    <div class="form-group col-lg-6">
+                                      <label for="inputGrupo" class="form-label titulo-seccion">Grupo</label>
+                                      <input type="text" class="form-control" list="grupos" id="inputGrupo" placeholder="Grupo">
+                                      <datalist id="grupos">
+                                        <option value="G_ICOMPU_3A(M)">
+                                        <option value="G_ISOFTW_1A(M)">
+                                        <option value="G_ICOMPU_2A(M)">
+                                        <option value="G_ISOFTW_4A(M)">
+                                      </datalist>
+                                    </div>
+
+                                    <div class="form-group col-lg-6">
+                                      <label for="inputGruposAsistencia" class="form-label titulo-seccion">Grupos Asistencia</label>
+                                      <input type="text" class="form-control" list="gruposAsistencia" id="inputGruposAsistencia" placeholder="Grupos asistencia">
+                                      <datalist id="gruposAsistencia">
+                                        <option value="G_VIDEO-COMP_3A(M)">
+                                        <option value="G_INF-COMP_1A(M)">
+                                        <option value="G_INF-SOFT_2A(M)">
+                                        <option value="G_VIDEO-COMP_4A(M)">
+                                      </datalist>
+                                    </div>
+
+                                    <div class="form-group col-lg-6">
+                                      <small class="truncar etiquetas">G_ICOMPU_3A(M)<i class="fas fa-times"></i></small>
+                                      <small class="truncar etiquetas">G_ICOMPU_2A(M)<i class="fas fa-times"></i></small>
+                                      <small class="truncar etiquetas">G_ISOFTW_4A(M)<i class="fas fa-times"></i></small>
+                                    </div>
+
+                                    <div class="form-group col-lg-6">
+                                      <small class="truncar etiquetas">G_INF-COMP_1A(M)<i class="fas fa-times"></i></small>
+                                    </div>
+                                  </div>
+                                </fieldset>
+
+                                <div class="modal-footer">
+                                  <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Añadir</button>
+                              </div>
+                            </form>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+
+                <span><small>Ordenar por </small></span>
+                <select class="form-select-sm desplegable-buscador">
+                  <option selected value="1">Asignatura</option>
+                  <option value="2">Carga </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="modal fade" id="alerta-editar-asignatura" role="dialog">
+              <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                          <h5 class="modal-title" id="titleModal"><b>Editar Estructura de Datos</b></h5>
+                          
+                          <fieldset>
+                            <legend>Identificación</legend>
+                            <div class="row">
+                              <div class="form-group col-lg-8">
+                                <label for="inputNombreEditar" class="form-label titulo-seccion">Nombre</label>
+                                <input type="text" class="form-control" id="inputNombreEditar" placeholder="Nombre de la asignatura">
+                              </div>
+                              <div class="form-group col-lg-4">
+                                <label for="inputIdEditar" class="form-label titulo-seccion">Identificador</label>
+                                <input type="number" class="form-control" id="inputIdEditar" placeholder="Id">
+                              </div>
+                              <div class="form-group">
+                                <label for="inputGradoEditar" class="form-label titulo-seccion">Grado</label>
+                                <input type="text" class="form-control" list="grados" id="inputGradoEditar" placeholder="Titulación">
+                                <datalist id="grados">
+                                  <option value="Grado Ingeniería del Software">
+                                  <option value="Grado Ingeniería Informática">
+                                  <option value="Grado de Matemáticas">
+                                  <option value="Grado Ingeniería de Computadores">
+                                  <option value="Grado Ingeniería Industrial">
+                                </datalist>
+                              </div>
+                            </div>
+                          </fieldset>
+
+                          <fieldset>
+                            <legend>Datos</legend>
+                            <div class="row">
+                              <div class="form-group col-lg-4">
+                                <label for="inputHorasEditar" class="form-label titulo-seccion">Horas</label>
+                                <input type="number" class="form-control" id="inputHorasEditar" placeholder="HH">
+                              </div>
+                              
+                              <div class="form-group col-lg-4">
+                                <label for="inputCampusEditar" class="form-label titulo-seccion">Campus</label>
+                                <input type="text" class="form-control" list="campus" id="inputCampusEditar" placeholder="Campus">
+                                <datalist id="campus">
+                                  <option value="Móstoles">
+                                  <option value="Fuenlabrada">
+                                  <option value="Madrid">
+                                  <option value="Alcorcón">
+                                  <option value="Aranjuez">
+                                </datalist>
+                              </div>
+
+                              <div class="form-group col-lg-4">
+                                <label for="inputCursoEditar" class="form-label titulo-seccion">Curso</label>
+                                <input type="text" class="form-control" list="cursos" id="inputCursoEditar" placeholder="Curso">
+                                <datalist id="cursos">
+                                  <option value="Curso 1">
+                                  <option value="Curso 2">
+                                  <option value="Curso 3">
+                                  <option value="Curso 4">
+                                  <option value="Curso 5">
+                                </datalist>
+                              </div>
+
+                              <div class="form-group col-lg-5">
+                                <label for="inputCuatrimestreEditar" class="form-label titulo-seccion">Cuatrimestre</label>
+                                <input type="text" class="form-control" list="cuatrimestres" id="inputCuatrimestreEditar" placeholder="Cuatrimestre">
+                                <datalist id="cuatrimestres">
+                                  <option value="Cuatrimestre 1">
+                                  <option value="Cuatrimestre 2">
+                                  <option value="Anual">
+                                </datalist>
+                              </div>
+                              
+
+                              <div class="form-group col-lg-7">
+                                <label for="inputTipoEditar" class="form-label titulo-seccion">Tipo</label>
+                                <input type="text" class="form-control" list="tipos" id="inputTipoEditar" placeholder="Tipo">
+                                <datalist id="tipos">
+                                  <option value="Optativa">
+                                  <option value="Obligatoria">
+                                  <option value="Formación Básica Común">
+                                  <option value="Formación Básica de Rama">
+                                </datalist>
+                              </div>
+                            </div>
+                          </fieldset>
+
+                          <fieldset>
+                              <legend>Horario</legend>
+                              <div class="form-group centrar">
+                                <label for="groupTurnosEditar" class="titulo-seccion">Turnos</label>
+                                <div id="groupTurnosEditar">
+                                  <input type="radio" name="select" id="opcion-mananaEditar" checked>
+                                  <input type="radio" name="select" id="opcion-tardeEditar">
+                                    <label for="opcion-mananaEditar" class="opcion opcion-manana">
+                                      <span>Turno Mañana</span>
+                                      </label>
+                                    <label for="opcion-tardeEditar" class="opcion opcion-tarde">
+                                      <span>Turno Tarde</span>
+                                    </label>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="form-group col-lg-5">
+                                  <label for="inputDiasSemanaEditar" class="titulo-seccion">Día</label>
+                                  <input type="text" class="form-control" list="diasSemana" id="inputDiasSemanaEditar" placeholder="Día de la semana">
+                                  <datalist id="diasSemana">
+                                    <option value="Lunes">
+                                    <option value="Martes">
+                                    <option value="Miércoles">
+                                    <option value="Jueves">
+                                    <option value="Viernes"></option>
+                                  </datalist>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                  <label for="horasHorarioInicioEditar" class="titulo-seccion">Hora Inicio</label>
+                                  <input type="time" class="form-control" name="horasHorarioInicio" id="horasHorarioInicioEditar">
+                                </div>
+                                <div class="form-group col-lg-3">
+                                  <label for="horasHorarioFinEditar" class="titulo-seccion">Hora Fin</label>
+                                  <input type="time" class="form-control" name="horasHorarioFin" id="horasHorarioFinEditar">
+                                </div>
+                                <div class="form-group col-lg-1" style="padding-top: 21px;">
+                                  <button style="border-radius: 50% !important;" type="button" title="Añadir asignatura" class="btn boton"><i class="fa fa-plus"></i></button>
+                                </div>
+                              </div>
+                          </fieldset>
+
+                          <fieldset>
+                            <legend>Grupos</legend>
+                            <div class="row">
+                              <div class="form-group col-lg-6">
+                                <label for="inputGrupo" class="form-label titulo-seccion">Grupo</label>
+                                <input type="text" class="form-control" list="grupos" id="inputGrupo" placeholder="Grupo">
+                                <datalist id="grupos">
+                                  <option value="G_ICOMPU_3A(M)">
+                                  <option value="G_ISOFTW_1A(M)">
+                                  <option value="G_ICOMPU_2A(M)">
+                                  <option value="G_ISOFTW_4A(M)">
+                                </datalist>
+                              </div>
+
+                              <div class="form-group col-lg-6">
+                                <label for="inputGruposAsistencia" class="form-label titulo-seccion">Grupos Asistencia</label>
+                                <input type="text" class="form-control" list="gruposAsistencia" id="inputGruposAsistencia" placeholder="Grupos asistencia">
+                                <datalist id="gruposAsistencia">
+                                  <option value="G_VIDEO-COMP_3A(M)">
+                                  <option value="G_INF-COMP_1A(M)">
+                                  <option value="G_INF-SOFT_2A(M)">
+                                  <option value="G_VIDEO-COMP_4A(M)">
+                                </datalist>
+                              </div>
+
+                              <div class="form-group col-lg-6">
+                                <small class="truncar etiquetas">G_ICOMPU_3A(M)<i class="fas fa-times"></i></small>
+                                <small class="truncar etiquetas">G_ICOMPU_2A(M)<i class="fas fa-times"></i></small>
+                                <small class="truncar etiquetas">G_ISOFTW_4A(M)<i class="fas fa-times"></i></small>
+                              </div>
+
+                              <div class="form-group col-lg-6">
+                                <small class="truncar etiquetas">G_INF-COMP_1A(M)<i class="fas fa-times"></i></small>
+                              </div>
+                            </div>
+                          </fieldset>
+
+                          <div class="modal-footer">
+                            <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Editar</button>
+                        </div>
+                        </form>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="alerta-eliminar-asignatura" role="dialog">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="mb-3 px-4 centrar">
+                          <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+                          <h5 class="modal-title" id="titleModal3"><b>Eliminar Estructura de Datos</b></h5>
+                          <a>¿Desea realmente eliminar la asignatura Estructura de Datos del Plan Docente Actual?</a>
+                        </div>
+                        <div class="modal-footer">
+                          <button (click)="deleteSubjectInPod()" class="btn mx-auto boton-general tema-urjc-rojo">Eliminar</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="col-12 contenido-asignaturas">
+              <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+                
+                <div class="col" *ngFor="let subject of subjects">
+                  <div class="card h-100 w-100 shadow">
+                    <div class="row g-0">
+                      <div class="col">
+                        <div class="card-body">
+                          <ul class="list-group list-group-flush carta-asignatura">
+                            <li class="list-group-item">
+                              <!--<a class="card-block stretched-link text-decoration-none" href></a>-->
+                              <div>
+                                <h4 class="card-title"><b>{{subject.name}}({{subject.code}})</b></h4>
+                                <h6 class="card-subtitle mb-2 text-muted">{{subject.title}}
+                                </h6>
+                                <small><i class="fa fa-clock fa-sm"></i>{{subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
+                                <p class="card-text"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno {{subject.turn}}</small></p>
+                                <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                                <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
+                                  <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                              </div>
+                            </li>
+                            <li class="list-group-item">
+                              <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
+                              <div class="row justify-content-end">
+                                <button type="button" onclick="verAsignatura()" title="Ver" class="col-1 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#alerta-eliminar-asignatura" title="Eliminar" class="col-1 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
+                              </div>
+                            </li></ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+  </div>
+
+  </main>
+<app-scroll-up></app-scroll-up>

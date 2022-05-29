@@ -6,11 +6,17 @@ import { VerifyComponent } from './components/verify/verify.component';
 import { ErrorComponent } from './components/error/error.component';
 import { AdminGuard } from './guards/admin.guard';
 import { TeacherGuard } from './guards/teacher.guard';
+import { PodsAdminComponent } from './components/pods-admin/pods-admin.component';
+import { AdminSubjectsComponent } from './components/admin-subjects/admin-subjects.component';
+import { AdminTeachersComponent } from './components/admin-teachers/admin-teachers.component';
 
 const routes: Routes = [
   { path: "", component: LoginComponent },
   { path: "error", component: ErrorComponent },
   { path: "verify/:code", component: VerifyComponent},
+  { path: "pods",  canActivate: [AdminGuard], component: PodsAdminComponent},
+  { path: "pods/:id/subjects",  canActivate: [AdminGuard], component: AdminSubjectsComponent},
+  { path: "pods/:id/teachers",  canActivate: [AdminGuard], component: AdminTeachersComponent},
   { path: "subjects", canActivate: [TeacherGuard], component: SubjectsComponent}
 
 ];

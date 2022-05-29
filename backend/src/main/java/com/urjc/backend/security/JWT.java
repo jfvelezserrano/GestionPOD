@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class JWT {
 
     private static String SECRET_KEY = "aWR1ZmhvaXkzODkyM3VyZmhvc2lkamZvaUZQT0lTVUZmZ3NzZGZzZGYzNEc1NkVSRkdTMzIzNGdkZ3NkZnMtLWdydHcyMzUzNDYyMzQyNWRmc2ZHREdSWTM0NTQ2U0ZTLXdldzU2MzQ=";
-    private static final int EXPIRATION_TIME = 60 * 60 * 1000;
+    private static final int EXPIRATION_TIME =  24 * 60 * 60 * 1000;
     private static SignatureAlgorithm algorithm = SignatureAlgorithm.HS256;
 
 

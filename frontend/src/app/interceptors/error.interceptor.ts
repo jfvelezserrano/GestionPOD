@@ -20,7 +20,7 @@ export class ErrorIntercept implements HttpInterceptor {
               catchError((error: HttpErrorResponse) => {
 
                 if (error.error instanceof ErrorEvent) {
-                    this.errorMessage = error.error.message;
+                    this.errorMessage = error.error;
                 } else {
                     this.errorMessage = error.error;
                     this.status = error.status;
@@ -32,7 +32,7 @@ export class ErrorIntercept implements HttpInterceptor {
 
                 this.router.navigate(['error'], navigationExtras);
 
-                return throwError(() => new Error());
+                return throwError(() => new Error(error.error));
               })
           )
   }

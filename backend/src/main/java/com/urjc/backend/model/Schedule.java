@@ -1,5 +1,7 @@
 package com.urjc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
@@ -7,23 +9,63 @@ import javax.validation.constraints.NotEmpty;
 @Table(name = "schedule")
 public class Schedule {
 
+    public interface Base {
+    }
+
+    @JsonView(Base.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject;
-
-    @NotEmpty(message = "Se debe completar el dia de la semana")
+    @JsonView(Base.class)
     @Column(nullable = false)
-    private String dayWeek;
+    private Character dayWeek;
 
-    @NotEmpty(message = "Se debe completar la hora de inicio")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String startTime;
 
-    @NotEmpty(message = "Se debe completar la hora de fin")
+    @JsonView(Base.class)
     @Column(nullable = false)
     private String endTime;
+
+    public Schedule() {}
+
+    public Schedule(Character dayWeek, String startTime, String endTime) {
+        this.dayWeek = dayWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public Character getDayWeek() {
+        return dayWeek;
+    }
+
+    public void setDayWeek(Character dayWeek) {
+        this.dayWeek = dayWeek;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
