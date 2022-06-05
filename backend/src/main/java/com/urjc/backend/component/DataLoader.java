@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +22,12 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) {
-        if(teacherService.findByEmailCurrentCourse("a.merinom.2017@alumnos.urjc.es") == null) {
+        Teacher teacher = teacherService.findByEmail("a.merinom.2017@alumnos.urjc.es");
+        if(teacher == null) {
             List<String> roles = new ArrayList<>();
             roles.add("ADMIN");
             roles.add("TEACHER");
-            teacherService.createTeacher(new Teacher(roles, "Alicia Merino Martínez", "a.merinom.2017@alumnos.urjc.es"));
+            teacherService.saveTeacher(new Teacher(roles, "Alicia Merino Martínez", "a.merinom.2017@alumnos.urjc.es"));
         }
     }
 }

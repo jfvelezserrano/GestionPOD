@@ -48,7 +48,7 @@ public class LoginRestController {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), null);
             authenticationManager.authenticate(authentication);
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Usuario no encontrado" ,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         String ip = request.getRemoteAddr();
@@ -57,12 +57,14 @@ public class LoginRestController {
 
         mailBoxService.addCodeEmail(randomeCode, loginRequest.getEmail(), ip);
 
-        Teacher teacher = teacherService.findByEmailCurrentCourse(loginRequest.getEmail());
+        Teacher teacher = teacherService.findByEmail(loginRequest.getEmail());
 
-        if(mailBoxService.sendEmail(randomeCode, teacher)){
+        try{
+            mailBoxService.sendEmail(randomeCode, teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Algo ha salido mal en el inicio de sesión", HttpStatus.BAD_REQUEST);
 
     }
 
@@ -74,9 +76,9 @@ public class LoginRestController {
             String email = mailBoxService.getCodesEmails().getEmailByCode(code);
 
             mailBoxService.getCodesEmails().removeCode(code);
-            Teacher teacher = teacherService.findByEmailCurrentCourse(email);
+            Teacher teacher = teacherService.findByEmail(email);
 
-            String token = JWT.createJWT(teacher.getEmail(), teacher.getRoles());
+            String token = JWT.createJWT(teacher.getEmail());
 
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
@@ -87,6 +89,6 @@ public class LoginRestController {
 
            return new ResponseEntity<>(teacher,HttpStatus.OK);
         }
-       return new ResponseEntity<>("Código de verificación no encontrado", HttpStatus.NOT_FOUND);
+       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

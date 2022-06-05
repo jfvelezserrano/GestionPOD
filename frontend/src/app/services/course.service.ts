@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class CourseService {
-
+  
   public csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
   public httpOptionsCookiesCSRF = {
@@ -33,10 +33,14 @@ export class CourseService {
   }
 
   deleteTeacherInPod(idPod:any, idTeacher:any){
-    return this.http.put(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCookiesCSRF);
+    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCookiesCSRF);
   }
 
-  deleteSubjectInPod(idPod:any, idSubject:any){
-    return this.http.put(environment.urlApi + "/pods/" + idPod + "/subjects/" + idSubject, this.httpOptionsCookiesCSRF);
+  deleteSubjectInPod(idPod:number, idSubject:number){
+    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/subjects/" + idSubject, this.httpOptionsCookiesCSRF);
+  }
+
+  deletePod(id: any) {
+    return this.http.delete(environment.urlApi + "/pods/" + id, this.httpOptionsCookiesCSRF);
   }
 }

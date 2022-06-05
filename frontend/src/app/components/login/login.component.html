@@ -21,7 +21,7 @@
                     <div class="custom-wrapper">
                       <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Correo electrónico"
                       #email="ngModel" name="email" [(ngModel)]="emailTeacher" required email [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
-                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" title="Email inválido"></i>
+                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" placement="end" ngbTooltip="Email inválido"></i>
                     </div>
                   </div>
               </div>

@@ -1,12 +1,10 @@
 package com.urjc.backend.model;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.urjc.backend.service.TeacherService;
 
 @Entity
 @Table(name = "course")
@@ -14,6 +12,7 @@ public class Course {
 
     public interface Base {
     }
+
 
     @JsonView(Base.class)
     @Id
@@ -114,6 +113,7 @@ public class Course {
         for (CourseTeacher courseTeacher : courseTeachers) {
             if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher.get())) {
                 newCourseTeacher = courseTeacher;
+                break;
             }
         }
         courseTeachers.remove(newCourseTeacher);
@@ -124,8 +124,27 @@ public class Course {
         for (CourseSubject courseSubject : courseSubjects) {
             if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject.get())) {
                 newCourseSubject = courseSubject;
+                break;
             }
         }
         courseSubjects.remove(newCourseSubject);
+    }
+
+    public Boolean isTeacherInCourse(Teacher teacher){
+        for (CourseTeacher courseTeacher : courseTeachers) {
+            if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean isSubjectInCourse(Subject subject){
+        for (CourseSubject courseSubject : courseSubjects) {
+            if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,12 +1,3 @@
-.icon-login-error{
-    padding: 10px;
-    margin:0%;
-    color: var(--error);
-    position: absolute;
-    right: 3px;
-    top: calc(50% - 1.1em);
-}
-
 .login{
     position: relative;
     background: rgba(201, 200, 200, 0.541);
@@ -27,18 +18,6 @@
   background-color: rgba(22, 22, 22, 0.39);
 }
 
- 
-.custom-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.border-error{
-    background-color:var(--colision-claro);
-    border: 0.11em solid var(--error);
-}
-
-/* From uiverse.io by @mrhyddenn */
 .progress-loader {
     background: var(--blanco);
     height: 5px;

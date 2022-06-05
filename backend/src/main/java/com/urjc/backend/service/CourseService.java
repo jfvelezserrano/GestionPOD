@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,12 +34,21 @@ public class CourseService {
 
     public Optional<Course> findCourseById(Long id){ return courseRepository.findById(id); }
 
-    public Course updateCourse(Optional<Course> course) {
+    public Course save(Optional<Course> course) {
         try {
             return courseRepository.save(course.get());
         }catch (Exception e){
             return null;
         }
+    }
 
+    public Boolean deleteCourse(Long id){
+        Optional<Course> course = findCourseById(id);
+        if(course.isPresent()){
+            courseRepository.delete(course.get());
+            return true;
+        }
+
+        return false;
     }
 }

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "teacher")
@@ -23,11 +21,11 @@ public class Teacher{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToMany(mappedBy = "teacher", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
     private Set<CourseTeacher> courseTeachers;
 
@@ -44,13 +42,27 @@ public class Teacher{
     @Column(nullable = false, unique = true)
     private String email;
 
-    public Teacher(List<String> roles, String name, String email) {
-        this.roles = roles;
+    public Teacher(String name, String email) {
+        this.roles = new ArrayList<>();
+        roles.add("TEACHER");
         this.name = name;
         this.email = email;
+        this.courseTeachers = new HashSet<>();
+        this.pods = new HashSet<>();
     }
 
-    public Teacher() {}
+    public Teacher(List<String> roles, String name, String email) {
+        this.name = name;
+        this.email = email;
+        this.roles = roles;
+        this.courseTeachers = new HashSet<>();
+        this.pods = new HashSet<>();
+    }
+
+    public Teacher() {
+        this.courseTeachers = new HashSet<>();
+        this.pods = new HashSet<>();
+    }
 
 
     public List<String> getRoles() {

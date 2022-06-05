@@ -1,0 +1,90 @@
+<app-navbar></app-navbar>
+<main class="container-fluid contenido-principal">
+    <div class="row">
+
+      <section class="sidebar col-12 col-xl-4">
+        <div class="sticky-top">
+
+          <div class="pt-1">
+            <h3><b>Añadir Administrador</b></h3>
+          </div>
+
+          <form #formAddAdmin="ngForm" (ngSubmit)="onSubmit(formAddAdmin)">
+            <div class="form-group mb-3">
+                <label for="elegirAdministrador" class="form-label titulo-seccion">Correo Electrónico *</label>
+                <div class="custom-wrapper">
+                    <input type="text" class="form-control" required #email="ngModel" name="email" [(ngModel)]="emailNewAdmin" list="teachersList" id="elegirAdministrador" 
+                    placeholder="example@example.com" email [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
+                    <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" ngbTooltip="Email de docente inválido"></i>
+                </div>
+                <datalist id="teachersList">
+                <option *ngFor="let item of teachers" [ngValue]="item.email">{{item.email}}</option>
+                </datalist>
+            </div>
+
+            <div class="d-flex justify-content-center pt-3">
+              <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formAddAdmin.form.valid">Añadir</button>
+            </div>
+
+          </form>
+
+        </div>
+      </section>
+
+      <section class="col-12 col-xl-8">
+        <div class="row">
+
+          <div class="col-12 d-flex justify-content-between">
+            <span>Mostrando {{admins.length}} resultados</span>
+          </div>
+
+          <div class="col-12 contenido-asignaturas box-mis-estadisticas-admin">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+
+              <table class="table table-borderless">
+                <tbody>
+                  
+                  <tr *ngFor="let admin of admins">
+                    <td class="td-icon"><i class="fa fa-user-shield icono-mis-estadisticas"></i> </td>
+                    <td>
+                      <div>
+                        <span><b>{{admin.name}}</b></span><br>
+                        <span><small class="text-muted">{{admin.email}}</small></span>
+                      </div>
+                    </td>
+                    <td>
+                      <button type="button" (click)="open(modalRemoveRoleAdmin, admin)" title="Eliminar" class="btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mt-3"></i></button>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+<app-scroll-up></app-scroll-up>
+
+<ng-template #modalRemoveRoleAdmin let-modal>
+  <div class="modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3 px-4 centrar">
+              <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+              <h5 class="modal-title" id="titleModal3"><b>Eliminar Administrador</b><b id="teacherToDelete"></b></h5>
+              <a>¿Desea realmente eliminar al docente {{adminTeacher.name}} del Plan Docente Actual?</a>
+            </div>
+            <div class="modal-footer">
+              <button (click)="modal.close(removeRoleAdmin())" class="btn mx-auto boton-general tema-urjc-rojo">Eliminar</button>
+            </div>
+          </div>
+      </div>
+  </div>
+</ng-template>

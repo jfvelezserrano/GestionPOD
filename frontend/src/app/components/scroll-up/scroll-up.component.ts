@@ -12,4 +12,9 @@ export class ScrollUpComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  scrollUp() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
+
 }

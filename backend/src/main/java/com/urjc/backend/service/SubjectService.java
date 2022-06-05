@@ -1,44 +1,52 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Course;
+import com.urjc.backend.model.Schedule;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.SubjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
 @Service
+@Transactional
 public class SubjectService {
     private static final Logger log = LoggerFactory.getLogger(SubjectService.class);
 
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public Subject saveSubject(Subject subject) throws IOException {
-        try {
-            return subjectRepository.save(subject);
-        }catch (Exception e){
-            return null;
-        }
+    public Subject saveSubject(Subject subject) {
+        return subjectRepository.save(subject);
+    }
+
+    public void deleteSubject(Subject subject){
+        subjectRepository.delete(subject);
     }
 
     public Optional<Subject> findSubjectById(Long id) {
         return subjectRepository.findById(id);
     }
 
-    public List<Subject> getSubjectsByPOD(Long id) {
-        return subjectRepository.getSubjectsByPOD(id);
+    public List<Subject> getSubjectsByPOD(Long id, Pageable pageable) {
+        Page<Subject> p = subjectRepository.getSubjectsByPOD(id, pageable);
+        return p.getContent();
     }
 
     public Boolean saveAllSubjects(MultipartFile file, Course course){
@@ -50,7 +58,7 @@ public class SubjectService {
             InputStream is = file.getInputStream();
             br = new BufferedReader(new InputStreamReader(is));
             while ((line = br.readLine()) != null) {
-                line = line.replaceAll("[\"=\']", "");
+                line = line.replaceAll("[\"=\'#!]", "");
                 String[] values = line.split(";", -1);
 
                 if (!(values[0].equals("Codigo")) && !(values[0].equals("Código"))) {
@@ -76,14 +84,10 @@ public class SubjectService {
                     Subject newSubject = getSubjectIfExists(subject);
                     if (newSubject != null) {
                         course.addSubject(newSubject);
-                        if(saveSubject(newSubject) == null){
-                            return false;
-                        }
+                        saveSubject(newSubject);
                     } else {
                         course.addSubject(subject);
-                        if(saveSubject(subject) == null){
-                            return false;
-                        }
+                        saveSubject(subject);
                     }
                 }
             }
@@ -156,5 +160,17 @@ public class SubjectService {
             return true;
         }
         return false;
+    }
+
+    public List<String> getTitles() {
+        return subjectRepository.getTitles();
+    }
+
+    public List<String> getCampus() {
+        return subjectRepository.getCampus();
+    }
+
+    public List<String> getTypes() {
+        return subjectRepository.getTypes();
     }
 }

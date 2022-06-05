@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -32,28 +33,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 String token = cookie.getValue();
                 if (StringUtils.hasText(token) && (JWT.isCorrect(token)) && (!JWT.isTokenExpired(token))) {
                     Claims claims = JWT.decodeJWT(token);
-                    if (claims.get("authorities") != null && claims.getSubject() != null) {
-                        Teacher teacher = teacherService.findByEmailCurrentCourse(claims.getSubject());
+                    if (claims.getSubject() != null) {
+                        Teacher teacher = teacherService.findIfIsInCurrentCourse(claims.getSubject());
                         if (teacher == null) {
                             SecurityContextHolder.clearContext();
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            filterChain.doFilter(request, response);
+                            return;
                         } else {
-                            Authentication authentication = JWT.getAuthentication(claims);
+                            Authentication authentication = JWT.getAuthentication(teacher.getRoles(),claims);
                             SecurityContextHolder.getContext().setAuthentication(authentication);
                             filterChain.doFilter(request, response);
+                            return;
                         }
-                    } else {
-                        SecurityContextHolder.clearContext();
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
-                } else {
-                    SecurityContextHolder.clearContext();
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
-            }else {
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
+
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     @Override

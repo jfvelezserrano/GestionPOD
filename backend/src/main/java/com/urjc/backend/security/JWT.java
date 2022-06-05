@@ -1,5 +1,6 @@
 package com.urjc.backend.security;
 
+import com.auth0.jwt.interfaces.Claim;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,12 +26,7 @@ public class JWT {
     private static SignatureAlgorithm algorithm = SignatureAlgorithm.HS256;
 
 
-    public static String createJWT(String email, List<String> roles) {
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
+    public static String createJWT(String email) {
 
         byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
         Key finalKey = new SecretKeySpec(secretKeyBytes, algorithm.getJcaName());
@@ -40,16 +36,11 @@ public class JWT {
                 .setIssuedAt(new Date(new Date().getTime()))
                 .setExpiration(new Date(new Date().getTime() + EXPIRATION_TIME))
                 .setSubject(email)
-                .claim("authorities",
-                        authorities.stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toList()))
                 .signWith(algorithm, finalKey)
                 .compact();
     }
 
-    public static Authentication getAuthentication(Claims claims) {
-        List<String> authorities = (List) claims.get("authorities");
+    public static Authentication getAuthentication(List<String> authorities, Claims claims) {
 
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
                 authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));

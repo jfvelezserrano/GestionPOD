@@ -2,6 +2,8 @@ package com.urjc.backend.repository;
 
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +26,14 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     List<Subject> existsSubject(@Param("subject") Subject subject);
 
     @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id ")
-    List<Subject> getSubjectsByPOD(@Param("id") Long id);
+    Page<Subject> getSubjectsByPOD(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT DISTINCT subject.title FROM Subject subject")
+    List<String> getTitles();
+
+    @Query("SELECT DISTINCT subject.campus FROM Subject subject")
+    List<String> getCampus();
+
+    @Query("SELECT DISTINCT subject.type FROM Subject subject")
+    List<String> getTypes();
 }

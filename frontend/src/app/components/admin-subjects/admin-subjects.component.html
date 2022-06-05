@@ -10,94 +10,96 @@
             <div class="col-12 d-flex justify-content-between">
               <span>Mostrando {{subjects.length}} resultados</span>
               <div>
-                <button type="button" title="Añadir asignatura" class="btn boton" data-bs-toggle="modal" data-bs-target="#modalAnadirAsignatura"><i class="fa fa-plus fa-sm"></i></button>
+                <button type="button" title="Añadir asignatura" class="btn boton" (click)="createModal(createSubject)"><i class="fa fa-plus fa-sm"></i></button>
 
-                <div class="modal fade" id="modalAnadirAsignatura" role="dialog">
-                  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <ng-template  #createSubject let-modal>
+                  <div class="modal-dialog-centered modal-lg" role="document">
                       <div class="modal-content">
                           <div class="modal-header">
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            <form class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                            <form #formCreateTeacher="ngForm" (ngSubmit)="modal.close(onSubmit(formCreateTeacher))" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
                                 <h5 class="modal-title" id="titleModal"><b>Añadir Nueva Asignatura</b></h5>
                                 
                                 <fieldset>
                                   <legend>Identificación</legend>
                                   <div class="row">
                                     <div class="form-group col-lg-8">
-                                      <label for="inputNombre" class="form-label titulo-seccion">Nombre</label>
-                                      <input type="text" class="form-control" id="inputNombre" placeholder="Nombre de la asignatura">
+                                      <label for="inputNombre" class="form-label titulo-seccion">Nombre *</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" class="form-control" id="inputNombre" required pattern="[a-zA-Z- áéíóúÁÉÍÓÚÑñÇç]{5,60}" placeholder="Pepe Merino Gómez"
+                                        [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!name.valid && name.touched" alt="Nombre inválido" ngbTooltip="Nombre de docente inválido"></i>
+                                      </div>
                                     </div>
                                     <div class="form-group col-lg-4">
-                                      <label for="inputId" class="form-label titulo-seccion">Identificador</label>
-                                      <input type="number" class="form-control" id="inputId" placeholder="Id">
+                                      <label for="inputCode" class="form-label titulo-seccion">Código *</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" id="inputCode" #code="ngModel" name="code" [(ngModel)]="newSubject.code" required pattern="[a-zA-Z0-9]{5,9}" placeholder="2061028"
+                                        [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!code.valid && code.touched" alt="Código inválido" ngbTooltip="Código inválido"></i>
+                                      </div>
                                     </div>
                                     <div class="form-group">
-                                      <label for="inputGrado" class="form-label titulo-seccion">Grado</label>
-                                      <input type="text" class="form-control" list="grados" id="inputGrado" placeholder="Titulación">
+                                      <label for="inputGrado" class="form-label titulo-seccion">Grado *</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" list="grados" required pattern="[0-9a-zA-Z- ()áéíóúÁÉÍÓÚÑñÇç]{5,80}" id="inputGrado" placeholder="(2061) Grado Ingeniería Informática (O)"
+                                        #title="ngModel" name="title" [(ngModel)]="newSubject.title" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!title.valid && title.touched" alt="Titulación inválida" ngbTooltip="Titulación inválida"></i>
+                                      </div>
                                       <datalist id="grados">
-                                        <option value="Grado Ingeniería del Software">
-                                        <option value="Grado Ingeniería Informática">
-                                        <option value="Grado de Matemáticas">
-                                        <option value="Grado Ingeniería de Computadores">
-                                        <option value="Grado Ingeniería Industrial">
+                                        <option *ngFor="let title of titles" [value]="title">{{title}}</option>
                                       </datalist>
                                     </div>
                                   </div>
+                                  
                                 </fieldset>
 
                                 <fieldset>
                                   <legend>Datos</legend>
                                   <div class="row">
-                                    <div class="form-group col-lg-4">
-                                      <label for="inputHoras" class="form-label titulo-seccion">Horas</label>
-                                      <input type="number" class="form-control" id="inputHoras" placeholder="HH">
+                                    <div class="form-group col-lg-3">
+                                      <label for="inputHoras" class="form-label titulo-seccion">Horas *</label>
+                                      <input type="number" class="form-control" #hours="ngModel" name="hours" [(ngModel)]="newSubject.totalHours" required id="inputHoras" placeholder="90">
                                     </div>
                                     
-                                    <div class="form-group col-lg-4">
-                                      <label for="inputCampus" class="form-label titulo-seccion">Campus</label>
-                                      <input type="text" class="form-control" list="campus" id="inputCampus" placeholder="Campus">
-                                      <datalist id="campus">
-                                        <option value="Móstoles">
-                                        <option value="Fuenlabrada">
-                                        <option value="Madrid">
-                                        <option value="Alcorcón">
-                                        <option value="Aranjuez">
+                                    <div class="form-group col-lg-6">
+                                      <label for="inputCampus" class="form-label titulo-seccion">Campus *</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" list="campusList" pattern="[a-zA-Z- áéíóúÁÉÍÓÚÑñÇç]{5,80}" #campus="ngModel" name="campus" [(ngModel)]="newSubject.campus" 
+                                        required id="inputCampus" placeholder="Móstoles" [ngClass]="!campus.valid && campus.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!campus.valid && campus.touched" alt="Campus inválido" ngbTooltip="Campus inválido"></i>
+                                      </div>
+                                      <datalist id="campusList">
+                                        <option *ngFor="let item of allCampus" [value]="item">{{item}}</option>
                                       </datalist>
                                     </div>
 
-                                    <div class="form-group col-lg-4">
-                                      <label for="inputCurso" class="form-label titulo-seccion">Curso</label>
-                                      <input type="text" class="form-control" list="cursos" id="inputCurso" placeholder="Curso">
-                                      <datalist id="cursos">
-                                        <option value="Curso 1">
-                                        <option value="Curso 2">
-                                        <option value="Curso 3">
-                                        <option value="Curso 4">
-                                        <option value="Curso 5">
-                                      </datalist>
+                                    <div class="form-group col-lg-3">
+                                      <label for="inputCurso" class="form-label titulo-seccion">Curso *</label>
+                                      <input type="number" class="form-control" #course="ngModel" name="course" [(ngModel)]="newSubject.year" required id="inputCurso" placeholder="1">
                                     </div>
 
                                     <div class="form-group col-lg-5">
-                                      <label for="inputCuatrimestre" class="form-label titulo-seccion">Cuatrimestre</label>
-                                      <input type="text" class="form-control" list="cuatrimestres" id="inputCuatrimestre" placeholder="Cuatrimestre">
-                                      <datalist id="cuatrimestres">
-                                        <option value="Cuatrimestre 1">
-                                        <option value="Cuatrimestre 2">
-                                        <option value="Anual">
-                                      </datalist>
+                                      <label for="inputCuatrimestre" class="form-label titulo-seccion">Cuatrimestre *</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" id="inputCuatrimestre" placeholder="Segundo Cuatrimestre" pattern="[a-zA-Z- áéíóúÁÉÍÓÚÑñÇç]{5,80}" #quarter="ngModel"
+                                        name="quarter" [(ngModel)]="newSubject.quarter" required [ngClass]="!quarter.valid && quarter.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!quarter.valid && quarter.touched" alt="Cuatrimestre inválido" ngbTooltip="Cuatrimestre inválido"></i>
+                                      </div>
                                     </div>
                                     
 
                                     <div class="form-group col-lg-7">
-                                      <label for="inputTipo" class="form-label titulo-seccion">Tipo</label>
-                                      <input type="text" class="form-control" list="tipos" id="inputTipo" placeholder="Tipo">
+                                      <label for="inputTipo" class="form-label titulo-seccion">Tipo *</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" list="tipos" id="inputTipo" placeholder="Optativa" pattern="[a-zA-Z- áéíóúÁÉÍÓÚÑñÇç]{5,80}" #type="ngModel"
+                                        name="type" [(ngModel)]="newSubject.type" required [ngClass]="!type.valid && type.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!type.valid && type.touched" alt="Tipo inválido" ngbTooltip="Tipo inválido"></i>
+                                      </div>
                                       <datalist id="tipos">
-                                        <option value="Optativa">
-                                        <option value="Obligatoria">
-                                        <option value="Formación Básica Común">
-                                        <option value="Formación Básica de Rama">
+                                        <option *ngFor="let item of types" [value]="item">{{item}}</option>
                                       </datalist>
                                     </div>
                                   </div>
@@ -106,10 +108,10 @@
                                 <fieldset>
                                     <legend>Horario</legend>
                                     <div class="form-group centrar">
-                                      <label for="groupTurnos" class="titulo-seccion">Turnos</label>
+                                      <label for="groupTurnos" class="titulo-seccion">Turnos *</label>
                                       <div id="groupTurnos">
-                                        <input type="radio" name="select" id="opcion-manana" checked>
-                                        <input type="radio" name="select" id="opcion-tarde">
+                                        <input type="radio" name="turn" value="M" [(ngModel)]="newSubject.turn" id="opcion-manana" required>
+                                        <input type="radio" name="turn" value="T" [(ngModel)]="newSubject.turn" id="opcion-tarde" required>
                                           <label for="opcion-manana" class="opcion opcion-manana">
                                             <span>Turno Mañana</span>
                                             </label>
@@ -121,265 +123,104 @@
 
                                     <div class="row">
                                       <div class="form-group col-lg-5">
-                                        <label for="inputDiasSemana" class="titulo-seccion">Día</label>
-                                        <input type="text" class="form-control" list="diasSemana" id="inputDiasSemana" placeholder="Día de la semana">
-                                        <datalist id="diasSemana">
-                                          <option value="Lunes">
-                                          <option value="Martes">
-                                          <option value="Miércoles">
-                                          <option value="Jueves">
-                                          <option value="Viernes"></option>
+                                        
+                                        <label for="inputDayWeek" class="titulo-seccion">Día</label>
+
+                                        <div class="custom-wrapper">
+                                          <input type="text" class="form-control" list="daysWeek" id="inputDayWeek" placeholder="L" pattern="[a-zA-Z-áéíóúÁÉÍÓÚÑñÇç]{1,7}" #dayWeek="ngModel"
+                                        name="dayWeek" ngModel [ngClass]="!dayWeek.valid && dayWeek.touched ? 'border-error' : ''">
+                                          <i class="fa-solid fa-xmark icon-login-error" *ngIf="!dayWeek.valid && dayWeek.touched" alt="Día inválido" ngbTooltip="Día inválido"></i>
+                                        </div>
+
+                                        <datalist id="daysWeek">
+                                          <option value="L">Lunes</option>
+                                          <option value="M">Martes</option>
+                                          <option value="X">Miércoles</option>
+                                          <option value="J">Jueves</option>
+                                          <option value="V">Viernes</option>
                                         </datalist>
                                       </div>
                                       <div class="form-group col-lg-3">
-                                        <label for="horasHorarioInicio" class="titulo-seccion">Hora Inicio</label>
-                                        <input type="time" class="form-control" name="horasHorarioInicio" id="horasHorarioInicio">
+                                        <label for="inputStartTime" class="titulo-seccion">Hora Inicio</label>
+                                        <div class="custom-wrapper">
+                                          <input type="text" class="form-control" id="inputStartTime" placeholder="09:00" pattern="[0-9]{2}:[0-9]{2}" #startTime="ngModel" ngModel name="startTime"
+                                          [ngClass]="!startTime.valid && startTime.touched ? 'border-error' : ''">
+                                          <i class="fa-solid fa-xmark icon-login-error" *ngIf="!startTime.valid && startTime.touched" alt="Hora inválida" ngbTooltip="Hora inválida"></i>
+                                        </div>
                                       </div>
                                       <div class="form-group col-lg-3">
-                                        <label for="horasHorarioFin" class="titulo-seccion">Hora Fin</label>
-                                        <input type="time" class="form-control" name="horasHorarioFin" id="horasHorarioFin">
+                                        <label for="inputEndTime" class="titulo-seccion">Hora Fin</label>
+                                        <div class="custom-wrapper">
+                                          <input type="text" class="form-control" id="inputEndTime" placeholder="11:00" pattern="[0-9]{2}:[0-9]{2}" #endTime="ngModel" ngModel name="endTime"
+                                          [ngClass]="!endTime.valid && endTime.touched ? 'border-error' : ''">
+                                          <i class="fa-solid fa-xmark icon-login-error" *ngIf="!endTime.valid && endTime.touched" alt="Hora inválida" ngbTooltip="Hora inválida"></i>
+                                      </div>
                                       </div>
                                       <div class="form-group col-lg-1" style="padding-top: 21px;">
-                                        <button style="border-radius: 50% !important;" type="button" title="Añadir asignatura" class="btn boton"><i class="fa fa-plus"></i></button>
+                                        <button (click)="addSchedule(dayWeek.value, startTime.value, endTime.value)" style="border-radius: 50% !important;" type="button" title="Añadir horario" class="btn boton-plus" 
+                                        [disabled]="dayWeek.value.length == 0 || !dayWeek.valid || startTime.value.length == 0  || !startTime.valid || endTime.value.length == 0 || !endTime.valid"><i class="fa fa-plus"></i></button>
+                                      </div>
+
+                                      <div class="form-group col-12">
+                                        <small class="truncar etiquetas" *ngFor="let item of scheduleList; let i = index"><i class="fas fa-times" (click)="scheduleList.splice(i, 1)"></i>{{item.dayWeek}} - ({{item.startTime}} a {{item.endTime}})</small>
                                       </div>
                                     </div>
+
                                 </fieldset>
 
                                 <fieldset>
                                   <legend>Grupos</legend>
                                   <div class="row">
-                                    <div class="form-group col-lg-6">
-                                      <label for="inputGrupo" class="form-label titulo-seccion">Grupo</label>
-                                      <input type="text" class="form-control" list="grupos" id="inputGrupo" placeholder="Grupo">
-                                      <datalist id="grupos">
-                                        <option value="G_ICOMPU_3A(M)">
-                                        <option value="G_ISOFTW_1A(M)">
-                                        <option value="G_ICOMPU_2A(M)">
-                                        <option value="G_ISOFTW_4A(M)">
-                                      </datalist>
+                                    <div class="form-group col-lg-5">
+                                      <label for="inputCareer" class="form-label titulo-seccion">Grupo</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" id="inputCareer" placeholder="G_INFonline_2A(O)" pattern="[a-zA-Z0-9- _áéíóúÁÉÍÓÚÑñÇç]{1,15}" #career="ngModel" [(ngModel)]="newSubject.career" name="career"
+                                        [ngClass]="!career.valid && career.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!career.valid && career.touched" alt="Grupo inválido" ngbTooltip="Grupo inválido"></i>
+                                      </div>
                                     </div>
 
                                     <div class="form-group col-lg-6">
-                                      <label for="inputGruposAsistencia" class="form-label titulo-seccion">Grupos Asistencia</label>
-                                      <input type="text" class="form-control" list="gruposAsistencia" id="inputGruposAsistencia" placeholder="Grupos asistencia">
-                                      <datalist id="gruposAsistencia">
-                                        <option value="G_VIDEO-COMP_3A(M)">
-                                        <option value="G_INF-COMP_1A(M)">
-                                        <option value="G_INF-SOFT_2A(M)">
-                                        <option value="G_VIDEO-COMP_4A(M)">
-                                      </datalist>
+                                      <label for="inputAssistanceCareers" class="form-label titulo-seccion">Grupos Asistencia</label>
+                                      <div class="custom-wrapper">
+                                        <input type="text" class="form-control" id="inputAssistanceCareers" placeholder="G_INF_1A(M)" pattern="[a-zA-Z0-9- _áéíóúÁÉÍÓÚÑñÇç]{1,15}"
+                                        #assistanceCareers="ngModel" ngModel name="assistanceCareers" [ngClass]="!assistanceCareers.valid && assistanceCareers.touched ? 'border-error' : ''">
+                                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!assistanceCareers.valid && assistanceCareers.touched" alt="Grupo inválido" ngbTooltip="Grupo inválido"></i>
+                                      </div>
+                                    </div>
+
+                                    <div class="form-group col-lg-1" style="padding-top: 28px;">
+                                      <button style="border-radius: 50% !important;" type="button" title="Añadir grupo" class="btn boton-plus" [disabled]="!assistanceCareers.valid || assistanceCareers.value.length == 0">
+                                        <i class="fa fa-plus" (click)="assistanceCareersList.push(assistanceCareers.value)"></i>
+                                      </button>
+                                    </div>
+
+                                    <div class="form-group col-lg-5">
+                                      <small></small>
                                     </div>
 
                                     <div class="form-group col-lg-6">
-                                      <small class="truncar etiquetas">G_ICOMPU_3A(M)<i class="fas fa-times"></i></small>
-                                      <small class="truncar etiquetas">G_ICOMPU_2A(M)<i class="fas fa-times"></i></small>
-                                      <small class="truncar etiquetas">G_ISOFTW_4A(M)<i class="fas fa-times"></i></small>
-                                    </div>
-
-                                    <div class="form-group col-lg-6">
-                                      <small class="truncar etiquetas">G_INF-COMP_1A(M)<i class="fas fa-times"></i></small>
+                                      <small class="truncar etiquetas" *ngFor="let item of assistanceCareersList; let i = index"><i class="fas fa-times" (click)="assistanceCareersList.splice(i, 1)"></i>{{item}}</small>
                                     </div>
                                   </div>
                                 </fieldset>
 
-                                <div class="modal-footer">
-                                  <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Añadir</button>
-                              </div>
+                                <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formCreateTeacher.form.valid">Añadir</button>
                             </form>
                           </div>
                       </div>
                   </div>
-                </div>
+                </ng-template>
 
                 <span><small>Ordenar por </small></span>
-                <select class="form-select-sm desplegable-buscador">
-                  <option selected value="1">Asignatura</option>
-                  <option value="2">Carga </option>
+                <select class="form-select-sm desplegable-buscador" [(ngModel)]="typeSort" (change)="getSubjectsInPod()">
+                  <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
               </div>
             </div>
 
-            <div class="modal fade" id="alerta-editar-asignatura" role="dialog">
-              <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
-                          <h5 class="modal-title" id="titleModal"><b>Editar Estructura de Datos</b></h5>
-                          
-                          <fieldset>
-                            <legend>Identificación</legend>
-                            <div class="row">
-                              <div class="form-group col-lg-8">
-                                <label for="inputNombreEditar" class="form-label titulo-seccion">Nombre</label>
-                                <input type="text" class="form-control" id="inputNombreEditar" placeholder="Nombre de la asignatura">
-                              </div>
-                              <div class="form-group col-lg-4">
-                                <label for="inputIdEditar" class="form-label titulo-seccion">Identificador</label>
-                                <input type="number" class="form-control" id="inputIdEditar" placeholder="Id">
-                              </div>
-                              <div class="form-group">
-                                <label for="inputGradoEditar" class="form-label titulo-seccion">Grado</label>
-                                <input type="text" class="form-control" list="grados" id="inputGradoEditar" placeholder="Titulación">
-                                <datalist id="grados">
-                                  <option value="Grado Ingeniería del Software">
-                                  <option value="Grado Ingeniería Informática">
-                                  <option value="Grado de Matemáticas">
-                                  <option value="Grado Ingeniería de Computadores">
-                                  <option value="Grado Ingeniería Industrial">
-                                </datalist>
-                              </div>
-                            </div>
-                          </fieldset>
-
-                          <fieldset>
-                            <legend>Datos</legend>
-                            <div class="row">
-                              <div class="form-group col-lg-4">
-                                <label for="inputHorasEditar" class="form-label titulo-seccion">Horas</label>
-                                <input type="number" class="form-control" id="inputHorasEditar" placeholder="HH">
-                              </div>
-                              
-                              <div class="form-group col-lg-4">
-                                <label for="inputCampusEditar" class="form-label titulo-seccion">Campus</label>
-                                <input type="text" class="form-control" list="campus" id="inputCampusEditar" placeholder="Campus">
-                                <datalist id="campus">
-                                  <option value="Móstoles">
-                                  <option value="Fuenlabrada">
-                                  <option value="Madrid">
-                                  <option value="Alcorcón">
-                                  <option value="Aranjuez">
-                                </datalist>
-                              </div>
-
-                              <div class="form-group col-lg-4">
-                                <label for="inputCursoEditar" class="form-label titulo-seccion">Curso</label>
-                                <input type="text" class="form-control" list="cursos" id="inputCursoEditar" placeholder="Curso">
-                                <datalist id="cursos">
-                                  <option value="Curso 1">
-                                  <option value="Curso 2">
-                                  <option value="Curso 3">
-                                  <option value="Curso 4">
-                                  <option value="Curso 5">
-                                </datalist>
-                              </div>
-
-                              <div class="form-group col-lg-5">
-                                <label for="inputCuatrimestreEditar" class="form-label titulo-seccion">Cuatrimestre</label>
-                                <input type="text" class="form-control" list="cuatrimestres" id="inputCuatrimestreEditar" placeholder="Cuatrimestre">
-                                <datalist id="cuatrimestres">
-                                  <option value="Cuatrimestre 1">
-                                  <option value="Cuatrimestre 2">
-                                  <option value="Anual">
-                                </datalist>
-                              </div>
-                              
-
-                              <div class="form-group col-lg-7">
-                                <label for="inputTipoEditar" class="form-label titulo-seccion">Tipo</label>
-                                <input type="text" class="form-control" list="tipos" id="inputTipoEditar" placeholder="Tipo">
-                                <datalist id="tipos">
-                                  <option value="Optativa">
-                                  <option value="Obligatoria">
-                                  <option value="Formación Básica Común">
-                                  <option value="Formación Básica de Rama">
-                                </datalist>
-                              </div>
-                            </div>
-                          </fieldset>
-
-                          <fieldset>
-                              <legend>Horario</legend>
-                              <div class="form-group centrar">
-                                <label for="groupTurnosEditar" class="titulo-seccion">Turnos</label>
-                                <div id="groupTurnosEditar">
-                                  <input type="radio" name="select" id="opcion-mananaEditar" checked>
-                                  <input type="radio" name="select" id="opcion-tardeEditar">
-                                    <label for="opcion-mananaEditar" class="opcion opcion-manana">
-                                      <span>Turno Mañana</span>
-                                      </label>
-                                    <label for="opcion-tardeEditar" class="opcion opcion-tarde">
-                                      <span>Turno Tarde</span>
-                                    </label>
-                                </div>
-                              </div>
-
-                              <div class="row">
-                                <div class="form-group col-lg-5">
-                                  <label for="inputDiasSemanaEditar" class="titulo-seccion">Día</label>
-                                  <input type="text" class="form-control" list="diasSemana" id="inputDiasSemanaEditar" placeholder="Día de la semana">
-                                  <datalist id="diasSemana">
-                                    <option value="Lunes">
-                                    <option value="Martes">
-                                    <option value="Miércoles">
-                                    <option value="Jueves">
-                                    <option value="Viernes"></option>
-                                  </datalist>
-                                </div>
-                                <div class="form-group col-lg-3">
-                                  <label for="horasHorarioInicioEditar" class="titulo-seccion">Hora Inicio</label>
-                                  <input type="time" class="form-control" name="horasHorarioInicio" id="horasHorarioInicioEditar">
-                                </div>
-                                <div class="form-group col-lg-3">
-                                  <label for="horasHorarioFinEditar" class="titulo-seccion">Hora Fin</label>
-                                  <input type="time" class="form-control" name="horasHorarioFin" id="horasHorarioFinEditar">
-                                </div>
-                                <div class="form-group col-lg-1" style="padding-top: 21px;">
-                                  <button style="border-radius: 50% !important;" type="button" title="Añadir asignatura" class="btn boton"><i class="fa fa-plus"></i></button>
-                                </div>
-                              </div>
-                          </fieldset>
-
-                          <fieldset>
-                            <legend>Grupos</legend>
-                            <div class="row">
-                              <div class="form-group col-lg-6">
-                                <label for="inputGrupo" class="form-label titulo-seccion">Grupo</label>
-                                <input type="text" class="form-control" list="grupos" id="inputGrupo" placeholder="Grupo">
-                                <datalist id="grupos">
-                                  <option value="G_ICOMPU_3A(M)">
-                                  <option value="G_ISOFTW_1A(M)">
-                                  <option value="G_ICOMPU_2A(M)">
-                                  <option value="G_ISOFTW_4A(M)">
-                                </datalist>
-                              </div>
-
-                              <div class="form-group col-lg-6">
-                                <label for="inputGruposAsistencia" class="form-label titulo-seccion">Grupos Asistencia</label>
-                                <input type="text" class="form-control" list="gruposAsistencia" id="inputGruposAsistencia" placeholder="Grupos asistencia">
-                                <datalist id="gruposAsistencia">
-                                  <option value="G_VIDEO-COMP_3A(M)">
-                                  <option value="G_INF-COMP_1A(M)">
-                                  <option value="G_INF-SOFT_2A(M)">
-                                  <option value="G_VIDEO-COMP_4A(M)">
-                                </datalist>
-                              </div>
-
-                              <div class="form-group col-lg-6">
-                                <small class="truncar etiquetas">G_ICOMPU_3A(M)<i class="fas fa-times"></i></small>
-                                <small class="truncar etiquetas">G_ICOMPU_2A(M)<i class="fas fa-times"></i></small>
-                                <small class="truncar etiquetas">G_ISOFTW_4A(M)<i class="fas fa-times"></i></small>
-                              </div>
-
-                              <div class="form-group col-lg-6">
-                                <small class="truncar etiquetas">G_INF-COMP_1A(M)<i class="fas fa-times"></i></small>
-                              </div>
-                            </div>
-                          </fieldset>
-
-                          <div class="modal-footer">
-                            <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Editar</button>
-                        </div>
-                        </form>
-                      </div>
-                  </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="alerta-eliminar-asignatura" role="dialog">
-              <div class="modal-dialog modal-dialog-centered" role="document">
+            <ng-template  #deleteSubject let-modal>
+              <div class="modal-dialog-centered" role="document">
                   <div class="modal-content">
                       <div class="modal-header">
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -387,51 +228,54 @@
                       <div class="modal-body">
                         <div class="mb-3 px-4 centrar">
                           <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
-                          <h5 class="modal-title" id="titleModal3"><b>Eliminar Estructura de Datos</b></h5>
-                          <a>¿Desea realmente eliminar la asignatura Estructura de Datos del Plan Docente Actual?</a>
+                          <h5 class="modal-title" id="titleModal3"><b>Eliminar {{subject.name}}</b></h5>
+                          <a>¿Desea realmente eliminar la asignatura {{subject.name}} del Plan Docente Actual?</a>
                         </div>
                         <div class="modal-footer">
-                          <button (click)="deleteSubjectInPod()" class="btn mx-auto boton-general tema-urjc-rojo">Eliminar</button>
+                          <button (click)="modal.close(deleteSubjectInPod(subject.id))" class="btn mx-auto boton-general tema-urjc-rojo">Eliminar</button>
                         </div>
                       </div>
                   </div>
               </div>
-            </div>
+            </ng-template>
 
             <div class="col-12 contenido-asignaturas">
               <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
                 
+                
+
                 <div class="col" *ngFor="let subject of subjects">
                   <div class="card h-100 w-100 shadow">
-                    <div class="row g-0">
-                      <div class="col">
-                        <div class="card-body">
-                          <ul class="list-group list-group-flush carta-asignatura">
-                            <li class="list-group-item">
-                              <!--<a class="card-block stretched-link text-decoration-none" href></a>-->
-                              <div>
-                                <h4 class="card-title"><b>{{subject.name}}({{subject.code}})</b></h4>
-                                <h6 class="card-subtitle mb-2 text-muted">{{subject.title}}
-                                </h6>
-                                <small><i class="fa fa-clock fa-sm"></i>{{subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                                <p class="card-text"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno {{subject.turn}}</small></p>
-                                <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                                <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                                  <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
-                              </div>
-                            </li>
-                            <li class="list-group-item">
-                              <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                              <div class="row justify-content-end">
-                                <button type="button" onclick="verAsignatura()" title="Ver" class="col-1 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#alerta-eliminar-asignatura" title="Eliminar" class="col-1 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
-                              </div>
-                            </li></ul>
-                        </div>
+                      <div class="card-body contenido-cards">
+                      <ul class="list-group list-group-flush carta-asignatura">
+                          <li class="list-group-item detalles1">
+                          <div>
+                              <h4 class="card-title"><b>{{subject.name}} ({{subject.code}})</b></h4>
+                              <h6 class="card-subtitle mb-2 text-muted">{{subject.title}}</h6>
+                              <small><i class="fa fa-clock fa-sm"></i>{{subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subject.campus}}</small>
+                              <p class="card-text" *ngIf="subject.turn == 'T'"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno Tarde</small></p>
+                              <p class="card-text" *ngIf="subject.turn == 'M'"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno Mañana</small></p>
+                              <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
+                              <p class="titulo-grupo" *ngIf="subject.assitanceCareers.length != 0"><small><b>GRUPOS ASISTENCIA</b></small>
+                                <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subject.assitanceCareers">{{career}}</span>
+                              </p>
+                          </div>
+                          </li>
+                          <li class="list-group-item detalles3" *ngIf="subject.schedules.length != 0">
+                          <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                            <small class="text-muted" *ngFor="let schedule of subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
+                          </p>
+                          </li>
+                      </ul>
                       </div>
-                    </div>
+                      <div class="card-footer text-muted">
+                      <div class="row justify-content-end">
+                        <button type="button" (click)="historical(history, subject)" title="Ver" class="col-3 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                        <button type="button" (click)="deleteModal(deleteSubject, subject)" title="Eliminar" class="col-3 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mx-3"></i></button>
+                      </div>
+                      </div>
                   </div>
-                </div>
+                  </div>
 
               </div>
             </div>
@@ -445,3 +289,96 @@
 
   </main>
 <app-scroll-up></app-scroll-up>
+
+<ng-template #history let-offcanvas>
+  <div class="offcanvas-header">
+    <h4 class="offcanvas-title">Historial</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+  </div>
+  <div class="offcanvas-body">
+    <p><b>{{subject.name}}</b></p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      <li class="list-group-item">
+        <p>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+          </span>
+          <span class="course-history color-libre">2020-2021</span><br>
+          <span class="teacher-history">Alicia Merino Martínez</span><br>
+          <span class="teacher-history">María Martínez Herrera</span>
+        </p>
+      </li>
+      
+    </ul>
+    <div class="d-flex justify-content-center pt-3">
+      <button class="btn mx-auto boton-general tema-urjc-azul" (click)="offcanvas.dismiss()">Cerrar</button>
+      </div>
+  </div>
+</ng-template>

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "subject")
@@ -63,10 +62,11 @@ public class Subject {
     @Column(nullable = false)
     private String career;
 
+    @JsonView(Base.class)
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<POD> pods;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
     private Set<CourseSubject> courseSubjects;
 
@@ -79,7 +79,10 @@ public class Subject {
     @JoinColumn(name = "subject_id")
     private List<Schedule> schedules;
 
-    public Subject(){}
+    public Subject(){
+        this.pods = new HashSet<>();
+        this.courseSubjects = new HashSet<>();
+    }
 
     public Subject(String code, String name, String title, Integer totalHours, String campus, Integer year,
                    String quarter, String type, String turn, String career) {
@@ -93,6 +96,8 @@ public class Subject {
         this.type = type;
         this.turn = turn;
         this.career = career;
+        this.pods = new HashSet<>();
+        this.courseSubjects = new HashSet<>();
     }
 
     public Long getId() {
@@ -201,9 +206,13 @@ public class Subject {
         this.assitanceCareers = assitanceCareers;
     }
 
-    public List<Schedule> getSchedules() { return schedules; }
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
 
-    public void setSchedules(List<Schedule> schedules) { this.schedules = schedules; }
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
 
     public void setSchedulesByString(String schedules) {
         if(!schedules.equals("")) {

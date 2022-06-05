@@ -18,6 +18,9 @@ import { ErrorComponent } from './components/error/error.component';
 import { PodsAdminComponent } from './components/pods-admin/pods-admin.component';
 import { AdminSubjectsComponent } from './components/admin-subjects/admin-subjects.component';
 import { AdminTeachersComponent } from './components/admin-teachers/admin-teachers.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ManagementAdminComponent } from './components/management-admin/management-admin.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,9 @@ import { AdminTeachersComponent } from './components/admin-teachers/admin-teache
     ErrorComponent,
     PodsAdminComponent,
     AdminSubjectsComponent,
-    AdminTeachersComponent
+    AdminTeachersComponent,
+    ManagementAdminComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +45,8 @@ import { AdminTeachersComponent } from './components/admin-teachers/admin-teache
     RouterModule,
     HttpClientModule,
     HttpClientXsrfModule,
-    CountdownModule
+    CountdownModule,
+    NgbModule
   ],
   providers: [AppRoutingProviders, 
     {provide: HTTP_INTERCEPTORS, useClass: ErrorIntercept, multi: true}
