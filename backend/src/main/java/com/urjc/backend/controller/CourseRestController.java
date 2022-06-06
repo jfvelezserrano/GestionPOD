@@ -56,16 +56,16 @@ public class CourseRestController {
                                                      @RequestPart("fileSubjects") MultipartFile fileSubjects,
                                                      @RequestPart("fileTeachers") MultipartFile fileTeachers) throws IOException {
 
-        Course newCourse = courseService.createCourse(course);
+        Course newCourse = courseService.create(course);
 
         if(newCourse == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if(!subjectService.saveAllSubjects(fileSubjects, newCourse)){
+        if(!subjectService.saveAll(fileSubjects, newCourse)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(!teacherService.saveAllTeachers(fileTeachers, newCourse)){
+        if(!teacherService.saveAll(fileTeachers, newCourse)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -75,7 +75,7 @@ public class CourseRestController {
     @JsonView(CourseBase.class)
     @GetMapping(value = "/pods")
     public List<Course> getPODs(){
-        return courseService.getCourses();
+        return courseService.findAll();
     }
 
     @JsonView(SubjectBase.class)
@@ -85,7 +85,7 @@ public class CourseRestController {
 
         Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
 
-        List<Subject> list = subjectService.getSubjectsByPOD(id, pageable);
+        List<Subject> list = subjectService.findAllByPOD(id, pageable);
 
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
@@ -97,7 +97,7 @@ public class CourseRestController {
 
         Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
 
-        List<Teacher> list = teacherService.getTeachersByPOD(id, pageable);
+        List<Teacher> list = teacherService.findAllByPOD(id, pageable);
 
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
@@ -105,17 +105,17 @@ public class CourseRestController {
     @DeleteMapping("/pods/{idPod}/teachers/{idTeacher}")
     public ResponseEntity<?> deleteTeacherInPod(@PathVariable Long idPod, @PathVariable Long idTeacher) {
 
-        Optional<Course> course = courseService.findCourseById(idPod);
+        Optional<Course> course = courseService.findById(idPod);
 
         if(course.isPresent()){
 
-            Optional<Teacher> teacher = teacherService.findTeacherById(idTeacher);
+            Optional<Teacher> teacher = teacherService.findById(idTeacher);
 
             if(teacher.isPresent()){
                 course.get().deleteTeacher(teacher);
                 if(courseService.save(course) != null){
                     if(teacher.get().getCourseTeachers().isEmpty() && !teacher.get().getRoles().contains("ADMIN")){
-                        teacherService.deleteTeacher(teacher.get());
+                        teacherService.delete(teacher.get());
                     }
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
@@ -127,17 +127,17 @@ public class CourseRestController {
     @DeleteMapping("/pods/{idPod}/subjects/{idSubject}")
     public ResponseEntity<?> deleteSubjectInPod(@PathVariable Long idPod, @PathVariable Long idSubject) {
 
-        Optional<Course> course = courseService.findCourseById(idPod);
+        Optional<Course> course = courseService.findById(idPod);
 
         if(course.isPresent()){
 
-            Optional<Subject> subject = subjectService.findSubjectById(idSubject);
+            Optional<Subject> subject = subjectService.findById(idSubject);
 
             if(subject.isPresent()){
                 course.get().deleteSubject(subject);
                 if(courseService.save(course) != null){
                     if(subject.get().getCourseSubjects().isEmpty()){
-                        subjectService.deleteSubject(subject.get());
+                        subjectService.delete(subject.get());
                     }
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
@@ -150,7 +150,7 @@ public class CourseRestController {
     @DeleteMapping("/pods/{id}")
     public ResponseEntity<?> deletePod(@PathVariable Long id) {
 
-        if(courseService.deleteCourse(id)){
+        if(courseService.delete(id)){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
@@ -159,7 +159,7 @@ public class CourseRestController {
 
     @PostMapping("/pods/{id}/teachers")
     public ResponseEntity<?> addNewTeacherToPod(@RequestBody TeacherRequest teacherRequest, @PathVariable Long id) {
-        Optional<Course> course = courseService.findCourseById(id);
+        Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
             Teacher newTeacher = new Teacher(teacherRequest.getName(), teacherRequest.getEmail());
             Teacher alreadyExists = teacherService.getTeacherIfExists(newTeacher);
@@ -167,16 +167,15 @@ public class CourseRestController {
             if (alreadyExists == null) {
                 try {
                     course.get().addTeacher(newTeacher, teacherRequest.getHours());
-                    teacherService.saveTeacher(newTeacher);
+                    teacherService.save(newTeacher);
                 } catch (RuntimeException e) {
                     log.info(e.getMessage());
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             } else if(!course.get().isTeacherInCourse(alreadyExists)) {
                 try {
-                    log.info("ya existe");
                     course.get().addTeacher(alreadyExists, teacherRequest.getHours());
-                    teacherService.saveTeacher(alreadyExists);
+                    teacherService.save(alreadyExists);
                 } catch (RuntimeException e) {
                     log.info(e.getMessage());
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -193,15 +192,15 @@ public class CourseRestController {
     @PostMapping("/pods/{id}/subjects")
     public ResponseEntity<?> addNewSubjectToPod(@RequestBody Subject subject, @PathVariable Long id) {
         log.info(String.valueOf(subject));
-        Optional<Course> course = courseService.findCourseById(id);
+        Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
 
-            Subject alreadyExists = subjectService.getSubjectIfExists(subject);
+            Subject alreadyExists = subjectService.findSubjectIfExists(subject);
 
             if (alreadyExists == null) {
                 try {
                     course.get().addSubject(subject);
-                    subjectService.saveSubject(subject);
+                    subjectService.save(subject);
                 } catch (RuntimeException e) {
                     log.info(e.getMessage());
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -209,7 +208,7 @@ public class CourseRestController {
             } else if(!course.get().isSubjectInCourse(alreadyExists)) {
                 try {
                     course.get().addSubject(alreadyExists);
-                    subjectService.saveSubject(alreadyExists);
+                    subjectService.save(alreadyExists);
                 } catch (RuntimeException e) {
                     log.info(e.getMessage());
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

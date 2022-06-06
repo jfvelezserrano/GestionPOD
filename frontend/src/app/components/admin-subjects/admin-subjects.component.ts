@@ -29,6 +29,7 @@ export class AdminSubjectsComponent implements OnInit {
   public page:any;
   public typeSort:any;
   public isMore:any;
+  public showLoader:boolean|any = false;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -56,11 +57,13 @@ export class AdminSubjectsComponent implements OnInit {
   }
 
   getSubjectsInPod(){
+    this.showLoader = true;
     this.page = 0;
     this.isMore = true;
 
     this.subjectService.getSubjectsByPOD(this.idPod, this.page,this.typeSort).subscribe({
       next: (data) => {
+        this.showLoader = false;
         this.subjects = data;
       }
     });

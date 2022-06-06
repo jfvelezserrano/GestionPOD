@@ -8,7 +8,8 @@
           <div class="row">
 
             <div class="col-12 d-flex justify-content-between">
-              <span>Mostrando {{subjects.length}} resultados</span>
+              <span *ngIf="!subjects">Mostrando 0 resultados</span>
+              <span *ngIf="subjects">Mostrando {{subjects.length}} resultados</span>
               <div>
                 <button type="button" title="Añadir asignatura" class="btn boton" (click)="createModal(createSubject)"><i class="fa fa-plus fa-sm"></i></button>
 
@@ -28,7 +29,7 @@
                                     <div class="form-group col-lg-8">
                                       <label for="inputNombre" class="form-label titulo-seccion">Nombre *</label>
                                       <div class="custom-wrapper">
-                                        <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" class="form-control" id="inputNombre" required pattern="[a-zA-Z- áéíóúÁÉÍÓÚÑñÇç]{5,60}" placeholder="Pepe Merino Gómez"
+                                        <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" class="form-control" id="inputNombre" required pattern="[a-zA-Z- áéíóúÁÉÍÓÚÑñÇç]{5,60}" placeholder="Estructura de Datos"
                                         [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
                                         <i class="fa-solid fa-xmark icon-login-error" *ngIf="!name.valid && name.touched" alt="Nombre inválido" ngbTooltip="Nombre de docente inválido"></i>
                                       </div>
@@ -158,7 +159,7 @@
                                       </div>
                                       <div class="form-group col-lg-1" style="padding-top: 21px;">
                                         <button (click)="addSchedule(dayWeek.value, startTime.value, endTime.value)" style="border-radius: 50% !important;" type="button" title="Añadir horario" class="btn boton-plus" 
-                                        [disabled]="dayWeek.value.length == 0 || !dayWeek.valid || startTime.value.length == 0  || !startTime.valid || endTime.value.length == 0 || !endTime.valid"><i class="fa fa-plus"></i></button>
+                                        [disabled]="!dayWeek.value ||dayWeek.value.length == 0 || !dayWeek.valid || !startTime.value || startTime.value.length == 0 || !startTime.valid || !endTime.value || endTime.value.length == 0 || !endTime.valid"><i class="fa fa-plus"></i></button>
                                       </div>
 
                                       <div class="form-group col-12">
@@ -190,7 +191,7 @@
                                     </div>
 
                                     <div class="form-group col-lg-1" style="padding-top: 28px;">
-                                      <button style="border-radius: 50% !important;" type="button" title="Añadir grupo" class="btn boton-plus" [disabled]="!assistanceCareers.valid || assistanceCareers.value.length == 0">
+                                      <button style="border-radius: 50% !important;" type="button" title="Añadir grupo" class="btn boton-plus" [disabled]="!assistanceCareers.valid || !assistanceCareers.value || assistanceCareers.value.length == 0">
                                         <i class="fa fa-plus" (click)="assistanceCareersList.push(assistanceCareers.value)"></i>
                                       </button>
                                     </div>
@@ -256,12 +257,12 @@
                               <p class="card-text" *ngIf="subject.turn == 'T'"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno Tarde</small></p>
                               <p class="card-text" *ngIf="subject.turn == 'M'"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno Mañana</small></p>
                               <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                              <p class="titulo-grupo" *ngIf="subject.assitanceCareers.length != 0"><small><b>GRUPOS ASISTENCIA</b></small>
+                              <p class="titulo-grupo" *ngIf="subject.assitanceCareers && subject.assitanceCareers.length != 0"><small><b>GRUPOS ASISTENCIA</b></small>
                                 <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subject.assitanceCareers">{{career}}</span>
                               </p>
                           </div>
                           </li>
-                          <li class="list-group-item detalles3" *ngIf="subject.schedules.length != 0">
+                          <li class="list-group-item detalles3" *ngIf="subject.schedules && subject.schedules.length != 0">
                           <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
                             <small class="text-muted" *ngFor="let schedule of subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
                           </p>
@@ -277,6 +278,15 @@
                   </div>
                   </div>
 
+              </div>
+              <div class="row justify-content-center mt-5" *ngIf="showLoader">
+                <div class="col-2 mt-5">
+                  <app-loader></app-loader>
+                </div>
+              </div>
+              <div class="text-center no-data" *ngIf="subjects && subjects.length == 0 && !showLoader">
+                <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
+                <p>No hay asignaturas aún</p>
               </div>
             </div>
 

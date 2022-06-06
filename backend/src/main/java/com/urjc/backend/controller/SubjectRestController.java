@@ -31,7 +31,7 @@ public class SubjectRestController {
     }
 
     @GetMapping(value = "/types")
-    public ResponseEntity<List<String>> getTyes(){
+    public ResponseEntity<List<String>> getTypes(){
         return new ResponseEntity<>(subjectService.getTypes(), HttpStatus.OK);
     }
 }

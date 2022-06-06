@@ -27,7 +27,7 @@ public class DataLoader implements ApplicationRunner {
             List<String> roles = new ArrayList<>();
             roles.add("ADMIN");
             roles.add("TEACHER");
-            teacherService.saveTeacher(new Teacher(roles, "Alicia Merino Martínez", "a.merinom.2017@alumnos.urjc.es"));
+            teacherService.save(new Teacher(roles, "Alicia Merino Martínez", "a.merinom.2017@alumnos.urjc.es"));
         }
     }
 }

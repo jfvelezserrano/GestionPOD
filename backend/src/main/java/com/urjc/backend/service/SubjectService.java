@@ -1,16 +1,13 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Course;
-import com.urjc.backend.model.Schedule;
 import com.urjc.backend.model.Subject;
-import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.SubjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,24 +28,24 @@ public class SubjectService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public Subject saveSubject(Subject subject) {
+    public Subject save(Subject subject) {
         return subjectRepository.save(subject);
     }
 
-    public void deleteSubject(Subject subject){
+    public void delete(Subject subject){
         subjectRepository.delete(subject);
     }
 
-    public Optional<Subject> findSubjectById(Long id) {
+    public Optional<Subject> findById(Long id) {
         return subjectRepository.findById(id);
     }
 
-    public List<Subject> getSubjectsByPOD(Long id, Pageable pageable) {
+    public List<Subject> findAllByPOD(Long id, Pageable pageable) {
         Page<Subject> p = subjectRepository.getSubjectsByPOD(id, pageable);
         return p.getContent();
     }
 
-    public Boolean saveAllSubjects(MultipartFile file, Course course){
+    public Boolean saveAll(MultipartFile file, Course course){
         BufferedReader br;
         try {
 
@@ -81,13 +77,13 @@ public class SubjectService {
                         subject.setAssistanceCareersByString(values[11]);
                     }
 
-                    Subject newSubject = getSubjectIfExists(subject);
+                    Subject newSubject = findSubjectIfExists(subject);
                     if (newSubject != null) {
                         course.addSubject(newSubject);
-                        saveSubject(newSubject);
+                        save(newSubject);
                     } else {
                         course.addSubject(subject);
-                        saveSubject(subject);
+                        save(subject);
                     }
                 }
             }
@@ -109,7 +105,7 @@ public class SubjectService {
         }
     }
 
-    public Subject getSubjectIfExists(Subject subject){
+    public Subject findSubjectIfExists(Subject subject){
 
         List<Subject> subjects = subjectRepository.existsSubject(subject);
 

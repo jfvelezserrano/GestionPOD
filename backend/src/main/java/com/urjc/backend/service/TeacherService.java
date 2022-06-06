@@ -1,24 +1,22 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Course;
-import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.CourseRepository;
 import com.urjc.backend.repository.TeacherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,20 +54,20 @@ public class TeacherService {
         return teacherRepository.findByEmail(email);
     }
 
-    public void deleteTeacher(Teacher teacher){
+    public void delete(Teacher teacher){
         teacherRepository.delete(teacher);
     }
 
-    public Teacher saveTeacher(Teacher teacher) {
+    public Teacher save(Teacher teacher) {
         return teacherRepository.save(teacher);
     }
 
-    public List<Teacher> getTeachersByPOD(Long id, Pageable pageable) {
+    public List<Teacher> findAllByPOD(Long id, Pageable pageable) {
         Page<Teacher> p = teacherRepository.getTeachersByPOD(id, pageable);
         return p.getContent();
     }
 
-    public List<Teacher> getAllTeachersInCurrentCourse() {
+    public List<Teacher> findAllInCurrentCourse() {
         List<Course> courses = courseRepository.findAllOrderByDate();
         if(courses.size() != 0){
             Long idLastPod = courses.get(0).getId();
@@ -78,11 +76,11 @@ public class TeacherService {
         return null;
     }
 
-    public List<Teacher> getTeachersByRole(String role) {
+    public List<Teacher> findAllByRole(String role) {
         return teacherRepository.findByRole(role);
     }
 
-    public Optional<Teacher> findTeacherById(Long id) {
+    public Optional<Teacher> findById(Long id) {
         return teacherRepository.findById(id);
     }
 
@@ -98,7 +96,7 @@ public class TeacherService {
         return teacherRepository.existsTeacher(teacher);
     }
 
-    public Boolean saveAllTeachers(MultipartFile file, Course course){
+    public Boolean saveAll(MultipartFile file, Course course){
         BufferedReader br;
         try {
 
@@ -124,7 +122,7 @@ public class TeacherService {
                     if (teacherResult == null) {
                         try{
                             course.addTeacher(teacher, Integer.valueOf(values[2]));
-                            saveTeacher(teacher);
+                            save(teacher);
                         } catch (RuntimeException e){
                             log.info(e.getMessage());
                             return false;
@@ -132,7 +130,7 @@ public class TeacherService {
                     }else{
                         try{
                             course.addTeacher(teacherResult, Integer.valueOf(values[2]));
-                            saveTeacher(teacherResult);
+                            save(teacherResult);
                         } catch (RuntimeException e){
                             log.info(e.getMessage());
                             return false;

@@ -50,6 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.antMatcher("/api/**");
 
         http.authorizeRequests().antMatchers("/api/pods/**").hasRole("ADMIN");
+        http.authorizeRequests().antMatchers("/api/subjects/**").hasRole("TEACHER");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/teachers/**").hasRole("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/teachers/**").hasRole("TEACHER");
 
         http.authorizeRequests().anyRequest().permitAll();
 

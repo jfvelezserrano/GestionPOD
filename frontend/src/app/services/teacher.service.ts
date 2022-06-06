@@ -16,11 +16,6 @@ export class TeacherService {
     withCredentials: true
   };
 
-
-  public httpOptionsCookies = {
-    withCredentials: true
-  };
-
   constructor(
     private http: HttpClient
   ) { }
