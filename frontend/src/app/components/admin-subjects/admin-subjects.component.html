@@ -214,7 +214,7 @@
                 </ng-template>
 
                 <span><small>Ordenar por </small></span>
-                <select class="form-select-sm desplegable-buscador" [(ngModel)]="typeSort" (change)="getSubjectsInPod()">
+                <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="getSubjectsInPod()">
                   <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
               </div>

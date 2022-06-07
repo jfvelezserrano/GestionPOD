@@ -2,7 +2,7 @@
 <main class="container-fluid contenido-todo col-md-10 offset-md-1">
     <div class="row">
 
-    <section class="col-12 col-md-4 col-xl-3">
+    <section class="col-12 col-md-4 col-xl-3 mb-5">
         <div class="sticky mx-4 mx-md-0 mb-4 mb-md-0">
 
         <div class="pt-1">
@@ -19,10 +19,6 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="cbx_colision">
                 <label class="form-check-label lbl-filtrar" for="cbx_colision">Colisión</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_conflicto">
-                <label class="form-check-label lbl-filtrar" for="cbx_conflicto">Conflicto</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="cbx_completa">
@@ -91,6 +87,10 @@
             </form>
         </div>
 
+        <div class="d-flex justify-content-center pt-3">
+            <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo">Filtrar</button>
+        </div>
+
         </div>
     </section>
 
@@ -100,16 +100,16 @@
         <div class="col-12 d-flex justify-content-between">
             <span>Mostrando 6 resultados</span>
             <div>
-            <button type="button" onclick="generarCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
+            <button id="createPOD" type="button" onclick="generarCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
             <span class="d-md-none d-lg-inline"><small>Ordenar por </small></span>
-            <select class="form-select-sm desplegable-buscador">
+            <select class="form-select-sm text-muted desplegable-buscador">
                 <option selected value="1">Asignatura</option>
                 <option value="2">Carga </option>
             </select>
             </div>
         </div>
 
-        <div class="col-12 contenido-asignaturas">
+        <div class="col-12 contenido-asignaturas-docentes">
             <div class="row row-cols-1 row-cols-xl-2 g-4">
 
                 <div class="col">
@@ -120,7 +120,7 @@
                         <div>
                             <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
                             <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura colision">Conflicto horario</small>
+                            <small class="truncar estado-asignatura colision">Colisión docente</small>
                             </h6>
                             <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
                             <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
@@ -257,7 +257,6 @@
                         <div>
                             <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
                             <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
                             <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
                             
                             </h6>

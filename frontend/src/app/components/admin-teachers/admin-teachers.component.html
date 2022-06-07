@@ -56,7 +56,7 @@
                 </ng-template>
 
                 <span><small>Ordenar por </small></span>
-                <select class="form-select-sm desplegable-buscador" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
+                <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
                   <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
               </div>

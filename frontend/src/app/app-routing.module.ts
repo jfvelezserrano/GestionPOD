@@ -10,6 +10,9 @@ import { PodsAdminComponent } from './components/pods-admin/pods-admin.component
 import { AdminSubjectsComponent } from './components/admin-subjects/admin-subjects.component';
 import { AdminTeachersComponent } from './components/admin-teachers/admin-teachers.component';
 import { ManagementAdminComponent } from './components/management-admin/management-admin.component';
+import { MyStatisticsComponent } from './components/my-statistics/my-statistics.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
+import { MySubjectsComponent } from './components/my-subjects/my-subjects.component';
 
 const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -19,6 +22,9 @@ const routes: Routes = [
   { path: "pods/:id/subjects",  canActivate: [AdminGuard], component: AdminSubjectsComponent},
   { path: "pods/:id/teachers",  canActivate: [AdminGuard], component: AdminTeachersComponent},
   { path: "subjects", canActivate: [TeacherGuard], component: SubjectsComponent},
+  { path: "statistics", canActivate: [TeacherGuard], component: StatisticsComponent},
+  { path: "myStatistics", canActivate: [TeacherGuard], component: MyStatisticsComponent},
+  { path: "mySubjects", canActivate: [TeacherGuard], component: MySubjectsComponent},
   { path: "admin", canActivate: [AdminGuard], component: ManagementAdminComponent}
 
 ];

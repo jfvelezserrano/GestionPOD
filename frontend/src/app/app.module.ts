@@ -21,6 +21,9 @@ import { AdminTeachersComponent } from './components/admin-teachers/admin-teache
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ManagementAdminComponent } from './components/management-admin/management-admin.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
+import { MyStatisticsComponent } from './components/my-statistics/my-statistics.component';
+import { MySubjectsComponent } from './components/my-subjects/my-subjects.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +39,10 @@ import { LoaderComponent } from './components/loader/loader.component';
     AdminSubjectsComponent,
     AdminTeachersComponent,
     ManagementAdminComponent,
-    LoaderComponent
+    LoaderComponent,
+    StatisticsComponent,
+    MyStatisticsComponent,
+    MySubjectsComponent
   ],
   imports: [
     BrowserModule,
