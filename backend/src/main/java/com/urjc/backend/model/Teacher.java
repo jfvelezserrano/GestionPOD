@@ -16,12 +16,15 @@ public class Teacher{
     public interface Roles {
     }
 
+    public interface Name {
+    }
+
     @JsonView(Base.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToMany(mappedBy = "teacher", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teacher", orphanRemoval = true, cascade = CascadeType.ALL)
     @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
@@ -33,7 +36,7 @@ public class Teacher{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    @JsonView(Base.class)
+    @JsonView({Base.class, Name.class})
     @Column(nullable = false)
     private String name;
 
@@ -64,6 +67,13 @@ public class Teacher{
         this.pods = new HashSet<>();
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public List<String> getRoles() {
         return roles;
@@ -103,5 +113,28 @@ public class Teacher{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void addChosenSubject(Subject subject, Course course, Integer hours) {
+        POD pod = new POD();
+        pod.setTeacher(this);
+        pod.setSubject(subject);
+        pod.setCourse(course);
+        pod.setChosenHours(hours);
+
+        this.pods.add(pod);
+    }
+
+    public void deleteChosenSubject(POD pod) {
+        pods.remove(pod);
+    }
+
+    public POD hasSubjectInCourse(Subject subject, Course course){
+        for (POD pod : pods) {
+            if (pod.getTeacher().equals(this) && pod.getSubject().equals(subject) && (pod.getCourse().equals(course))) {
+                return pod;
+            }
+        }
+        return null;
     }
 }

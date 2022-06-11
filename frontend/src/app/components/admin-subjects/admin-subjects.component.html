@@ -62,7 +62,7 @@
                                   <div class="row">
                                     <div class="form-group col-lg-3">
                                       <label for="inputHoras" class="form-label titulo-seccion">Horas *</label>
-                                      <input type="number" class="form-control" #hours="ngModel" name="hours" [(ngModel)]="newSubject.totalHours" required id="inputHoras" placeholder="90">
+                                      <input type="number" class="form-control" #hours="ngModel" name="hours" min="1" [(ngModel)]="newSubject.totalHours" required id="inputHoras" placeholder="90">
                                     </div>
                                     
                                     <div class="form-group col-lg-6">
@@ -224,7 +224,7 @@
               <div class="modal-dialog-centered" role="document">
                   <div class="modal-content">
                       <div class="modal-header">
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                         <div class="mb-3 px-4 centrar">
@@ -240,7 +240,7 @@
               </div>
             </ng-template>
 
-            <div class="col-12 contenido-asignaturas">
+            <div class="col-12 contenido-asignaturas-docentes">
               <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
                 
                 
@@ -251,28 +251,33 @@
                       <ul class="list-group list-group-flush carta-asignatura">
                           <li class="list-group-item detalles1">
                           <div>
-                              <h4 class="card-title"><b>{{subject.name}} ({{subject.code}})</b></h4>
-                              <h6 class="card-subtitle mb-2 text-muted">{{subject.title}}</h6>
-                              <small><i class="fa fa-clock fa-sm"></i>{{subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subject.campus}}</small>
-                              <p class="card-text" *ngIf="subject.turn == 'T'"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno Tarde</small></p>
-                              <p class="card-text" *ngIf="subject.turn == 'M'"><small class="text-muted">Curso {{subject.year}} | {{subject.quarter}} | {{subject.type}} | Turno Mañana</small></p>
-                              <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                              <p class="titulo-grupo" *ngIf="subject.assitanceCareers && subject.assitanceCareers.length != 0"><small><b>GRUPOS ASISTENCIA</b></small>
-                                <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subject.assitanceCareers">{{career}}</span>
+                              <h4 class="card-title"><b>{{subject[0].name}} ({{subject[0].code}})</b></h4>
+                              <h6 class="card-subtitle mb-2 text-muted">{{subject[0].title}}</h6>
+                              <small><i class="fa fa-clock fa-sm"></i>{{subject[0].totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subject[0].campus}}</small>
+                              <p class="card-text" *ngIf="subject[0].turn == 'T'"><small class="text-muted">Curso {{subject[0].year}} | {{subject[0].quarter}} | {{subject[0].type}} | Turno Tarde</small></p>
+                              <p class="card-text" *ngIf="subject[0].turn == 'M'"><small class="text-muted">Curso {{subject[0].year}} | {{subject[0].quarter}} | {{subject[0].type}} | Turno Mañana</small></p>
+                              <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{subject[0].career}}</span></p>
+                              <p class="titulo-grupo" *ngIf="subject[0].assitanceCareers && subject[0].assitanceCareers.length != 0"><small><b>GRUPOS ASISTENCIA</b></small>
+                                <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subject[0].assitanceCareers">{{career}}</span>
                               </p>
                           </div>
                           </li>
-                          <li class="list-group-item detalles3" *ngIf="subject.schedules && subject.schedules.length != 0">
+                          <li class="list-group-item detalles2" *ngIf="subject[2]">
+                            <p class="card-text">
+                              <span *ngFor="let teacher of subject[2]"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                            </p>
+                          </li>
+                          <li class="list-group-item detalles3" *ngIf="subject[0].schedules && subject[0].schedules.length != 0">
                           <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                            <small class="text-muted" *ngFor="let schedule of subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
+                            <small class="text-muted" *ngFor="let schedule of subject[0].schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
                           </p>
                           </li>
                       </ul>
                       </div>
                       <div class="card-footer text-muted">
                       <div class="row justify-content-end">
-                        <button type="button" (click)="historical(history, subject)" title="Ver" class="col-3 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                        <button type="button" (click)="deleteModal(deleteSubject, subject)" title="Eliminar" class="col-3 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mx-3"></i></button>
+                        <button type="button" (click)="recordModal(record, subject[0])" title="Ver" class="col-3 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                        <button type="button" (click)="deleteModal(deleteSubject, subject[0])" title="Eliminar" class="col-3 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mx-3"></i></button>
                       </div>
                       </div>
                   </div>
@@ -300,93 +305,26 @@
   </main>
 <app-scroll-up></app-scroll-up>
 
-<ng-template #history let-offcanvas>
+<ng-template #record let-offcanvas>
   <div class="offcanvas-header">
     <h4 class="offcanvas-title">Historial</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
   </div>
   <div class="offcanvas-body">
     <p><b>{{subject.name}}</b></p>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
+    <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
+      <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
         <p>
           <span class="fa-stack fa-2x">
             <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
             <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
           </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
+          <span class="course-history color-libre">{{item.key}}</span><br>
+          <span *ngFor="let teacherName of getValues(item.value)"><span class="teacher-history truncar">{{teacherName}}</span><br></span>
         </p>
       </li>
-      <li class="list-group-item">
-        <p>
-          <span class="fa-stack fa-2x">
-            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-          </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
-        </p>
-      </li>
-      <li class="list-group-item">
-        <p>
-          <span class="fa-stack fa-2x">
-            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-          </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
-        </p>
-      </li>
-      <li class="list-group-item">
-        <p>
-          <span class="fa-stack fa-2x">
-            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-          </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
-        </p>
-      </li>
-      <li class="list-group-item">
-        <p>
-          <span class="fa-stack fa-2x">
-            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-          </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
-        </p>
-      </li>
-      <li class="list-group-item">
-        <p>
-          <span class="fa-stack fa-2x">
-            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-          </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
-        </p>
-      </li>
-      <li class="list-group-item">
-        <p>
-          <span class="fa-stack fa-2x">
-            <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-          </span>
-          <span class="course-history color-libre">2020-2021</span><br>
-          <span class="teacher-history">Alicia Merino Martínez</span><br>
-          <span class="teacher-history">María Martínez Herrera</span>
-        </p>
-      </li>
-      
     </ul>
+    <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
     <div class="d-flex justify-content-center pt-3">
       <button class="btn mx-auto boton-general tema-urjc-azul" (click)="offcanvas.dismiss()">Cerrar</button>
       </div>

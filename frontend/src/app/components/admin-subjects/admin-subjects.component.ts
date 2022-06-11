@@ -23,12 +23,13 @@ export class AdminSubjectsComponent implements OnInit {
   public titles:any;
   public allCampus:any;
   public types:any;
-  public newSubject:SubjectModel;
+  public newSubject:SubjectModel|any;
   public scheduleList:Array<Schedule> = [];
   public assistanceCareersList:Array<string> = [];
   public page:any;
   public typeSort:any;
   public isMore:any;
+  public records:any;
   public showLoader:boolean|any = false;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
@@ -45,6 +46,7 @@ export class AdminSubjectsComponent implements OnInit {
     private modalService: NgbModal,
     private offcanvasService: NgbOffcanvas) { 
       this.typeSort = "name";
+      this.records = new Map<String, String[]>(null);
       this.newSubject = new SubjectModel(null, '', '', '', null, '', null, '', '', '', '', null, null, [], []);
     }
 
@@ -112,16 +114,32 @@ export class AdminSubjectsComponent implements OnInit {
   }
 
   createModal(model:any) {
-    
     this.getAllTitles();
     this.getAllCampus();
     this.getAllTypes();
     this.modalService.open(model, { size: 'lg' });
   }
 
-  historical(model:any, subject:any) {
+  recordModal(model:any, subject:any) {
     this.offcanvasService.open(model, { position: 'end' });
     this.subject = subject;
+    this.getRecordSubject();
+  }
+
+  getRecordSubject(){
+    this.subjectService.getRecordSubject(this.subject.id).subscribe({
+      next: (data) => {
+        this.records = data;
+      }
+    });
+  }
+
+  getValues(values:any){
+    return values;
+  }
+
+  asIsOrder(a:any, b:any) {
+    return 1;
   }
 
   getAllTitles(){
@@ -164,6 +182,8 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.createSubject(this.newSubject, this.idPod).subscribe({
       next: (data) => {
         this.getSubjectsInPod();
+        this.newSubject = null;
+        form.reset;
       },
       error: (error) => {
         console.error(error);

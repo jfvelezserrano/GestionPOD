@@ -55,7 +55,7 @@ export class ManagementAdminComponent implements OnInit {
 
   onSubmit(form:NgForm){
     this.setAdmin();
-    this.teacherService.editTeacher(this.adminTeacher)
+    this.teacherService.changeRole(this.adminTeacher)
     .subscribe({
       next: (data) => {
         this.getAdmins();
@@ -71,7 +71,7 @@ export class ManagementAdminComponent implements OnInit {
     this.adminTeacher.roles.forEach((value:any,index: any)=>{
       if(value=="ADMIN") this.adminTeacher.roles.splice(index,1);
     });
-    this.teacherService.editTeacher(this.adminTeacher)
+    this.teacherService.changeRole(this.adminTeacher)
     .subscribe({
       next: (data) => {
         this.getAdmins();

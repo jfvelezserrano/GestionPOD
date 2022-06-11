@@ -36,7 +36,19 @@ export class SubjectService {
     return this.http.get(environment.urlApi + "/subjects/types" , this.httpOptionsCookiesCSRF);
   }
 
+  getAllCurrentCourse(){
+    return this.http.get(environment.urlApi + "/subjects" , this.httpOptionsCookiesCSRF);
+  }
+
   createSubject(subject:SubjectModel, idPod:number){
     return this.http.post(environment.urlApi + "/pods/" + idPod + "/subjects", subject, this.httpOptionsCookiesCSRF);
+  }
+
+  getById(id:number){
+    return this.http.get(environment.urlApi + "/subjects/" + id, this.httpOptionsCookiesCSRF);
+  }
+
+  getRecordSubject(id:number){
+    return this.http.get(environment.urlApi + "/subjects/" + id + "/record", this.httpOptionsCookiesCSRF);
   }
 }

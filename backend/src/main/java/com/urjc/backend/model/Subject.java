@@ -15,18 +15,24 @@ public class Subject {
     public interface Base {
     }
 
-    @JsonView(Base.class)
+    public interface Name {
+    }
+
+    public interface Details {
+    }
+
+    @JsonView({Base.class, Name.class})
     @Id
     @Basic(optional = false)
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonView(Base.class)
+    @JsonView({Base.class, Name.class})
     @Column(nullable = false)
     private String code;
 
-    @JsonView(Base.class)
+    @JsonView({Base.class, Name.class})
     @Column(nullable = false)
     private String name;
 
@@ -62,8 +68,8 @@ public class Subject {
     @Column(nullable = false)
     private String career;
 
-    @JsonView(Base.class)
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonView(Details.class)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<POD> pods;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Teacher } from '../models/teacher';
+import { Pod } from '../models/pod';
 
 @Injectable({
   providedIn: 'root'
@@ -32,12 +33,23 @@ export class TeacherService {
     return this.http.get(environment.urlApi + "/teachers", this.httpOptionsCookiesCSRF);
   }
 
-  editTeacher(teacher:Teacher){
-    return this.http.put(environment.urlApi + "/teachers", teacher, this.httpOptionsCookiesCSRF);
+  joinSubject(idSubject:number, form:any){
+    return this.http.post(environment.urlApi + "/teachers/join/" + idSubject, form, this.httpOptionsCookiesCSRF);
+  }
+
+  unjoinSubject(idSubject:number){
+    return this.http.delete(environment.urlApi + "/teachers/unjoin/" + idSubject, this.httpOptionsCookiesCSRF);
+  }
+
+  changeRole(teacher:Teacher){
+    return this.http.put(environment.urlApi + "/teachers/admin", teacher, this.httpOptionsCookiesCSRF);
   }
 
   findByRole(role:string){
     return this.http.get(environment.urlApi + "/teachers?role=" + role, this.httpOptionsCookiesCSRF);
   }
 
+  getMySubjects(typeSort:string){
+    return this.http.get(environment.urlApi + "/teachers/mySubjects?typeSort=" + typeSort, this.httpOptionsCookiesCSRF);
+  }
 }

@@ -62,8 +62,8 @@ public class TeacherService {
         return teacherRepository.save(teacher);
     }
 
-    public List<Teacher> findAllByPOD(Long id, Pageable pageable) {
-        Page<Teacher> p = teacherRepository.getTeachersByPOD(id, pageable);
+    public List<Teacher> findAllByCourse(Long id, Pageable pageable) {
+        Page<Teacher> p = teacherRepository.getTeachersByCourse(id, pageable);
         return p.getContent();
     }
 
@@ -71,7 +71,7 @@ public class TeacherService {
         List<Course> courses = courseRepository.findAllOrderByDate();
         if(courses.size() != 0){
             Long idLastPod = courses.get(0).getId();
-            return teacherRepository.getAllTeachersByPOD(idLastPod);
+            return teacherRepository.getAllTeachersByCourse(idLastPod);
         }
         return null;
     }

@@ -1,13 +1,15 @@
 package com.urjc.backend.service;
 
-import com.urjc.backend.model.Course;
-import com.urjc.backend.model.Subject;
+import com.urjc.backend.model.*;
 import com.urjc.backend.repository.SubjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,8 +18,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -40,9 +47,110 @@ public class SubjectService {
         return subjectRepository.findById(id);
     }
 
-    public List<Subject> findAllByPOD(Long id, Pageable pageable) {
-        Page<Subject> p = subjectRepository.getSubjectsByPOD(id, pageable);
-        return p.getContent();
+    public List<Object[]> findAllByCourse(Course course, Pageable pageable) {
+
+        Page<Object[]> p3 = subjectRepository.getSubjectsByCourse(course.getId(), pageable);
+
+        //generate result and get teachers joined to each subject of a specific year
+        List<Object[]> finalList = new ArrayList<>();
+
+        for (Object[] item:p3.getContent()) {
+            List<String> teachers = recordSubject(((Subject) item[0])).get(course.getName());
+            Object[] obj = new Object[] { item[0], item[1], teachers };
+            finalList.add(obj);
+        }
+
+        return finalList;
+    }
+    public List<Subject> findAllInCurrentCourse(Long id) {
+        return subjectRepository.findAllByCourse(id);
+    }
+
+    public List<Object[]> findAllSubjectsFromLoggedTeacher(Long idTeacher, Course course, Sort typeSort){
+        List<Subject> mySubjects = subjectRepository.findAllMySubjects(idTeacher, course.getId(), typeSort);
+
+        if(mySubjects.size() != 0) {
+            //get all schedules from my subjects
+            List<Object[]> schedulesFromAllMySubjects = new ArrayList<>();
+
+            for (Subject subject : mySubjects) {
+                for (Schedule schedule : subject.getSchedules()) {
+                    Object[] item = {subject.getName(), schedule};
+                    schedulesFromAllMySubjects.add(item);
+                }
+            }
+
+            //generate result and check if there is any conflict
+            List<Object[]> finalList = new ArrayList<>();
+
+            for (Subject subject : mySubjects) {
+                List<String> conflicts = checkScheduleConflicts(subject, schedulesFromAllMySubjects);
+                List<String> teachers = recordSubject(subject).get(course.getName());
+
+                Integer chosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
+
+                Object[] obj = new Object[]{subject, subject.getTotalHours() - chosenHours, conflicts, teachers};
+                finalList.add(obj);
+            }
+
+            return finalList;
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<String> checkScheduleConflicts(Subject subject, List<Object[]> allSchedulesFromMySubjects){
+        List<String> resultConflicts = new ArrayList<>();
+
+        for (Schedule schedule: subject.getSchedules()) {
+            for (Object[] item: allSchedulesFromMySubjects) {
+                if(subject.getName() != item[0]) {
+                    Schedule scheduleToCompare = ((Schedule) item[1]);
+
+                    if ((schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
+
+                        LocalTime scheduleStartTime = LocalTime.parse(schedule.getStartTime());
+                        LocalTime scheduleEndTime = LocalTime.parse(schedule.getEndTime());
+                        LocalTime scheduleToCompareStartTime = LocalTime.parse(scheduleToCompare.getStartTime());
+                        LocalTime scheduleToCompareEndTime = LocalTime.parse(scheduleToCompare.getEndTime());
+
+                        //time overlap
+                        if ((( (scheduleStartTime.isBefore(scheduleToCompareStartTime)) || (scheduleStartTime.compareTo(scheduleToCompareStartTime) == 0) )
+                                && scheduleToCompareStartTime.isBefore(scheduleEndTime)) ||
+                                (scheduleStartTime.isAfter(scheduleToCompareStartTime) && scheduleStartTime.isBefore(scheduleToCompareEndTime))) {
+                            String result = item[0] + " - Solapamiento de horarios";
+                            resultConflicts.add(result);
+                        }
+
+                        //nearby schedules
+                        else if ((scheduleStartTime.compareTo(scheduleToCompareEndTime) == 0) ||
+                                (Math.abs(scheduleStartTime.until(scheduleToCompareEndTime, ChronoUnit.MINUTES)) < 30) ||
+                                (Math.abs(scheduleEndTime.until(scheduleToCompareStartTime, ChronoUnit.MINUTES)) < 30)) {
+                            String result = item[0] + " - Horarios cercanos";
+                            resultConflicts.add(result);
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultConflicts;
+    }
+
+    public Map<String, List<String>> recordSubject(Subject subject){
+        Map<String, List<String>> recordMap = new HashMap<>();
+
+        for (POD pod:subject.getPods()) {
+            List<String> values = new ArrayList<>();
+            String courseName = pod.getCourse().getName();
+            if(recordMap.containsKey(courseName)){
+                values = recordMap.get(courseName);
+            }
+            values.add(pod.getChosenHours() + "h " + pod.getTeacher().getName());
+            recordMap.put(courseName, values);
+        }
+
+        return recordMap;
     }
 
     public Boolean saveAll(MultipartFile file, Course course){

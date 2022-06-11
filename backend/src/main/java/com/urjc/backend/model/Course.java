@@ -13,20 +13,23 @@ public class Course {
     public interface Base {
     }
 
+    public interface Name {
+    }
+
 
     @JsonView(Base.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @JsonView(Base.class)
+    @JsonView({Base.class, Name.class})
     @Column(nullable = false, unique = true)
     String name;
 
     @Column(nullable = false)
     Date creationDate;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
     private Set<POD> pods;
 

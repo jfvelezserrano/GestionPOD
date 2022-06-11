@@ -74,36 +74,41 @@ public class CourseRestController {
 
     @JsonView(CourseBase.class)
     @GetMapping(value = "/pods")
-    public List<Course> getPODs(){
+    public List<Course> getCourses(){
         return courseService.findAll();
     }
 
     @JsonView(SubjectBase.class)
     @GetMapping("/pods/{id}/subjects")
-    public ResponseEntity<List<Subject>> getSubjectsByIdPOD(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    public ResponseEntity<?> getSubjectsByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @PathVariable Long id, @RequestParam(defaultValue = "name") String typeSort) {
 
-        Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
+        Optional<Course> course = courseService.findById(id);
+        if(course.isPresent()) {
+            Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
+            List<Object[]> list = subjectService.findAllByCourse(course.get(), pageable);
 
-        List<Subject> list = subjectService.findAllByPOD(id, pageable);
-
-        return new ResponseEntity<>(list, HttpStatus.OK);
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @JsonView(TeacherBase.class)
     @GetMapping("/pods/{id}/teachers")
-    public ResponseEntity<List<Teacher>> getTeachersByIdPOD(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    public ResponseEntity<List<Teacher>> getTeachersByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @PathVariable Long id, @RequestParam(defaultValue = "name") String typeSort) {
+        Optional<Course> course = courseService.findById(id);
+        if(course.isPresent()) {
+            Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
+            List<Teacher> list = teacherService.findAllByCourse(id, pageable);
 
-        Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
-
-        List<Teacher> list = teacherService.findAllByPOD(id, pageable);
-
-        return new ResponseEntity<>(list, HttpStatus.OK);
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/pods/{idPod}/teachers/{idTeacher}")
-    public ResponseEntity<?> deleteTeacherInPod(@PathVariable Long idPod, @PathVariable Long idTeacher) {
+    public ResponseEntity<?> deleteTeacherInCourse(@PathVariable Long idPod, @PathVariable Long idTeacher) {
 
         Optional<Course> course = courseService.findById(idPod);
 
@@ -125,7 +130,7 @@ public class CourseRestController {
     }
 
     @DeleteMapping("/pods/{idPod}/subjects/{idSubject}")
-    public ResponseEntity<?> deleteSubjectInPod(@PathVariable Long idPod, @PathVariable Long idSubject) {
+    public ResponseEntity<?> deleteSubjectInCourse(@PathVariable Long idPod, @PathVariable Long idSubject) {
 
         Optional<Course> course = courseService.findById(idPod);
 
@@ -148,7 +153,7 @@ public class CourseRestController {
     }
 
     @DeleteMapping("/pods/{id}")
-    public ResponseEntity<?> deletePod(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
 
         if(courseService.delete(id)){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -158,7 +163,7 @@ public class CourseRestController {
     }
 
     @PostMapping("/pods/{id}/teachers")
-    public ResponseEntity<?> addNewTeacherToPod(@RequestBody TeacherRequest teacherRequest, @PathVariable Long id) {
+    public ResponseEntity<?> addNewTeacherToCourse(@RequestBody TeacherRequest teacherRequest, @PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
             Teacher newTeacher = new Teacher(teacherRequest.getName(), teacherRequest.getEmail());
@@ -190,7 +195,7 @@ public class CourseRestController {
     }
 
     @PostMapping("/pods/{id}/subjects")
-    public ResponseEntity<?> addNewSubjectToPod(@RequestBody Subject subject, @PathVariable Long id) {
+    public ResponseEntity<?> addNewSubjectToCourse(@RequestBody Subject subject, @PathVariable Long id) {
         log.info(String.valueOf(subject));
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
