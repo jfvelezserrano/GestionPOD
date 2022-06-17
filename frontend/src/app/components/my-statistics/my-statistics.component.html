@@ -7,9 +7,9 @@
         <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
         <div class="card-body">
             <i class="fa fa-calendar-check fa-2x iconos-estadisticas-azul"></i> 
-            <h1 class="card-title"><b>70%</b></h1>
+            <h1 class="card-title"><b>{{personalStatistics[0]}}%</b></h1>
             <p class="card-text"><b>Carga Docente</b></p>
-            <p class="card-text texto-fraccion"><b>700/1000</b></p>
+            <p class="card-text texto-fraccion"><b>{{personalStatistics[1]}}/{{personalStatistics[2]}}</b></p>
         </div>
         </div>
     </div>
@@ -18,9 +18,8 @@
         <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
         <div class="card-body">
             <i class="fa fa-calendar fa-2x gris iconos-estadisticas-gris"></i> 
-            <h1 class="card-title"><b>89%</b></h1>
+            <h1 class="card-title"><b>{{personalStatistics[2]}}h</b></h1>
             <p class="card-text"><b>Fuerza Docente</b></p>
-            <p class="card-text texto-fraccion"><b>890/1000</b></p>
         </div>
         </div>
     </div>
@@ -29,7 +28,7 @@
         <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
         <div class="card-body">
             <i class="fa fa-book-open fa-2x iconos-estadisticas-azul"></i> 
-            <h1 class="card-title"><b>5</b></h1>
+            <h1 class="card-title"><b>{{personalStatistics[3]}}</b></h1>
             <p class="card-text"><b>Asignaturas</b></p>
         </div>
         </div>
@@ -39,7 +38,7 @@
         <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
         <div class="card-body">
             <i class="fa fa-times fa-2x iconos-estadisticas-gris"></i> 
-            <h1 class="card-title"><b>2</b></h1>
+            <h1 class="card-title"><b>{{personalStatistics[4]}}</b></h1>
             <p class="card-text"><b>Conflictos</b></p>
         </div>
         </div>
@@ -54,217 +53,74 @@
     <!--<div class="col-12 col-xl-9">-->
 
         <div class="row gy-4">
-        <div class="col-12 col-lg-8">
+        <div class="col-12 col-lg-7">
             <div class="box-mis-estadisticas h-100 w-100">
-            <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Mis compañeros</b></h6>
-            <table class="table table-borderless table-responsive">
-                <tbody>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>Juan Rodríguez Sánchez</b></span><br>
-                        <span><small class="text-muted">Física</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 25%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>Laura Cabrera Rincón</b></span><br>
-                        <span><small class="text-muted">Bases de datos</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 78%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 78%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>Mercedes Hernández Casillas</b></span><br>
-                        <span><small class="text-muted">Lógica</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 15%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 15%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>David Martínez López</b></span><br>
-                        <span><small class="text-muted">Multimedia</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 80%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>Silvia Pérez Martín</b></span><br>
-                        <span><small class="text-muted">Laboratorio de Dispositivos Móviles</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 62%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 62%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>Silvia Pérez Martín</b></span><br>
-                        <span><small class="text-muted">Laboratorio de Dispositivos Móviles</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 3%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 3%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td-icon"><i class="fa fa-user-alt icono-mis-estadisticas"></i> </td>
-                    <td>
-                    <div>
-                        <span><b>Verónica Pérez Martín</b></span><br>
-                        <span><small class="text-muted">Laboratorio de Dispositivos Móviles</small></span>
-                    </div>
-                    </td>
-                    <td class="td-progress-bar">
-                    <span><b>Progreso:</b> 99%</span>
-                    <div class="progress" style="height: 8px; width: 90%;">
-                        <div class="progress-bar" role="progressbar" style="width: 99%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Mis compañeros</b></h6>
+                <table class="table table-borderless table-responsive" *ngIf="mates">
+                    <tbody>
+                    <tr *ngFor="let mate of mates">
+                        <td>
+                        <div>
+                            <span><b>{{mate[0]}}</b></span><br>
+                            <span><small class="text-muted">{{mate[1]}}</small></span>
+                        </div>
+                        </td>
+                        <td class="td-progress-bar">
+                        <span><b>Progreso:</b> {{mate[2]}}%</span>
+                        <div class="progress" style="height: 8px; width: 90%;">
+                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="text-center py-3 text-muted" *ngIf="!mates || mates.length == 0">
+                    <p>No hay docentes aún</p>
+                </div>
             </div>
         </div>
 
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-5">
             <div class="box-mis-estadisticas h-100 w-100">
-            <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Historial asignaturas</b></h6>
-                <form>
-                <div class="form-group">
-                    <select class="form-select text-muted form-select-sm desplegable-buscador">
-                    <option selected value="1">2020 - 2021</option>
-                    <option value="2">2019 - 2020</option>
-                    <option value="3">2018 - 2019</option>
-                    <option value="4">2017 - 2018</option>
-                    <option value="5">2016 - 2017</option>
+                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Asignaturas por año</b></h6>
+                <div class="form-group" *ngIf="courseChosen">
+                    <select class="form-select text-muted form-select-sm desplegable-buscador" [(ngModel)]="courseChosen" (change)="getSubjectsByCourse()">
+                        <option *ngFor="let course of courses" [ngValue]="course.id">{{course.name}}</option>
                     </select>
                 </div>
-                </form>
                 
-                <table class="table table-borderless table-responsive">
+                <table class="table table-borderless" *ngIf="courses.length != 0">
                 <tbody>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td class="td-icon"><i class="fa fa-book-open icono-mis-estadisticas"></i></td>
-                    <td>
-                        <div>
-                        <span><b>Multimedia</b></span><br>
-                        <span><small class="text-muted">Cuatrimestre 1</small></span>
-                        </div>
-                    </td>
+                    <tr *ngFor="let subject of subjects">
+                        <td>
+                            <div>
+                            <span><b>{{subject[0]}}</b></span><br>
+                            <span><small class="text-muted">{{subject[1]}}</small></span>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 </table>
+
+                <div class="text-center py-3 text-muted" *ngIf="!mates || mates.length == 0">
+                    <p>No hay asignaturas aún</p>
+                </div>
             </div>
         </div>
         
         <div class="col-12 col-lg-4">
             <div class="box-mis-estadisticas h-100 w-100">
             <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Horas por asignatura</b></h6>
-            <canvas id="horas-por-asignatura"></canvas>
+            <canvas id="barChart"></canvas>
+
             </div>
         </div>
 
         <div class="col-12 col-lg-4">
             <div class="box-mis-estadisticas h-100 w-100">
             <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Porcentajes de asignaturas</b></h6>
-            <canvas id="doughnut-docente"></canvas>
+            <canvas id="doughnutChart"></canvas>
+
             </div>
         </div>   
 
@@ -282,7 +138,7 @@
                 <textarea class="form-control" id="textareaObservaciones" rows="2" placeholder="Mis observaciones"></textarea>
                 </div>
                 <div class="text-center mt-3">
-                <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul">Guardar</button>
+                <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="personalStatistics[1] == 0">Guardar</button>
                 </div>
             </form>
 

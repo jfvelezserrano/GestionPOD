@@ -55,18 +55,32 @@ public class SubjectService {
         List<Object[]> finalList = new ArrayList<>();
 
         for (Object[] item:p3.getContent()) {
-            List<String> teachers = recordSubject(((Subject) item[0])).get(course.getName());
+            List<String> teachers = ((Subject) item[0]).recordSubject().get(course.getName());
             Object[] obj = new Object[] { item[0], item[1], teachers };
             finalList.add(obj);
         }
 
         return finalList;
     }
+
     public List<Subject> findAllInCurrentCourse(Long id) {
         return subjectRepository.findAllByCourse(id);
     }
 
-    public List<Object[]> findAllSubjectsFromLoggedTeacher(Long idTeacher, Course course, Sort typeSort){
+    public Object[] findMySubjectsByCourse(Long idTeacher, Course course, Sort typeSort) {
+        return subjectRepository.findMySubjectsByCourse(idTeacher, course.getId(), typeSort);
+    }
+
+    public List<Object[]> graphHoursPerSubject(Teacher teacher, Course course, Sort typeSort) {
+        return subjectRepository.hoursPerSubject(teacher.getId(), course.getId(), typeSort);
+    }
+
+    public List<Object[]> graphPercentageHoursSubjects(Teacher teacher, Course course, Sort typeSort) {
+        Integer totalHours = subjectRepository.totalHoursMySubjects(teacher.getId(), course.getId());
+        return subjectRepository.percentageHoursSubjects(teacher.getId(), course.getId(), totalHours,typeSort);
+    }
+
+    public List<Object[]> findMySubjects(Long idTeacher, Course course, Sort typeSort){
         List<Subject> mySubjects = subjectRepository.findAllMySubjects(idTeacher, course.getId(), typeSort);
 
         if(mySubjects.size() != 0) {
@@ -85,11 +99,11 @@ public class SubjectService {
 
             for (Subject subject : mySubjects) {
                 List<String> conflicts = checkScheduleConflicts(subject, schedulesFromAllMySubjects);
-                List<String> teachers = recordSubject(subject).get(course.getName());
+                List<String> teachers = subject.recordSubject().get(course.getName());
 
-                Integer chosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
+                Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
 
-                Object[] obj = new Object[]{subject, subject.getTotalHours() - chosenHours, conflicts, teachers};
+                Object[] obj = new Object[]{subject, subject.getTotalHours() - totalChosenHours, conflicts, teachers};
                 finalList.add(obj);
             }
 
@@ -135,22 +149,6 @@ public class SubjectService {
         }
 
         return resultConflicts;
-    }
-
-    public Map<String, List<String>> recordSubject(Subject subject){
-        Map<String, List<String>> recordMap = new HashMap<>();
-
-        for (POD pod:subject.getPods()) {
-            List<String> values = new ArrayList<>();
-            String courseName = pod.getCourse().getName();
-            if(recordMap.containsKey(courseName)){
-                values = recordMap.get(courseName);
-            }
-            values.add(pod.getChosenHours() + "h " + pod.getTeacher().getName());
-            recordMap.put(courseName, values);
-        }
-
-        return recordMap;
     }
 
     public Boolean saveAll(MultipartFile file, Course course){

@@ -29,4 +29,20 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     @Query("SELECT t FROM Teacher t JOIN t.roles r WHERE r = :role ")
     List<Teacher> findByRole(@Param("role") String role);
+
+    @Query("SELECT (SUM(pods.chosenHours)/ct.correctedHours)*100 as percentage, SUM(pods.chosenHours) as charge, ct.correctedHours as force, " +
+            "COUNT(subject.id) as numSubjects FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t  JOIN t.courseTeachers ct" +
+            " WHERE c.id = :idCourse AND t.id = :idTeacher AND ct.course.id = :idCourse")
+    Object findPersonalStatistics(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse);
+
+    @Query("SELECT DISTINCT teacher.id, teacher.name, sT.name, ctT.correctedHours FROM Teacher teacher " +
+            "JOIN teacher.pods podsT JOIN podsT.course cT JOIN podsT.subject sT " +
+            "JOIN teacher.courseTeachers ctT WHERE sT.id in (SELECT subject.id FROM Subject subject JOIN subject.pods pods " +
+            "JOIN pods.course c JOIN pods.teacher t WHERE c.id = :idCourse AND t.id = :idTeacher) AND cT.id = :idCourse " +
+            "AND teacher.id <> :idTeacher")
+    List<Object[]> findMates(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse);
+
+    @Query("SELECT sum(pods.chosenHours) FROM Teacher teacher JOIN teacher.pods pods JOIN pods.course c JOIN pods.teacher t" +
+            " WHERE c.id = :idCourse AND t.id = :idTeacher")
+    Integer chosenHoursTeacher(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse);
 }

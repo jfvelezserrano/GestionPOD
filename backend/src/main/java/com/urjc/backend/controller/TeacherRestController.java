@@ -30,6 +30,9 @@ public class TeacherRestController {
     interface SubjectBase extends Subject.Base, Schedule.Base {
     }
 
+    interface CourseBase extends Course.Base{
+    }
+
     @Autowired
     private TeacherService teacherService;
 
@@ -73,7 +76,7 @@ public class TeacherRestController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Teacher updateTeacher = teacherService.findByEmail(authentication.getName());
+        Teacher teacher = teacherService.findByEmail(authentication.getName());
 
         Optional<Subject> subject = subjectService.findById(idSubject);
 
@@ -81,13 +84,13 @@ public class TeacherRestController {
             Course course = courseService.findLastCourse();
 
             if (course != null && course.isSubjectInCourse(subject.get())) {
-                POD pod = updateTeacher.hasSubjectInCourse(subject.get(), course);
+                POD pod = teacher.hasSubjectInCourse(subject.get(), course);
                 if(pod != null){
                     pod.setChosenHours(teacherRequest.getHours());
                 }else{
-                    updateTeacher.addChosenSubject(subject.get(), course, teacherRequest.getHours());
+                    teacher.addChosenSubject(subject.get(), course, teacherRequest.getHours());
                 }
-                teacherService.save(updateTeacher);
+                teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }
@@ -99,7 +102,7 @@ public class TeacherRestController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Teacher updateTeacher = teacherService.findByEmail(authentication.getName());
+        Teacher teacher = teacherService.findByEmail(authentication.getName());
 
         Optional<Subject> subject = subjectService.findById(idSubject);
 
@@ -107,11 +110,11 @@ public class TeacherRestController {
             Course course = courseService.findLastCourse();
 
             if (course != null && course.isSubjectInCourse(subject.get())) {
-                POD pod = updateTeacher.hasSubjectInCourse(subject.get(), course);
+                POD pod = teacher.hasSubjectInCourse(subject.get(), course);
                 if(pod != null){
-                    updateTeacher.deleteChosenSubject(pod);
+                    teacher.deleteChosenSubject(pod);
                 }
-                teacherService.save(updateTeacher);
+                teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }
@@ -122,12 +125,25 @@ public class TeacherRestController {
     @GetMapping(value = "/mySubjects")
     public ResponseEntity<?> findAllMySubjects(@RequestParam(defaultValue = "name") String typeSort){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Teacher updateTeacher = teacherService.findByEmail(authentication.getName());
+        Teacher teacher = teacherService.findByEmail(authentication.getName());
         Course course = courseService.findLastCourse();
         if (course != null) {
             Sort sort = Sort.by(typeSort).ascending();
-            List<Object[]> mySubjects = subjectService.findAllSubjectsFromLoggedTeacher(updateTeacher.getId(), course, sort);
+            List<Object[]> mySubjects = subjectService.findMySubjects(teacher.getId(), course, sort);
             return new ResponseEntity<>(mySubjects, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @JsonView(CourseBase.class)
+    @GetMapping(value = "/myCourses")
+    public ResponseEntity<List<Course>> findAllMyCourses(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Teacher teacher = teacherService.findByEmail(authentication.getName());
+        Course course = courseService.findLastCourse();
+        if (course != null) {
+            List<Course> myCourses = courseService.getCoursesByTeacher(teacher.getId());
+            return new ResponseEntity<>(myCourses, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

@@ -31,10 +31,13 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id ")
     List<Subject> findAllByCourse(@Param("id") Long id);
 
-    @Query("SELECT subject FROM Subject subject  JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
+    @Query("SELECT subject FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     List<Subject> findAllMySubjects(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse, Sort typeSort);
 
+    @Query("SELECT subject.name, subject.quarter FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
+            " WHERE c.id = :idCourse AND t.id = :idTeacher")
+    Object[] findMySubjectsByCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse, Sort typeSort);
 
     @Query("SELECT DISTINCT subject.title FROM Subject subject")
     List<String> getTitles();
@@ -44,4 +47,16 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
     @Query("SELECT DISTINCT subject.type FROM Subject subject")
     List<String> getTypes();
+
+    @Query("SELECT subject.name, subject.totalHours, pods.chosenHours FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
+            " WHERE c.id = :idCourse AND t.id = :idTeacher")
+    List<Object[]> hoursPerSubject(Long idTeacher, Long idCourse, Sort typeSort);
+
+    @Query("SELECT subject.name, (pods.chosenHours/:total)*100 FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
+            " WHERE c.id = :idCourse AND t.id = :idTeacher")
+    List<Object[]> percentageHoursSubjects(Long idTeacher, Long idCourse, Integer total, Sort typeSort);
+
+    @Query("SELECT SUM(pods.chosenHours) FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
+            " WHERE c.id = :idCourse AND t.id = :idTeacher")
+    Integer totalHoursMySubjects(Long idTeacher, Long idCourse);
 }

@@ -1,14 +1,17 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Course;
+import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.CourseRepository;
+import com.urjc.backend.repository.SubjectRepository;
 import com.urjc.backend.repository.TeacherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +34,9 @@ public class TeacherService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
 
     public Teacher findIfIsInCurrentCourse(String email){
@@ -82,6 +89,35 @@ public class TeacherService {
 
     public Optional<Teacher> findById(Long id) {
         return teacherRepository.findById(id);
+    }
+
+    public Object[] findPersonalStatistics(Long idTeacher, Course course){
+        int i = 0;
+        Object[] statistics = ((Object[]) teacherRepository.findPersonalStatistics(idTeacher, course.getId()));
+
+        for (Subject subject:subjectRepository.findAllMySubjects(idTeacher, course.getId(), Sort.unsorted())) {
+            List<String> teachers = subject.recordSubject().get(course.getName());
+            Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
+            if(totalChosenHours > subject.getTotalHours()){
+                i++;
+            }
+        }
+
+        Object[] result = new Object[]{ statistics[0], statistics[1], statistics[2], statistics[3], i };
+
+        return result;
+    }
+
+    public List<Object[]> findMates(Long idTeacher, Long idCourse){
+        List<Object[]> mates = teacherRepository.findMates(idTeacher, idCourse);
+        List<Object[]> result = new ArrayList<>();
+
+        for (Object[] mate: mates) {
+            Integer chosenHoursTeacher = teacherRepository.chosenHoursTeacher(((Long) mate[0]), idCourse);
+            Object[] obj = new Object[]{mate[1], mate[2], chosenHoursTeacher * 100/ ((Integer) mate[3]) };
+            result.add(obj);
+        }
+        return result;
     }
 
     public void setNullValues(String[] values){

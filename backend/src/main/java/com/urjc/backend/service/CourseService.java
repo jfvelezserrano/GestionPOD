@@ -1,6 +1,7 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Course;
+import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.CourseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,5 +61,9 @@ public class CourseService {
         }
 
         return false;
+    }
+
+    public List<Course> getCoursesByTeacher(Long idTeacher){
+        return courseRepository.findAllByTeacher(idTeacher);
     }
 }

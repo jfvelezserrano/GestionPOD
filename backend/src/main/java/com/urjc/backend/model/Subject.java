@@ -3,10 +3,7 @@ package com.urjc.backend.model;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "subject")
@@ -241,5 +238,21 @@ public class Subject {
             List<String> values = List.of(assistanceCareer.split(", "));
             this.assitanceCareers = values;
         }
+    }
+
+    public Map<String, List<String>> recordSubject(){
+        Map<String, List<String>> recordMap = new HashMap<>();
+
+        for (POD pod:this.getPods()) {
+            List<String> values = new ArrayList<>();
+            String courseName = pod.getCourse().getName();
+            if(recordMap.containsKey(courseName)){
+                values = recordMap.get(courseName);
+            }
+            values.add(pod.getChosenHours() + "h " + pod.getTeacher().getName());
+            recordMap.put(courseName, values);
+        }
+
+        return recordMap;
     }
 }

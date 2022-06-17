@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Teacher } from '../models/teacher';
-import { Pod } from '../models/pod';
 
 @Injectable({
   providedIn: 'root'
@@ -51,5 +49,9 @@ export class TeacherService {
 
   getMySubjects(typeSort:string){
     return this.http.get(environment.urlApi + "/teachers/mySubjects?typeSort=" + typeSort, this.httpOptionsCookiesCSRF);
+  }
+
+  getMyCourses(){
+    return this.http.get(environment.urlApi + "/teachers/myCourses", this.httpOptionsCookiesCSRF);
   }
 }

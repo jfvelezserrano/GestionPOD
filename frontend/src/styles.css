@@ -710,7 +710,7 @@ select > option:checked, select > option:hover
 .box-mis-estadisticas{
     position: relative;
     padding: 45px;
-    max-height: 500px;
+    height: 395px !important;
     background: var(--blanco);
     border-radius: 15px;
     overflow: auto;
@@ -816,14 +816,6 @@ label span{
     text-align: left;
 }
 
-th:first-child{
-    text-align: right !important;
-}
-
-td:first-child{
-    text-align: right !important;
-}
-
 .progress-bar{
     background-color: var(--libre);
 }
@@ -837,11 +829,11 @@ td:first-child{
     margin: 0;
 }
 
-#doughnut-docente{
+#doughnutChart{
     height: 250px;
     width: 250px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 100px;
+    margin-right: 100px;
 }
 
 .btn:focus {

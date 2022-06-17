@@ -54,7 +54,7 @@ public class SubjectRestController {
         if(subjectOptional.isPresent()){
             Course course = courseService.findLastCourse();
             if (course != null && course.isSubjectInCourse(subjectOptional.get())) {
-                List<String> teachers = subjectService.recordSubject(subjectOptional.get()).get(course.getName());
+                List<String> teachers = subjectOptional.get().recordSubject().get(course.getName());
 
                 Object[] obj = new Object[] { subjectOptional.get(), teachers};
                 return new ResponseEntity<>(obj, HttpStatus.OK);
@@ -78,7 +78,7 @@ public class SubjectRestController {
     public ResponseEntity<Map<String, List<String>>> recordSubject(@PathVariable Long id){
         Optional<Subject> subjectOptional = subjectService.findById(id);
         if(subjectOptional.isPresent()){
-            Map<String, List<String>> record = subjectService.recordSubject(subjectOptional.get());
+            Map<String, List<String>> record = subjectOptional.get().recordSubject();
             return new ResponseEntity<>(record, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
