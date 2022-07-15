@@ -64,34 +64,6 @@ public class Course {
         this.name = name;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Set<POD> getPods() {
-        return pods;
-    }
-
-    public void setPods(Set<POD> PODS) {
-        this.pods = PODS;
-    }
-
-    public Set<CourseTeacher> getCourseTeachers() {
-        return courseTeachers;
-    }
-
-    public void setCourseTeachers(Set<CourseTeacher> courseTeachers) {
-        this.courseTeachers = courseTeachers;
-    }
-
-    public Set<CourseSubject> getCourseSubjects() { return courseSubjects; }
-
-    public void setCourseSubjects(Set<CourseSubject> courseSubjects) { this.courseSubjects = courseSubjects; }
-
     public void addTeacher(Teacher teacher, Integer hours) {
         CourseTeacher newCourseTeacher = new CourseTeacher();
         newCourseTeacher.setCourse(this);
@@ -112,25 +84,43 @@ public class Course {
     }
 
     public void deleteTeacher(Optional<Teacher> teacher) {
-        CourseTeacher newCourseTeacher = new CourseTeacher();
+        CourseTeacher courseTeacherToDelete = new CourseTeacher();
         for (CourseTeacher courseTeacher : courseTeachers) {
             if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher.get())) {
-                newCourseTeacher = courseTeacher;
+                courseTeacherToDelete = courseTeacher;
                 break;
             }
         }
-        courseTeachers.remove(newCourseTeacher);
+        courseTeachers.remove(courseTeacherToDelete);
+
+        POD podToDelete = new POD();
+        for (POD pod : pods) {
+            if (pod.getCourse().equals(this) && pod.getTeacher().equals(teacher.get())) {
+                podToDelete = pod;
+                break;
+            }
+        }
+        pods.remove(podToDelete);
     }
 
     public void deleteSubject(Optional<Subject> subject) {
-        CourseSubject newCourseSubject = new CourseSubject();
+        CourseSubject courseSubjectToDelete = new CourseSubject();
         for (CourseSubject courseSubject : courseSubjects) {
             if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject.get())) {
-                newCourseSubject = courseSubject;
+                courseSubjectToDelete = courseSubject;
                 break;
             }
         }
-        courseSubjects.remove(newCourseSubject);
+        courseSubjects.remove(courseSubjectToDelete);
+
+        POD podToDelete = new POD();
+        for (POD pod : pods) {
+            if (pod.getCourse().equals(this) && pod.getSubject().equals(subject.get())) {
+                podToDelete = pod;
+                break;
+            }
+        }
+        pods.remove(podToDelete);
     }
 
     public Boolean isTeacherInCourse(Teacher teacher){

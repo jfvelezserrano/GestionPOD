@@ -1,15 +1,14 @@
 package com.urjc.backend.service;
 
-import com.urjc.backend.model.*;
+import com.urjc.backend.model.Course;
+import com.urjc.backend.model.Schedule;
+import com.urjc.backend.model.Subject;
+import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.SubjectRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,17 +19,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
 @Transactional
 public class SubjectService {
-    private static final Logger log = LoggerFactory.getLogger(SubjectService.class);
 
     @Autowired
     private SubjectRepository subjectRepository;
@@ -39,49 +35,76 @@ public class SubjectService {
         return subjectRepository.save(subject);
     }
 
-    public void delete(Subject subject){
-        subjectRepository.delete(subject);
-    }
+    public void delete(Subject subject){ subjectRepository.delete(subject); }
 
-    public Optional<Subject> findById(Long id) {
-        return subjectRepository.findById(id);
-    }
+    public Optional<Subject> findById(Long id) { return subjectRepository.findById(id); }
 
-    public List<Object[]> findAllByCourse(Course course, Pageable pageable) {
+    public List<Object[]> findByCoursePage(Course course, Pageable pageable) {
 
-        Page<Object[]> p3 = subjectRepository.getSubjectsByCourse(course.getId(), pageable);
+        Page<Subject> p3 = subjectRepository.findByCoursePage(course.getId(), pageable);
 
-        //generate result and get teachers joined to each subject of a specific year
-        List<Object[]> finalList = new ArrayList<>();
+        //generate result to return and get teachers joined to each subject of a specific course
+        List<Object[]> resultList = new ArrayList<>();
 
-        for (Object[] item:p3.getContent()) {
-            List<String> teachers = ((Subject) item[0]).recordSubject().get(course.getName());
-            Object[] obj = new Object[] { item[0], item[1], teachers };
-            finalList.add(obj);
+        for (Subject subject:p3.getContent()) {
+            List<String> teachers = subject.recordSubject().get(course.getName());
+            Object[] obj = new Object[] { subject, teachers };
+            resultList.add(obj);
         }
 
-        return finalList;
+        return resultList;
     }
 
-    public List<Subject> findAllInCurrentCourse(Long id) {
-        return subjectRepository.findAllByCourse(id);
+    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, String turn, String title, Long teacher, Sort sort) {
+
+        if(quarter.equals("")){ quarter = null; }
+        if(turn.equals("")){ turn = null; }
+        if(title.equals("")){ title = null; }
+        if(teacher == -1){ teacher = null; }
+
+        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, teacher, sort);
+
+        //generate result to return and get teachers joined to each subject of a specific course
+        List<Object[]> resultList = new ArrayList<>();
+
+        for (Subject subject:subjectsSearched) {
+            List<String> teachers = subject.recordSubject().get(course.getName());
+
+            Integer totalChosenHours = 0;
+            if(teachers != null){
+                totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
+            }
+
+            Integer hoursLeft = subject.getTotalHours() - totalChosenHours;
+            if(occupation.equals("") || (occupation.equals("Libre") && (hoursLeft > 0)) || (occupation.equals("Completa") && (hoursLeft == 0)) ||
+                    (occupation.equals("Conflicto") && (hoursLeft < 0))){
+                Object[] obj = new Object[] { subject, hoursLeft, teachers };
+                resultList.add(obj);
+            }
+        }
+
+        return resultList;
     }
 
-    public Object[] findMySubjectsByCourse(Long idTeacher, Course course, Sort typeSort) {
-        return subjectRepository.findMySubjectsByCourse(idTeacher, course.getId(), typeSort);
+    public List<Subject> findByCourse(Long id) {
+        return subjectRepository.findByCourse(id);
     }
 
-    public List<Object[]> graphHoursPerSubject(Teacher teacher, Course course, Sort typeSort) {
-        return subjectRepository.hoursPerSubject(teacher.getId(), course.getId(), typeSort);
+    public List<Object[]> findNameAndQuarterByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort) {
+        return subjectRepository.findNameAndQuarterByTeacherAndCourse(idTeacher, course.getId(), typeSort);
     }
 
-    public List<Object[]> graphPercentageHoursSubjects(Teacher teacher, Course course, Sort typeSort) {
-        Integer totalHours = subjectRepository.totalHoursMySubjects(teacher.getId(), course.getId());
-        return subjectRepository.percentageHoursSubjects(teacher.getId(), course.getId(), totalHours,typeSort);
+    public List<Object[]> hoursPerSubjectByTeacherAndCourse(Teacher teacher, Course course, Sort typeSort) {
+        return subjectRepository.hoursPerSubjectByTeacherAndCourse(teacher.getId(), course.getId(), typeSort);
     }
 
-    public List<Object[]> findMySubjects(Long idTeacher, Course course, Sort typeSort){
-        List<Subject> mySubjects = subjectRepository.findAllMySubjects(idTeacher, course.getId(), typeSort);
+    public List<Object[]> percentageHoursByTeacherAndCourse(Teacher teacher, Course course, Sort typeSort) {
+        Integer totalHours = subjectRepository.totalChosenHoursByTeacherAndCourse(teacher.getId(), course.getId());
+        return subjectRepository.percentageHoursByTeacherAndCourse(teacher.getId(), course.getId(), totalHours,typeSort);
+    }
+
+    public List<Object[]> findByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort){
+        List<Subject> mySubjects = subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), typeSort);
 
         if(mySubjects.size() != 0) {
             //get all schedules from my subjects
@@ -95,7 +118,7 @@ public class SubjectService {
             }
 
             //generate result and check if there is any conflict
-            List<Object[]> finalList = new ArrayList<>();
+            List<Object[]> resultList = new ArrayList<>();
 
             for (Subject subject : mySubjects) {
                 List<String> conflicts = checkScheduleConflicts(subject, schedulesFromAllMySubjects);
@@ -104,10 +127,10 @@ public class SubjectService {
                 Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
 
                 Object[] obj = new Object[]{subject, subject.getTotalHours() - totalChosenHours, conflicts, teachers};
-                finalList.add(obj);
+                resultList.add(obj);
             }
 
-            return finalList;
+            return resultList;
         }
 
         return new ArrayList<>();
@@ -154,7 +177,6 @@ public class SubjectService {
     public Boolean saveAll(MultipartFile file, Course course){
         BufferedReader br;
         try {
-
             if(!file.isEmpty()){
             String line;
             InputStream is = file.getInputStream();
@@ -173,7 +195,6 @@ public class SubjectService {
                         subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
                                 values[2], Integer.parseInt(values[3]), values[4], values[6], values[9], values[8]);
                     } catch (Exception e) {
-                        log.info(e.getMessage());
                         return false;
                     }
                     if (!values[10].equals("")) {
@@ -195,10 +216,9 @@ public class SubjectService {
             }
                 return true;
             }
-            return false;
+            return true;
 
         } catch (IOException e) {
-            log.info(e.getMessage());
             return false;
         }
     }
@@ -213,7 +233,7 @@ public class SubjectService {
 
     public Subject findSubjectIfExists(Subject subject){
 
-        List<Subject> subjects = subjectRepository.existsSubject(subject);
+        List<Subject> subjects = subjectRepository.exists(subject);
 
         for (Subject storedSubject: subjects) {
             Boolean exists = isExact(subject, storedSubject);
@@ -265,7 +285,12 @@ public class SubjectService {
     }
 
     public List<String> getTitles() {
-        return subjectRepository.getTitles();
+        List<String> a = subjectRepository.getTitles();
+        return a;
+    }
+
+    public List<String> getTitlesByCourse(Long idCourse) {
+        return subjectRepository.getTitlesByCourse(idCourse);
     }
 
     public List<String> getCampus() {

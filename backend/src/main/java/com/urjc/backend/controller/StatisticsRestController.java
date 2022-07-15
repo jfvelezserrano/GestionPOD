@@ -38,9 +38,9 @@ public class StatisticsRestController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null) {
             Teacher teacher = teacherService.findByEmail(authentication.getName());
-            Course course = courseService.findLastCourse();
-            if (course != null) {
-                Object[] myStatistics = teacherService.findPersonalStatistics(teacher.getId(), course);
+            Optional<Course> course = courseService.findLastCourse();
+            if (course.isPresent()) {
+                Object[] myStatistics = teacherService.findPersonalStatistics(teacher.getId(), course.get());
                 return new ResponseEntity<>(myStatistics, HttpStatus.OK);
             }
         }
@@ -52,9 +52,9 @@ public class StatisticsRestController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null) {
             Teacher teacher = teacherService.findByEmail(authentication.getName());
-            Course course = courseService.findLastCourse();
-            if (course != null) {
-                List<Object[]>  myStatistics = teacherService.findMates(teacher.getId(), course.getId());
+            Optional<Course> course = courseService.findLastCourse();
+            if (course.isPresent()) {
+                List<Object[]>  myStatistics = teacherService.findMates(teacher.getId(), course.get().getId());
                 return new ResponseEntity<>(myStatistics, HttpStatus.OK);
             }
         }
@@ -62,13 +62,13 @@ public class StatisticsRestController {
     }
 
     @GetMapping(value = "/mySubjects/{idCourse}")
-    public ResponseEntity<Object[]> findMySubjectsByCourse(@PathVariable Long idCourse){
+    public ResponseEntity<List<Object[]>> findMySubjectsByCourse(@PathVariable Long idCourse){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findById(idCourse);
         if (course.isPresent()) {
             Sort sort = Sort.by("name").ascending();
-            Object[] mySubjects = subjectService.findMySubjectsByCourse(teacher.getId(), course.get(), sort);
+            List<Object[]> mySubjects = subjectService.findNameAndQuarterByTeacherAndCourse(teacher.getId(), course.get(), sort);
             return new ResponseEntity<>(mySubjects, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -78,10 +78,10 @@ public class StatisticsRestController {
     public ResponseEntity<List<Object[]>> graphHoursPerSubject(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
-        Course course = courseService.findLastCourse();
-        if (course != null) {
+        Optional<Course> course = courseService.findLastCourse();
+        if (course.isPresent()) {
             Sort sort = Sort.by("name").ascending();
-            List<Object[]> subjects = subjectService.graphHoursPerSubject(teacher, course, sort);
+            List<Object[]> subjects = subjectService.hoursPerSubjectByTeacherAndCourse(teacher, course.get(), sort);
             return new ResponseEntity<>(subjects, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -91,10 +91,10 @@ public class StatisticsRestController {
     public ResponseEntity<List<Object[]>> graphPercentageHoursSubjects(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
-        Course course = courseService.findLastCourse();
-        if (course != null) {
+        Optional<Course> course = courseService.findLastCourse();
+        if (course.isPresent()) {
             Sort sort = Sort.by("name").ascending();
-            List<Object[]> subjects = subjectService.graphPercentageHoursSubjects(teacher, course, sort);
+            List<Object[]> subjects = subjectService.percentageHoursByTeacherAndCourse(teacher, course.get(), sort);
             return new ResponseEntity<>(subjects, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

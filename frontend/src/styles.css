@@ -250,7 +250,7 @@ hr {
     margin-bottom: 20px;
   }
 
-  #groupTurnos .opcion, #groupTurnosEditar .opcion{
+  #groupTurnos .option, #groupTurnosEditar .option{
     font-weight: bold;
     color: var(--libre) !important;
     height: 50px;
@@ -265,27 +265,30 @@ hr {
     box-shadow: 0 4px 15px 0 rgba(145, 144, 143, 0.75);
   }
 
-  #groupTurnos .opcion:hover,  #groupTurnosEditar .opcion:hover{
+  #groupTurnos .option:hover,  #groupTurnosEditar .option:hover{
     border: 1px solid var(--libre);
     transition: all .4s ease-in;
   }
   
-  input[type="radio"]{
+  #option-manana[type="radio"]{
     display: none;
   }
-  #opcion-manana:checked:checked ~ .opcion-manana,
-  #opcion-tarde:checked:checked ~ .opcion-tarde,
-  #opcion-mananaEditar:checked:checked ~ .opcion-manana,
-  #opcion-tardeEditar:checked:checked ~ .opcion-tarde{
+  #option-tarde[type="radio"]{
+    display: none;
+  }
+  #option-manana:checked:checked ~ .option-manana,
+  #option-tarde:checked:checked ~ .option-tarde,
+  #option-mananaEditar:checked:checked ~ .option-manana,
+  #option-tardeEditar:checked:checked ~ .option-tarde{
     border-color: var(--libre); 
     background: var(--libre); 
     box-shadow: none;
   }
   
-  #opcion-manana:checked:checked ~ .opcion-manana span,
-  #opcion-tarde:checked:checked ~ .opcion-tarde span,
-  #opcion-mananaEditar:checked:checked ~ .opcion-manana span,
-  #opcion-tardeEditar:checked:checked ~ .opcion-tarde span{
+  #option-manana:checked:checked ~ .option-manana span,
+  #option-tarde:checked:checked ~ .option-tarde span,
+  #option-mananaEditar:checked:checked ~ .option-manana span,
+  #option-tardeEditar:checked:checked ~ .option-tarde span{
     color: #fff;
   }
 
@@ -583,11 +586,6 @@ span{
     padding: 37px !important;
 }
 
-select > option:checked, select > option:hover
-{
-    box-shadow: 0 0 10px 100px var(--gris-claro) inset;
-    background-color: var(--gris-claro) !important;
-}
 
 .posicion-sticky{
     position:relative;
@@ -602,6 +600,15 @@ select > option:checked, select > option:hover
 .sticky{
     position: sticky;
     top: 0;
+}
+
+.int-filtrar:checked{
+    background-color: var(--colision);
+    border-color: var(--colision);
+}
+
+.int-filtrar:focus{
+    box-shadow: 0 0 0 .25rem var(--colision-claro) !important;
 }
 
 .lbl-filtrar{
@@ -735,7 +742,7 @@ input:hover, textarea:hover{
     border: 1px solid var(--gris);
 }
 
-input:focus{
+input:focus :not([type='radio']){
     color: var(--gris);
     outline: none !important;
     border: 2px solid var(--gris) !important;
@@ -903,6 +910,12 @@ label span{
     margin-bottom: 40px;
     opacity: 0.85;
     color: rgba(10, 0, 0, 0.767);
+}
+
+.centrar-hor-ver{
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .course-history{

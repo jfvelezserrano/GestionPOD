@@ -5,92 +5,101 @@
     <section class="col-12 col-md-4 col-xl-3 mb-5">
         <div class="sticky mx-4 mx-md-0 mb-4 mb-md-0">
 
-        <div class="pt-1">
+        <div class="pt-1 d-flex justify-content-between">
             <h3><b>Filtrar</b></h3>
+            <button type="button" class="col-2 btn boton" [disabled]="!occupation && !quarter && !titleChosen && !turn && !idTeacherChosen" 
+            (click)="cleanFilter(formSearchSubject)" placement="end" ngbTooltip="Limpiar filtro"><i class="fa-solid fa-trash"></i></button>
         </div>
 
-        <div class="border-top py-2 my-2 ml-3">
-            <span class="titulo-seccion">Ocupación</span>
-            <form>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_libre">
-                <label class="form-check-label lbl-filtrar" for="cbx_libre">Libre</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_colision">
-                <label class="form-check-label lbl-filtrar" for="cbx_colision">Colisión</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_completa">
-                <label class="form-check-label lbl-filtrar" for="cbx_completa">Completa</label>
-            </div>
-            </form>
-        </div>
+        <form #formSearchSubject="ngForm" (ngSubmit)="searchSubjects()">
+            <div class="border-top py-2 my-2 ml-3">
+                <label for="searchOccupation" class="titulo-seccion">Ocupación</label>
 
-        <div class="border-top py-2 my-2 ml-3">
-            <span class="titulo-seccion">Cuatrimestre</span>
-            <form>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_q1">
-                <label class="form-check-label lbl-filtrar" for="cbx_q1">Primero</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_q2">
-                <label class="form-check-label lbl-filtrar" for="cbx_q2">Segundo</label>
-            </div>
-            </form>
-        </div>
+                <div id="searchOccupation">
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Libre" [(ngModel)]="occupation" id="option-libre">
+                        <label class="form-check-label lbl-filtrar" for="option-libre">Libre</label>
+                    </div>
 
-        <div class="border-top py-2 my-2 ml-3">
-            <form>
-            <div class="form-group">
-                <label for="inputGrado" class="form-label titulo-seccion">Titulación</label>
-                <input type="text" class="form-control" list="grados" id="inputGrado" placeholder="Seleccione uno...">
-                <datalist id="grados">
-                    <option value="Grado Ingeniería del Software">
-                    <option value="Grado Ingeniería Informática">
-                    <option value="Grado de Matemáticas">
-                    <option value="Grado Ingeniería de Computadores">
-                    <option value="Grado Ingeniería Industrial">
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Completa" [(ngModel)]="occupation" id="option-completa">
+                        <label class="form-check-label lbl-filtrar" for="option-completa">Completa</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Conflicto" [(ngModel)]="occupation" id="option-conflicto">
+                        <label class="form-check-label lbl-filtrar" for="option-conflicto">Conflicto</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="border-top py-2 my-2 ml-3">
+                <label for="searchQuarter" class="titulo-seccion">Cuatrimestre</label>
+
+                <div id="searchQuarter">
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="quarter" value="Primer Cuatrimestre" [(ngModel)]="quarter" id="option-first">
+                        <label class="form-check-label lbl-filtrar" for="option-first">Primer Cuatrimestre</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="quarter" value="Segundo Cuatrimestre" [(ngModel)]="quarter" id="option-second">
+                        <label class="form-check-label lbl-filtrar" for="option-second">Segundo Cuatrimestre</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="border-top py-2 my-2 ml-3">
+                <div class="form-group">
+                    <label for="inputTitle" class="form-label titulo-seccion">Titulación</label>
+                    <div class="custom-wrapper">
+                        <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[0-9a-zA-Z- .()áéíóúÁÉÍÓÚÑñÇç]{5,80}" #title="ngModel"
+                        name="title" [(ngModel)]="titleChosen" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
+                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!title.valid && title.touched" alt="Titulación inválida" ngbTooltip="Titulación inválida"></i>
+                    </div>
+                    <datalist id="titleList">
+                    <option *ngFor="let itemTitle of titles" [ngValue]="itemTitle">{{itemTitle}}</option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="border-top py-2 my-2 ml-3">
+                <label for="searchTurn" class="titulo-seccion">Turno</label>
+
+                <div id="searchTurn">
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="turn" value="M" [(ngModel)]="turn" id="option-morning">
+                        <label class="form-check-label lbl-filtrar" for="option-morning">Mañana</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input int-filtrar" type="radio" name="turn" value="T" [(ngModel)]="turn" id="option-evening">
+                        <label class="form-check-label lbl-filtrar" for="option-evening">Tarde</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="border-top py-2 my-2 ml-3">
+                <label for="inputTeacher" class="form-label titulo-seccion">Docente</label>
+                <div class="custom-wrapper">
+                    <input type="text" class="form-control" list="teacherList" id="inputTeacher" placeholder="Docente" pattern="[0-9]{1,3}" #idTeacher="ngModel"
+                    name="idTeacher" [(ngModel)]="idTeacherChosen" [ngClass]="!idTeacher.valid && idTeacher.touched ? 'border-error' : ''">
+                    <i class="fa-solid fa-xmark icon-login-error" *ngIf="!idTeacher.valid && idTeacher.touched" alt="Docente inválido" ngbTooltip="Docente inválido"></i>
+                </div>
+                <datalist id="teacherList">
+                    <option *ngFor="let item of teachers" [value]="item.id">{{item.name}}</option>
                 </datalist>
             </div>
-            </form>
-        </div>
 
-        <div class="border-top py-2 my-2 ml-3">
-            <span class="titulo-seccion">Turno</span>
-            <form>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_tarde">
-                <label class="form-check-label lbl-filtrar" for="cbx_tarde">Tarde</label>
+            <div class="d-flex justify-content-center pt-3">
+                <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo" 
+                [disabled]="!formSearchSubject.form.valid">Filtrar</button>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="cbx_manana">
-                <label class="form-check-label lbl-filtrar" for="cbx_manana">Mañana</label>
-            </div>
-            </form>
-        </div>
 
-        <div class="border-top py-2 my-2 ml-3">
-            <form>
-            <div class="form-group">
-                <label for="inputDocentes" class="form-label titulo-seccion">Docentes</label>
-                <input type="text" class="form-control" list="docentes" id="inputDocentes" placeholder="Seleccione uno...">
-                <datalist id="docentes">
-                <option value="Juan Rodríguez Martínez">
-                <option value="Marta López Martín">
-                <option value="Eva Soriano Ocaña">
-                <option value="Adrián Hernández Ramirez">
-                <option value="Silvia Perez Roma">
-                </datalist>
-            </div>
-            </form>
-        </div>
-
-        <div class="d-flex justify-content-center pt-3">
-            <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo">Filtrar</button>
-        </div>
-
+        </form>
         </div>
     </section>
 
@@ -98,259 +107,70 @@
         <div class="row">
 
         <div class="col-12 d-flex justify-content-between">
-            <span>Mostrando 6 resultados</span>
+            <span *ngIf="!subjects">Mostrando 0 resultados</span>
+            <span *ngIf="subjects">Mostrando {{subjects.length}} resultados</span>
             <div>
             <button id="createPOD" type="button" onclick="generarCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
-            <span class="d-md-none d-lg-inline"><small>Ordenar por </small></span>
-            <select class="form-select-sm text-muted desplegable-buscador">
-                <option selected value="1">Asignatura</option>
-                <option value="2">Carga </option>
+            <span><small>Ordenar por </small></span>
+            <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="searchSubjects()">
+                <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
             </select>
             </div>
         </div>
 
         <div class="col-12 contenido-asignaturas-docentes">
-            <div class="row row-cols-1 row-cols-xl-2 g-4">
+            <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
 
-                <div class="col">
-                <div class="card card-asignatura-colision h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura colision">Colisión docente</small>
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
+                <div class="col" *ngFor="let subject of subjects">
+                    <div [ngClass]="{'card-asignatura-colision': 0 > subject[1], 'card-asignatura-libre' : subject[1] > 0, 'card-asignatura-completa' : 0 == subject[1]}" class="card h-100 w-100 shadow">
+                        <div class="card-body contenido-cards">
+                        <ul class="list-group list-group-flush carta-asignatura">
+                            <li class="list-group-item detalles1">
+                            <div>
+                                <h4 class="card-title"><b>{{subject[0].name}} ({{subject[0].code}})</b></h4>
+                                <h6 class="card-subtitle mb-2 text-muted">{{subject[0].title}}
+                                <small *ngIf="0 > subject[1]" class="truncar estado-asignatura colision">Colisión docente</small>
+                                <small *ngIf="subject[1] > 0" class="truncar estado-asignatura libre">Libre</small> 
+                                <small *ngIf="0 == subject[1]" class="truncar estado-asignatura completa">Completa</small>
+                                </h6>
+                                <small><i class="fa fa-clock fa-sm"></i>{{subject[0].totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subject[0].campus}}</small>
+                                <p class="card-text" *ngIf="subject[0].turn == 'T'"><small class="text-muted">Curso {{subject[0].year}} | {{subject[0].quarter}} | {{subject[0].type}} | Turno Tarde</small></p>
+                                <p class="card-text" *ngIf="subject[0].turn == 'M'"><small class="text-muted">Curso {{subject[0].year}} | {{subject[0].quarter}} | {{subject[0].type}} | Turno Mañana</small></p>
+                                <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{subject[0].career}}</span></p>
+                                <p class="titulo-grupo" *ngIf="subject[0].assitanceCareers && subject[0].assitanceCareers.length != 0">
+                                    <small><b>GRUPOS ASISTENCIA</b></small>
+                                    <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subject[0].assitanceCareers">{{career}}</span>
+                                </p>
+                            </div>
+                            </li>
+                            <li class="list-group-item detalles2" *ngIf="subject[2]">
+                                <p class="card-text">
+                                  <span *ngFor="let teacher of subject[2]"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                </p>
+                              </li>
+                            <li class="list-group-item detalles3" *ngIf="subject[0].schedules && subject[0].schedules.length != 0">
+                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                                  <small class="text-muted" *ngFor="let schedule of subject[0].schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
+                                </p>
+                            </li>
+                        </ul>
                         </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-colision">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-colision">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-colision"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
+                        <div class="card-footer p-0 text-muted">
+                            <div class="row justify-content-end">
+                              <button type="button" (click)="openRecord(record, subject)" title="Ver" class="col-2 m-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                            </div>
+                            </div>
                     </div>
                 </div>
+            </div>
+            <div class="row justify-content-center mt-5" *ngIf="showLoader">
+                <div class="col-2 mt-5">
+                  <app-loader></app-loader>
                 </div>
-
-                <div class="col">
-                <div class="card card-asignatura-completa h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura completa justify-content-center">Completa</small>
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
-                        </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-completa">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-completa">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-completa"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="col">
-                <div class="card card-asignatura-colision h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
-                        </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-colision">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-colision">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-colision"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="col">
-                <div class="card card-asignatura-libre h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura libre justify-content-center">Libre</small>
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
-                        </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-libre">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-libre">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="col">
-                <div class="card card-asignatura-colision h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura colision justify-content-center">Colisión docente</small>
-                            
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
-                        </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-colision">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-colision">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-colision"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="col">
-                <div class="card card-asignatura-libre h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura libre justify-content-center">Libre</small>
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span></p>
-                        </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><small class="text-muted"> Aún no hay profesores asignados</small><br></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="col">
-                <div class="card card-asignatura-libre h-100 w-100 shadow">
-                    <div class="card-body contenido-cards">
-                    <ul class="list-group list-group-flush carta-asignatura">
-                        <li class="list-group-item detalles1">
-                        <div>
-                            <h4 class="card-title"><b>Estructura de datos (20430)</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Grado Ingeniería del Software 
-                            <small class="truncar estado-asignatura libre justify-content-center">Libre</small>
-                            </h6>
-                            <small><i class="fa fa-clock fa-sm"></i>80h <i class="fa fa-map-marker-alt fa-sm"></i>Móstoles</small>
-                            <p class="card-text"><small class="text-muted">Curso 1 | Cuatrimestre 1 | Optativa | Turno Tarde</small></p>
-                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">G_ICOMPU_3A(M)</span></p>
-                            <p class="titulo-grupo"><small><b>GRUPOS ASISTENCIA</b></small><span class="badge fondo-grupos-asignaturas">G_INF-COMP_3A(M)</span>
-                            <span class="badge fondo-grupos-asignaturas">G_VIDEO-COMP_3A(M)</span></p>
-                        </div>
-                        </li>
-                        <li class="list-group-item detalles2">
-                        <p class="card-text"><b class="color-libre">60h</b><small class="text-muted"> Juan Martínez Fernández</small><br>
-                            <b class="color-libre">20h</b><small class="text-muted"> Martina Rodríguez Fuentes</small></p>
-                        </li>
-                        <li class="list-group-item detalles3">
-                        <p class="card-text"><i class="fa fa-calendar fa-sm"></i><small class="text-muted"> M - 11:00 a 13:00 y X - 11:00 a 13:00</small></p>
-                        </li>
-                    </ul>
-                    </div>
-                    <div class="card-footer text-muted">
-                    <div class="row justify-content-end">
-                        <button type="button" onclick="verAsignatura()" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
+            </div>
+            <div class="text-center no-data" *ngIf="subjects && subjects.length == 0 && !showLoader">
+                <p><i class="fa-solid fa-2xl fa-magnifying-glass"></i></p>
+                <p>No hay resultados</p>
             </div>
         </div>
         </div>
@@ -359,3 +179,29 @@
     </div>
 </main>
 <app-scroll-up></app-scroll-up>
+
+<ng-template #record let-offcanvas>
+    <div class="offcanvas-header">
+      <h4 class="offcanvas-title">Historial</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
+    </div>
+    <div class="offcanvas-body">
+      <p><b>{{subjectToShow[0].name}}</b></p>
+      <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
+        <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
+          <p>
+            <span class="fa-stack fa-2x">
+              <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+              <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+            </span>
+            <span class="course-history color-libre">{{item.key}}</span><br>
+            <span *ngFor="let teacherName of getValues(item.value)"><span class="teacher-history truncar">{{teacherName}}</span><br></span>
+          </p>
+        </li>
+      </ul>
+      <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
+      <div class="d-flex justify-content-center pt-3">
+        <button class="btn mx-auto boton-general tema-urjc-azul" (click)="offcanvas.dismiss()">Cerrar</button>
+        </div>
+    </div>
+  </ng-template>

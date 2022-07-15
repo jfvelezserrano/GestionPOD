@@ -6,8 +6,6 @@ import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.CourseRepository;
 import com.urjc.backend.repository.SubjectRepository;
 import com.urjc.backend.repository.TeacherRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +25,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class TeacherService {
-    private static final Logger log = LoggerFactory.getLogger(TeacherService.class);
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -42,16 +39,17 @@ public class TeacherService {
     public Teacher findIfIsInCurrentCourse(String email){
 
         Teacher teacher = findByEmail(email);
-        List<Course> courses = courseRepository.findAllOrderByDate();
-
         if(teacher == null) {
             return null;
         }
-        if(courses.isEmpty() || teacher.getRoles().contains("ADMIN")){
+
+        if(teacher.getRoles().contains("ADMIN")){
             return teacher;
         }
-        Course course = courses.get(0);
-        if (course.isTeacherInCourse(teacher)) {
+
+        Optional<Course> course = courseRepository.findFirst1ByOrderByCreationDateDesc();
+
+        if (course.isPresent() && course.get().isTeacherInCourse(teacher)) {
             return teacher;
         }
         return null;
@@ -70,17 +68,8 @@ public class TeacherService {
     }
 
     public List<Teacher> findAllByCourse(Long id, Pageable pageable) {
-        Page<Teacher> p = teacherRepository.getTeachersByCourse(id, pageable);
+        Page<Teacher> p = teacherRepository.findByCoursePage(id, pageable);
         return p.getContent();
-    }
-
-    public List<Teacher> findAllInCurrentCourse() {
-        List<Course> courses = courseRepository.findAllOrderByDate();
-        if(courses.size() != 0){
-            Long idLastPod = courses.get(0).getId();
-            return teacherRepository.getAllTeachersByCourse(idLastPod);
-        }
-        return null;
     }
 
     public List<Teacher> findAllByRole(String role) {
@@ -93,9 +82,10 @@ public class TeacherService {
 
     public Object[] findPersonalStatistics(Long idTeacher, Course course){
         int i = 0;
-        Object[] statistics = ((Object[]) teacherRepository.findPersonalStatistics(idTeacher, course.getId()));
 
-        for (Subject subject:subjectRepository.findAllMySubjects(idTeacher, course.getId(), Sort.unsorted())) {
+        Object[] statistics = ((Object[]) teacherRepository.statisticsByTeacherAndCourse(idTeacher, course.getId()));
+
+        for (Subject subject:subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), Sort.unsorted())) {
             List<String> teachers = subject.recordSubject().get(course.getName());
             Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
             if(totalChosenHours > subject.getTotalHours()){
@@ -103,15 +93,25 @@ public class TeacherService {
             }
         }
 
-        Object[] result = new Object[]{ statistics[0], statistics[1], statistics[2], statistics[3], i };
+        if(statistics[0] == null){
+            statistics[0] = 0;
+        }
+        if(statistics[1] == null){
+            statistics[1] = 0;
+        }
+
+        Integer correctedHours = teacherRepository.findCorrectedHours(idTeacher);
+
+        Object[] result = new Object[]{ statistics[0], statistics[1], correctedHours, statistics[2], i };
 
         return result;
     }
 
     public List<Object[]> findMates(Long idTeacher, Long idCourse){
-        List<Object[]> mates = teacherRepository.findMates(idTeacher, idCourse);
+        List<Object[]> mates = teacherRepository.findMatesByTeacherAndCourse(idTeacher, idCourse);
         List<Object[]> result = new ArrayList<>();
 
+        //get their totalChosenHours percentage
         for (Object[] mate: mates) {
             Integer chosenHoursTeacher = teacherRepository.chosenHoursTeacher(((Long) mate[0]), idCourse);
             Object[] obj = new Object[]{mate[1], mate[2], chosenHoursTeacher * 100/ ((Integer) mate[3]) };
@@ -129,7 +129,7 @@ public class TeacherService {
     }
 
     public Teacher getTeacherIfExists(Teacher teacher){
-        return teacherRepository.existsTeacher(teacher);
+        return teacherRepository.exists(teacher);
     }
 
     public Boolean saveAll(MultipartFile file, Course course){
@@ -150,7 +150,6 @@ public class TeacherService {
                     try {
                         teacher = new Teacher(values[0], values[1]);
                     }catch (Exception e){
-                        log.info(e.getMessage());
                         return false;
                     }
 
@@ -160,7 +159,6 @@ public class TeacherService {
                             course.addTeacher(teacher, Integer.valueOf(values[2]));
                             save(teacher);
                         } catch (RuntimeException e){
-                            log.info(e.getMessage());
                             return false;
                         }
                     }else{
@@ -168,7 +166,6 @@ public class TeacherService {
                             course.addTeacher(teacherResult, Integer.valueOf(values[2]));
                             save(teacherResult);
                         } catch (RuntimeException e){
-                            log.info(e.getMessage());
                             return false;
                         }
                     }
@@ -178,7 +175,6 @@ public class TeacherService {
             return false;
 
         } catch (IOException e) {
-            log.info(e.getMessage());
             return false;
         }
     }

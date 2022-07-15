@@ -111,12 +111,12 @@
                                     <div class="form-group centrar">
                                       <label for="groupTurnos" class="titulo-seccion">Turnos *</label>
                                       <div id="groupTurnos">
-                                        <input type="radio" name="turn" value="M" [(ngModel)]="newSubject.turn" id="opcion-manana" required>
-                                        <input type="radio" name="turn" value="T" [(ngModel)]="newSubject.turn" id="opcion-tarde" required>
-                                          <label for="opcion-manana" class="opcion opcion-manana">
+                                        <input type="radio" name="turn" value="M" [(ngModel)]="newSubject.turn" id="option-manana" required>
+                                        <input type="radio" name="turn" value="T" [(ngModel)]="newSubject.turn" id="option-tarde" required>
+                                          <label for="option-manana" class="option option-manana">
                                             <span>Turno Mañana</span>
                                             </label>
-                                          <label for="opcion-tarde" class="opcion opcion-tarde">
+                                          <label for="option-tarde" class="option option-tarde">
                                             <span>Turno Tarde</span>
                                           </label>
                                       </div>
@@ -274,11 +274,11 @@
                           </li>
                       </ul>
                       </div>
-                      <div class="card-footer text-muted">
-                      <div class="row justify-content-end">
-                        <button type="button" (click)="recordModal(record, subject[0])" title="Ver" class="col-3 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                        <button type="button" (click)="deleteModal(deleteSubject, subject[0])" title="Eliminar" class="col-3 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mx-3"></i></button>
-                      </div>
+                      <div class="card-footer p-0 text-muted">
+                        <div class="row justify-content-end">
+                          <button type="button" (click)="recordModal(record, subject[0])" title="Ver" class="col-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
+                          <button type="button" (click)="deleteModal(deleteSubject, subject[0])" title="Eliminar" class="col-4 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mx-3"></i></button>
+                        </div>
                       </div>
                   </div>
                   </div>

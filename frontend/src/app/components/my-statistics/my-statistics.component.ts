@@ -12,11 +12,8 @@ import Chart from 'chart.js/auto';
   styleUrls: ['./my-statistics.component.css']
 })
 export class MyStatisticsComponent implements OnInit {
-  @ViewChild('barChart')
-  private barChart!: ElementRef;
-  @ViewChild('doughnutChart') private doughnutChart!: ElementRef;
 
-  public personalStatistics: number[]|any = [0, 0, 0, 0, 0];
+  public personalStatistics: number[]|any;
   public mates: any = [];
   public courseChosen: any;
   public courses:any = [];
@@ -33,15 +30,13 @@ export class MyStatisticsComponent implements OnInit {
   public chartHours!: Chart;
   public chartPercentage!: Chart;
 
-  public ctx:any;
-
   constructor(
     private statisticsService: StatisticsService,
     private teacherService: TeacherService,
     private route: ActivatedRoute
   ) {
-    
-   }
+    this.personalStatistics = [0, 0, 0, 0, 0];
+  }
 
   ngOnInit(): void {
     this.getPersonalStatistics();
@@ -53,12 +48,6 @@ export class MyStatisticsComponent implements OnInit {
     this.getHoursPerSubject();
     this.getPercentageHours();
   }
-
-  ngAfterContentInit():void{
-    
-  }
-
-  
 
   getCourses(){
     this.teacherService.getMyCourses()
@@ -120,7 +109,9 @@ export class MyStatisticsComponent implements OnInit {
           this.hoursSubjectsGraphHours.push(element[1]);
           this.myHoursSubjectsGraphHours.push(element[2]);
         });
-        this.graphHoursPerSubject();
+        if(this.personalStatistics[3] != 0){
+          this.graphHoursPerSubject();
+        }
       },
       error: (error) => {
         console.error(error);
@@ -181,7 +172,7 @@ export class MyStatisticsComponent implements OnInit {
           }
       }
   });
-}
+  }
 
   getPercentageHours() {
     this.statisticsService.graphPercentageHours()
@@ -196,7 +187,9 @@ export class MyStatisticsComponent implements OnInit {
           this.subjectsGraphPercentage.push(String(matches));
           this.percentagesGraphPercentage.push(element[1]);
         });
-        this.graphPercentageHours();
+        if(this.personalStatistics[3] != 0){
+          this.graphPercentageHours();
+        }
       },
       error: (error) => {
         console.error(error);
@@ -222,7 +215,7 @@ export class MyStatisticsComponent implements OnInit {
             'rgb(197, 61, 76)',
             'rgb(226, 56, 54)',
             'rgba(255, 70, 51)',
-            'rgb(255, 87, 70)'  
+            'rgb(255, 87, 70)' 
           ],
           borderWidth: 1
         }]

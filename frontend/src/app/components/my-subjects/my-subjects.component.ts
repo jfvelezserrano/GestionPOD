@@ -20,6 +20,7 @@ export class MySubjectsComponent implements OnInit {
   public subjectToEdit:any;
   public typeSort:any;
   public records:any;
+  public showLoader:boolean;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -33,6 +34,7 @@ export class MySubjectsComponent implements OnInit {
     private modalService: NgbModal,
     private offcanvasService: NgbOffcanvas) { 
       this.typeSort = "name";
+      this.showLoader = false;
       this.records = new Map<String, String[]>(null);
   }
 
@@ -95,8 +97,10 @@ export class MySubjectsComponent implements OnInit {
   }
 
   getMySubjects(){
+    this.showLoader = true;
     this.teacherService.getMySubjects(this.typeSort).subscribe({
       next: (data) => {
+        this.showLoader = false;
         this.mySubjects = data;
       },
       error: (error) => {

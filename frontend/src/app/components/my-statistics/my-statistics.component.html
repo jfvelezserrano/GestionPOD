@@ -102,7 +102,7 @@
                 </tbody>
                 </table>
 
-                <div class="text-center py-3 text-muted" *ngIf="!mates || mates.length == 0">
+                <div class="text-center py-3 text-muted" *ngIf="!subjects || subjects.length == 0">
                     <p>No hay asignaturas aún</p>
                 </div>
             </div>
@@ -110,17 +110,21 @@
         
         <div class="col-12 col-lg-4">
             <div class="box-mis-estadisticas h-100 w-100">
-            <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Horas por asignatura</b></h6>
-            <canvas id="barChart"></canvas>
-
+                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Horas por asignatura</b></h6>
+                <canvas id="barChart" *ngIf="personalStatistics[3] != 0"></canvas>
+                <div class="text-center py-3 text-muted" *ngIf="personalStatistics[3] == 0">
+                    <p>No hay asignaturas aún</p>
+                </div>
             </div>
         </div>
 
         <div class="col-12 col-lg-4">
             <div class="box-mis-estadisticas h-100 w-100">
-            <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Porcentajes de asignaturas</b></h6>
-            <canvas id="doughnutChart"></canvas>
-
+                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Porcentajes de asignaturas</b></h6>
+                <canvas id="doughnutChart" *ngIf="personalStatistics[3] != 0"></canvas>
+                <div class="text-center py-3 text-muted" *ngIf="personalStatistics[3] == 0">
+                    <p>No hay asignaturas aún</p>
+                </div>
             </div>
         </div>   
 

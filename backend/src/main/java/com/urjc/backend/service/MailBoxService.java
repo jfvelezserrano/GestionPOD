@@ -18,8 +18,8 @@ import java.util.Map;
 @Service
 public class MailBoxService {
 
-    private final int minCode = 10000000;
-    private final int maxCode = 99999999;
+    private final int minCode = 1000000000;
+    private final int maxCode = 999999999;
 
     private CodesEmail codesEmail = CodesEmail.getCodeEmail();
 

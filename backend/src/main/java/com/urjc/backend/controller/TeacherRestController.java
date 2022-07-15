@@ -8,6 +8,7 @@ import com.urjc.backend.service.TeacherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,14 +62,17 @@ public class TeacherRestController {
 
     @JsonView(TeacherBaseWithRoles.class)
     @GetMapping(value = "")
-    public ResponseEntity<List<Teacher>> findAllInCurrentCourse(@RequestParam(value = "role", required = false) String role){
-        if(role == null){
-            return new ResponseEntity<>(teacherService.findAllInCurrentCourse(), HttpStatus.OK);
+    public ResponseEntity<List<Teacher>> findAllByRole(@RequestParam(value = "role", required = false) String role){
+        Optional<Course> course = courseService.findLastCourse();
+        if(course.isPresent()) {
+            if (role == null) {
+                return new ResponseEntity<>(teacherService.findAllByCourse(course.get().getId(), Pageable.unpaged()), HttpStatus.OK);
+            } else {
+                List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
+                return new ResponseEntity<>(teachersWithRole, HttpStatus.OK);
+            }
         }
-
-        List<Teacher> admins = teacherService.findAllByRole(role);
-
-        return new ResponseEntity<>(admins, HttpStatus.OK);
+        else{ return new ResponseEntity<>(HttpStatus.NOT_FOUND); }
     }
 
     @PostMapping("/join/{idSubject}")
@@ -81,14 +85,14 @@ public class TeacherRestController {
         Optional<Subject> subject = subjectService.findById(idSubject);
 
         if(subject.isPresent()){
-            Course course = courseService.findLastCourse();
+            Optional<Course> course = courseService.findLastCourse();
 
-            if (course != null && course.isSubjectInCourse(subject.get())) {
-                POD pod = teacher.hasSubjectInCourse(subject.get(), course);
+            if (course.isPresent() && course.get().isSubjectInCourse(subject.get())) {
+                POD pod = teacher.hasSubjectInCourse(subject.get(), course.get());
                 if(pod != null){
                     pod.setChosenHours(teacherRequest.getHours());
                 }else{
-                    teacher.addChosenSubject(subject.get(), course, teacherRequest.getHours());
+                    teacher.addChosenSubject(subject.get(), course.get(), teacherRequest.getHours());
                 }
                 teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -107,10 +111,10 @@ public class TeacherRestController {
         Optional<Subject> subject = subjectService.findById(idSubject);
 
         if(subject.isPresent()){
-            Course course = courseService.findLastCourse();
+            Optional<Course> course = courseService.findLastCourse();
 
-            if (course != null && course.isSubjectInCourse(subject.get())) {
-                POD pod = teacher.hasSubjectInCourse(subject.get(), course);
+            if (course.isPresent() && course.get().isSubjectInCourse(subject.get())) {
+                POD pod = teacher.hasSubjectInCourse(subject.get(), course.get());
                 if(pod != null){
                     teacher.deleteChosenSubject(pod);
                 }
@@ -126,10 +130,10 @@ public class TeacherRestController {
     public ResponseEntity<?> findAllMySubjects(@RequestParam(defaultValue = "name") String typeSort){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
-        Course course = courseService.findLastCourse();
-        if (course != null) {
+        Optional<Course> course = courseService.findLastCourse();
+        if (course.isPresent()) {
             Sort sort = Sort.by(typeSort).ascending();
-            List<Object[]> mySubjects = subjectService.findMySubjects(teacher.getId(), course, sort);
+            List<Object[]> mySubjects = subjectService.findByTeacherAndCourse(teacher.getId(), course.get(), sort);
             return new ResponseEntity<>(mySubjects, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -140,9 +144,9 @@ public class TeacherRestController {
     public ResponseEntity<List<Course>> findAllMyCourses(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
-        Course course = courseService.findLastCourse();
-        if (course != null) {
-            List<Course> myCourses = courseService.getCoursesByTeacher(teacher.getId());
+        Optional<Course> course = courseService.findLastCourse();
+        if (course.isPresent()) {
+            List<Course> myCourses = courseService.findByTeacherOrderByCreationDate(teacher.getId());
             return new ResponseEntity<>(myCourses, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
