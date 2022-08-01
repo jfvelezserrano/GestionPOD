@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -32,7 +29,8 @@ public class LoginRestController {
     interface TeacherLogin extends Teacher.Base, Teacher.Roles {
     }
 
-    private final AuthenticateProvider authenticationManager;
+    @Autowired
+    private AuthenticateProvider authenticationManager;
 
     @Autowired
     private MailBoxService mailBoxService;
@@ -53,14 +51,14 @@ public class LoginRestController {
 
         String ip = request.getRemoteAddr();
 
-        Long randomeCode = mailBoxService.generateCodeEmail();
+        Long randomCode = mailBoxService.generateCodeEmail();
 
-        mailBoxService.addCodeEmail(randomeCode, loginRequest.getEmail(), ip);
+        mailBoxService.addCodeEmail(randomCode, loginRequest.getEmail(), ip);
 
         Teacher teacher = teacherService.findByEmail(loginRequest.getEmail());
 
         try{
-            mailBoxService.sendEmail(randomeCode, teacher);
+            mailBoxService.sendEmail(randomCode, teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -87,6 +87,15 @@ public class Subject {
         this.courseSubjects = new HashSet<>();
     }
 
+    public Subject(String title, String quarter, String turn){
+        this.id = 1L;
+        this.title = title;
+        this.quarter = quarter;
+        this.turn = turn;
+        this.pods = new HashSet<>();
+        this.courseSubjects = new HashSet<>();
+    }
+
     public Subject(String code, String name, String title, Integer totalHours, String campus, Integer year,
                    String quarter, String type, String turn, String career) {
         this.code = code;

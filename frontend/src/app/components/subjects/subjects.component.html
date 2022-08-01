@@ -110,7 +110,7 @@
             <span *ngIf="!subjects">Mostrando 0 resultados</span>
             <span *ngIf="subjects">Mostrando {{subjects.length}} resultados</span>
             <div>
-            <button id="createPOD" type="button" onclick="generarCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
+            <button id="createPOD" (click)="exportCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
             <span><small>Ordenar por </small></span>
             <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="searchSubjects()">
                 <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>

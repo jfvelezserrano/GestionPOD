@@ -1,15 +1,26 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Course;
+import com.urjc.backend.model.Schedule;
+import com.urjc.backend.model.Subject;
 import com.urjc.backend.repository.CourseRepository;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CourseService {
+
+    private static final CSVFormat FORMAT = CSVFormat.EXCEL.withDelimiter(';').withHeader("\ufeff" + "Codigo", "Titulación",
+            "Campus", "Curso", "Semestre", "Asignatura", "Tipo", "Horas", "Grupo", "Turno", "Horario",
+            "Grupos asisten", "Profesores");
 
     @Autowired
     private CourseRepository courseRepository;
@@ -37,5 +48,66 @@ public class CourseService {
 
     public List<Course> findByTeacherOrderByCreationDate(Long idTeacher){
         return courseRepository.findByTeacherOrderByCreationDateDesc(idTeacher);
+    }
+
+    public ByteArrayInputStream writePODInCSV(List<String[]> body){
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+             CSVPrinter printer = new CSVPrinter(new PrintWriter(stream), FORMAT)) {
+            for (String[] line:body) {
+                printer.printRecord(line);
+            }
+
+            printer.flush();
+            printer.close();
+            return new ByteArrayInputStream(stream.toByteArray());
+        } catch (final IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public List<String[]> createContentForCSV(List<Object[]> subjectsAndTeachersCurrentCourse){
+
+        List<String[]> content = new ArrayList<>();
+
+        for (Object[] subjectAndTeacher:subjectsAndTeachersCurrentCourse) {
+            Subject subject = ((Subject) subjectAndTeacher[0]);
+            List<String> line = new ArrayList<>() {{ add(subject.getCode()); add(subject.getTitle());
+                add(subject.getCampus()); add(subject.getYear().toString()); add(subject.getQuarter()); add(subject.getName());
+                add(subject.getType()); add(subject.getTotalHours().toString()); add(subject.getCareer()); add(subject.getTurn()); }};
+
+            int i = 0;
+            String itemSchedule = "";
+
+            if(subject.getSchedules().size() != 0){
+                for (Schedule schedule:subject.getSchedules()) {
+                    itemSchedule += schedule.getDayWeek() + "(" + schedule.getStartTime() + " - " + schedule.getEndTime() + ")";
+                    i++;
+
+                    if(subject.getSchedules().size() != i){
+                        itemSchedule += ", ";
+                    } else{
+                        line.add(itemSchedule);
+                    }
+                }
+            }else{
+                line.add("");
+            }
+
+            if(subject.getAssitanceCareers().size() != 0){
+                line.add(Arrays.toString(subject.getAssitanceCareers().toArray()));
+            }else {
+                line.add("");
+            }
+
+            if(subjectAndTeacher[2] != null){
+                line.add(Arrays.toString(((List) subjectAndTeacher[2]).toArray()));
+            }else {
+                line.add("");
+            }
+
+            content.add(line.toArray(new String[13]));
+        }
+
+        return content;
     }
 }

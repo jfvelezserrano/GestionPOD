@@ -7,6 +7,7 @@ import { SubjectService } from 'src/app/services/subject.service';
 import { SubjectModel } from 'src/app/models/subject';
 import { NgForm } from '@angular/forms';
 import { Schedule } from 'src/app/models/schedule';
+import { saveAs } from 'file-saver';
 import { TeacherService } from 'src/app/services/teacher.service';
 
 @Component({
@@ -40,6 +41,7 @@ export class SubjectsComponent implements OnInit {
   constructor(
     private subjectService: SubjectService,
     private teacherService: TeacherService,
+    private courseService: CourseService,
     private offcanvasService: NgbOffcanvas
   ) {
     this.pageTitle = 'Asignaturas';
@@ -113,5 +115,17 @@ export class SubjectsComponent implements OnInit {
 
   cleanFilter(form:NgForm){
     form.reset();
+  }
+  
+  exportCSV() {
+    this.courseService.exportCSV()
+      .subscribe(response => { 
+        this.saveCSV(response.body, response.headers.get('content-disposition'));
+      });
+  }
+ 
+  saveCSV(body: string, fileName:string) {
+    var blob = new Blob([body], {type: 'text/csv; charset=utf-8'});
+    saveAs(blob, fileName + '.csv');
   }
 }

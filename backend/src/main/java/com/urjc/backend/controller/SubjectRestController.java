@@ -55,7 +55,7 @@ public class SubjectRestController {
 
     @JsonView(SubjectBase.class)
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object[]> getById(@PathVariable Long id){
+    public ResponseEntity<Object[]> getByIdInCurrentCourse(@PathVariable Long id){
         Optional<Subject> subjectOptional = subjectService.findById(id);
         if(subjectOptional.isPresent()){
             Optional<Course> course = courseService.findLastCourse();
@@ -105,6 +105,6 @@ public class SubjectRestController {
 
             return new ResponseEntity<>(list, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

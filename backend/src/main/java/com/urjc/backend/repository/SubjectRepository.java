@@ -16,7 +16,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
             "AND su.code = :#{#subject.code} AND su.name = :#{#subject.name} AND su.quarter = :#{#subject.quarter} " +
             "AND su.title = :#{#subject.title} AND su.totalHours = :#{#subject.totalHours} AND su.turn = :#{#subject.turn} " +
             "AND su.type = :#{#subject.type} AND su.year = :#{#subject.year} ")
-    List<Subject> exists(@Param("subject") Subject subject);
+    List<Subject> sameValues(@Param("subject") Subject subject);
 
     @Query(" SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c LEFT JOIN subject.pods pods" +
             " WHERE c.id = :id group by subject ")
@@ -60,11 +60,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
     @Query("SELECT subject.name, (pods.chosenHours/:total)*100 FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     List<Object[]> percentageHoursByTeacherAndCourse(Long idTeacher, Long idCourse, Integer total, Sort typeSort);
-
-
-
-
-
 
     @Query("SELECT SUM(pods.chosenHours) FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")

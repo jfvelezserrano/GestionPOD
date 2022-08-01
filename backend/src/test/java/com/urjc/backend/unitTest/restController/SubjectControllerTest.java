@@ -18,7 +18,6 @@ import org.junit.Assert;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.Cookie;
@@ -124,7 +123,7 @@ public class SubjectControllerTest {
         Mockito.when(subjectService.findById(subject.getId())).thenReturn(Optional.of(subject));
         Mockito.when(courseService.findLastCourse()).thenReturn(course);
 
-        ResponseEntity<Object[]> responseEntity = subjectRestController.getById(subject.getId());
+        ResponseEntity<Object[]> responseEntity = subjectRestController.getByIdInCurrentCourse(subject.getId());
 
         Assert.assertEquals(2, responseEntity.getBody().length);
         Assert.assertEquals(200, responseEntity.getStatusCodeValue());
@@ -141,7 +140,7 @@ public class SubjectControllerTest {
         Mockito.when(subjectService.findById(subject.getId())).thenReturn(Optional.of(subject));
         Mockito.when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        ResponseEntity<Object[]> responseEntity = subjectRestController.getById(subject.getId());
+        ResponseEntity<Object[]> responseEntity = subjectRestController.getByIdInCurrentCourse(subject.getId());
 
         Assert.assertEquals(404, responseEntity.getStatusCodeValue());
     }
@@ -155,7 +154,7 @@ public class SubjectControllerTest {
 
         Mockito.when(subjectService.findById(subject.getId())).thenReturn(Optional.empty());
 
-        ResponseEntity<Object[]> responseEntity = subjectRestController.getById(subject.getId());
+        ResponseEntity<Object[]> responseEntity = subjectRestController.getByIdInCurrentCourse(subject.getId());
 
         Assert.assertEquals(404, responseEntity.getStatusCodeValue());
     }
@@ -223,37 +222,28 @@ public class SubjectControllerTest {
 
     @Test
     public void givenFilter_WhenSearchASubject_ThenReturnResults(){
-        Long id = 1L;
-        String title = "Example title by course";
-        String quarter = "Segundo Cuatrimestre";
-        String turn = "T";
-        String nameCourse = "2001-2002";
-        String typeSort = "name";
-        Integer hoursLeft = 12;
+        Subject subject = new Subject("Example title by course","Segundo Cuatrimestre","T");
 
-        Subject subject = new Subject();
-        subject.setId(id);
-        subject.setTitle(title);
-        subject.setQuarter(quarter);
-        subject.setTurn(turn);
+        Course course = new Course("2001-2002");
 
-        Optional<Course> course = Optional.of(new Course(nameCourse));
-        course.get().setId(id);
-        course.get().addSubject(subject);
+        Object[] objectToCompare = new Object[] { subject, 12, null};
+        List<Object[]> searchedResults = new ArrayList<>();
+        searchedResults.add(objectToCompare);
 
-        Object[] objectToCompare = new Object[] { subject, hoursLeft, null};
+        Mockito.when(courseService.findLastCourse()).thenReturn(Optional.of(course));
+        Mockito.when(subjectService.searchByCourse(course, "", subject.getQuarter(),
+                subject.getTurn(), subject.getTitle(), -1L, Sort.by("name").ascending())
+        ).thenReturn(searchedResults);
 
-        List<Object[]> results = new ArrayList<>();
-        results.add(objectToCompare);
+        ResponseEntity<List<Object[]>> responseEntity = subjectRestController.search("", subject.getQuarter(),
+                subject.getTurn(), subject.getTitle(), -1L, "name");
 
-        Mockito.when(courseService.findLastCourse()).thenReturn(course);
-        Mockito.when(subjectService.searchByCourse(course.get(), "", quarter, turn, title, -1L, Sort.by(typeSort).ascending())).thenReturn(results);
-
-        ResponseEntity<List<Object[]>> responseEntity = subjectRestController.search("", quarter, turn, title, -1L, typeSort);
-
+        Assert.assertNotNull(responseEntity.getBody());
         Assert.assertEquals(1, responseEntity.getBody().size());
         Assert.assertEquals(200, responseEntity.getStatusCodeValue());
-        Assert.assertEquals(hoursLeft, responseEntity.getBody().get(0)[1]);
+        Assert.assertEquals(subject, responseEntity.getBody().get(0)[0]);
+        Assert.assertEquals(12, responseEntity.getBody().get(0)[1]);
+        Assert.assertNull(responseEntity.getBody().get(0)[2]);
     }
 
     @Test

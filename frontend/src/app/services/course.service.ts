@@ -15,6 +15,11 @@ export class CourseService {
     withCredentials: true
   };
 
+  public httpOptionsCookiesCSRFCSV = {
+    headers: new HttpHeaders({ 'X-XSRF-TOKEN': this.csrfToken, observe:'response', responseType:'blob'}),
+    withCredentials: true
+  };
+
 
   public httpOptionsCookies = {
     withCredentials: true
@@ -42,5 +47,17 @@ export class CourseService {
 
   deletePod(id: any) {
     return this.http.delete(environment.urlApi + "/pods/" + id, this.httpOptionsCookiesCSRF);
+  }
+
+  exportCSV(): Observable<Blob|String|any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Accept', 'text/csv; charset=UTF-8;');
+    
+    return this.http.get(environment.urlApi + "/pods/exportCSV", {
+      withCredentials: true,
+      headers: headers,
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 }

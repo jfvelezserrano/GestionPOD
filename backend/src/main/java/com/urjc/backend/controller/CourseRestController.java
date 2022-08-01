@@ -6,14 +6,24 @@ import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
 import com.urjc.backend.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +51,7 @@ public class CourseRestController {
 
 
     @PostMapping(value = "/pods", consumes = { "multipart/form-data"})
-    public @ResponseBody ResponseEntity<?> createPOD(@RequestPart("course") String course,
+    public ResponseEntity<?> createPOD(@RequestPart("course") String course,
                                                      @RequestPart("fileSubjects") MultipartFile fileSubjects,
                                                      @RequestPart("fileTeachers") MultipartFile fileTeachers) {
 
@@ -186,7 +196,7 @@ public class CourseRestController {
     }
 
     @PostMapping("/pods/{id}/subjects")
-    public ResponseEntity<?> addNewSubjectToCourse(@RequestBody Subject subject, @PathVariable Long id) {
+    public ResponseEntity<Course> addNewSubjectToCourse(@RequestBody Subject subject, @PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
 
@@ -213,5 +223,30 @@ public class CourseRestController {
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "/pods/exportCSV")
+    public ResponseEntity<Resource> exportCSV() {
+
+        Optional<Course> course = courseService.findLastCourse();
+        if(course.isPresent()) {
+            Sort sort = Sort.unsorted();
+            List<Object[]> subjectsAndTeachersCurrentCourse =
+                    subjectService.searchByCourse(course.get(), "", "", "", "", -1L, sort);
+
+            List<String[]> body = courseService.createContentForCSV(subjectsAndTeachersCurrentCourse);
+
+            String nameCSV = "POD_" + courseService.findLastCourse().get().getName();
+
+            InputStreamResource resource = new InputStreamResource(courseService.writePODInCSV(body));
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, nameCSV)
+                    .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+                    .contentType(MediaType.parseMediaType("text/csv; UTF-8"))
+                    .body(resource);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

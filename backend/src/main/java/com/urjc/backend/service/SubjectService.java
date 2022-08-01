@@ -136,7 +136,7 @@ public class SubjectService {
         return new ArrayList<>();
     }
 
-    public List<String> checkScheduleConflicts(Subject subject, List<Object[]> allSchedulesFromMySubjects){
+    private List<String> checkScheduleConflicts(Subject subject, List<Object[]> allSchedulesFromMySubjects){
         List<String> resultConflicts = new ArrayList<>();
 
         for (Schedule schedule: subject.getSchedules()) {
@@ -223,7 +223,7 @@ public class SubjectService {
         }
     }
 
-    public void setNullValues(String[] values){
+    private void setNullValues(String[] values){
         for (int i = 0; i < 10; i++) {
             if(values[i] == ""){
                 values[i] = null;
@@ -233,7 +233,7 @@ public class SubjectService {
 
     public Subject findSubjectIfExists(Subject subject){
 
-        List<Subject> subjects = subjectRepository.exists(subject);
+        List<Subject> subjects = subjectRepository.sameValues(subject);
 
         for (Subject storedSubject: subjects) {
             Boolean exists = isExact(subject, storedSubject);
@@ -246,7 +246,7 @@ public class SubjectService {
         return null;
     }
 
-    public Boolean isExact(Subject subject, Subject storedSubject){
+    private Boolean isExact(Subject subject, Subject storedSubject){
 
         Boolean isEqual = storedSubject != null;
 
