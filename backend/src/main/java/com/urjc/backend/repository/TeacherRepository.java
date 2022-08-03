@@ -37,11 +37,18 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "AND teacher.id <> :idTeacher")
     List<Object[]> findMatesByTeacherAndCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse);
 
+    @Query(value = "SELECT teacher.id, teacher.name, ct.originalHours, ct.correctedHours, ct.observation FROM Teacher teacher " +
+            "JOIN teacher.courseTeachers ct JOIN ct.course c WHERE c.id = :idCourse ")
+    Page<Object[]> allTeachersStatistics(@Param("idCourse") Long idCourse, Pageable pageable);
 
-
-
-
-    @Query("SELECT sum(pods.chosenHours) FROM Teacher teacher JOIN teacher.pods pods JOIN pods.course c JOIN pods.teacher t" +
+    @Query("SELECT SUM(pods.chosenHours) FROM Teacher teacher JOIN teacher.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     Integer chosenHoursTeacher(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse);
+
+    @Query("SELECT DISTINCT SUM(pods.chosenHours) FROM Teacher teacher JOIN teacher.pods pods " +
+            "JOIN pods.course c WHERE c.id = :idCourse")
+    Integer getSumChosenHours(Long idCourse);
+
+    @Query("SELECT SUM(st.correctedHours) as totalForce FROM Teacher teacher JOIN teacher.courseTeachers st JOIN st.course c WHERE c.id = :idCourse")
+    Integer getSumCorrectedHours(Long idCourse);
 }

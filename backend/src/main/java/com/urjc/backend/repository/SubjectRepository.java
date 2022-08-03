@@ -64,4 +64,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
     @Query("SELECT SUM(pods.chosenHours) FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     Integer totalChosenHoursByTeacherAndCourse(Long idTeacher, Long idCourse);
+
+    @Query("SELECT SUM(subject.totalHours) as totalCharge, COUNT(subject.id) as numSubjects FROM Subject subject " +
+            "JOIN subject.courseSubjects sc JOIN sc.course c WHERE c.id = :idCourse")
+    Object getSumTotalHoursAndSubjectsNumber(Long idCourse);
+
 }

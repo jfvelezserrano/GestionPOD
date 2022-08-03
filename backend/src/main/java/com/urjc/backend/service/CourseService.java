@@ -4,9 +4,12 @@ import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Schedule;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.repository.CourseRepository;
+import com.urjc.backend.repository.SubjectRepository;
+import com.urjc.backend.repository.TeacherRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -24,6 +27,15 @@ public class CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private SubjectService subjectService;
 
 
     public Boolean exists(String courseName){ return courseRepository.findByName(courseName) != null; }
@@ -48,6 +60,20 @@ public class CourseService {
 
     public List<Course> findByTeacherOrderByCreationDate(Long idTeacher){
         return courseRepository.findByTeacherOrderByCreationDateDesc(idTeacher);
+    }
+
+    public Object[] getGlobalStatistics(Course course){
+        Object[] totalHoursAndNumSubjects = ((Object[]) subjectRepository.getSumTotalHoursAndSubjectsNumber(course.getId()));
+        Integer totalCorrectHours = teacherRepository.getSumCorrectedHours(course.getId());
+        Integer totalChosenHours = teacherRepository.getSumChosenHours(course.getId());
+
+        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", "", "", -1L, Sort.unsorted()).size();
+        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", "", "", -1L, Sort.unsorted()).size();
+
+        return new Object[]{ (totalChosenHours * 100/Integer.parseInt(String.valueOf(totalHoursAndNumSubjects[0]))), totalChosenHours,
+                totalHoursAndNumSubjects[0], (totalChosenHours * 100/totalCorrectHours), totalCorrectHours,
+                (numCompletations * 100/Integer.parseInt(String.valueOf(totalHoursAndNumSubjects[1]))), numCompletations,
+                totalHoursAndNumSubjects[1], numConflicts};
     }
 
     public ByteArrayInputStream writePODInCSV(List<String[]> body){

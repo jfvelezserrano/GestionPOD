@@ -72,6 +72,21 @@ public class TeacherService {
         return p.getContent();
     }
 
+    public List<Object[]> allTeachersStatistics(Course course, Pageable pageable) {
+
+        Page<Object[]> listDataTeachers = teacherRepository.allTeachersStatistics(course.getId(), pageable);
+
+        List<Object[]> resultList = new ArrayList<>();
+
+        for (Object[] dataTeachers: listDataTeachers) {
+            Object[] personalStatistics = ((Object[]) teacherRepository.statisticsByTeacherAndCourse(((Long) dataTeachers[0]), course.getId()));
+            Object[] finalData = new Object[]{ dataTeachers[1], dataTeachers[2], dataTeachers[3], dataTeachers[4],
+                    personalStatistics[0] != null ? personalStatistics[0] : 0, personalStatistics[1] != null ? personalStatistics[1] : 0, personalStatistics[2] };
+            resultList.add(finalData);
+        }
+        return resultList;
+    }
+
     public List<Teacher> findAllByRole(String role) {
         return teacherRepository.findByRole(role);
     }
@@ -81,7 +96,7 @@ public class TeacherService {
     }
 
     public Object[] findPersonalStatistics(Long idTeacher, Course course){
-        int i = 0;
+        int numConflicts = 0;
 
         Object[] statistics = ((Object[]) teacherRepository.statisticsByTeacherAndCourse(idTeacher, course.getId()));
 
@@ -89,7 +104,7 @@ public class TeacherService {
             List<String> teachers = subject.recordSubject().get(course.getName());
             Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
             if(totalChosenHours > subject.getTotalHours()){
-                i++;
+                numConflicts++;
             }
         }
 
@@ -102,7 +117,7 @@ public class TeacherService {
 
         Integer correctedHours = teacherRepository.findCorrectedHours(idTeacher);
 
-        Object[] result = new Object[]{ statistics[0], statistics[1], correctedHours, statistics[2], i };
+        Object[] result = new Object[]{ statistics[0], statistics[1], correctedHours, statistics[2], numConflicts };
 
         return result;
     }

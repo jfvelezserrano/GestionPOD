@@ -20,7 +20,7 @@ export class StatisticsService {
   ) { }
 
   getPersonalStatistics(){
-    return this.http.get(environment.urlApi + "/statistics", this.httpOptionsCookiesCSRF);
+    return this.http.get(environment.urlApi + "/statistics/myData", this.httpOptionsCookiesCSRF);
   }
 
   getMates(){
@@ -32,10 +32,18 @@ export class StatisticsService {
   }
 
   graphHoursPerSubject(){
-    return this.http.get(environment.urlApi + "/statistics/hoursPerSubject", this.httpOptionsCookiesCSRF);
+    return this.http.get(environment.urlApi + "/statistics/myHoursPerSubject", this.httpOptionsCookiesCSRF);
   }
 
   graphPercentageHours(){
-    return this.http.get(environment.urlApi + "/statistics/percentageHoursSubjects", this.httpOptionsCookiesCSRF);
+    return this.http.get(environment.urlApi + "/statistics/myPercentageHoursSubjects", this.httpOptionsCookiesCSRF);
+  }
+
+  getGlobalStatistics(){
+    return this.http.get(environment.urlApi + "/statistics", this.httpOptionsCookiesCSRF);
+  }
+
+  getAllTeachersStatistics(page:number, typeSort:string){
+    return this.http.get(environment.urlApi + "/statistics/teachersStatistics?page=" + page + "&typeSort=" + typeSort, this.httpOptionsCookiesCSRF);
   }
 }
