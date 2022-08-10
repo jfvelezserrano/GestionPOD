@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
 
   ngOnDestroy(){
     if(this.status == "sentCode"){
-      this.subscription && this.subscription.unsubscribe();
+      this.subscription.unsubscribe();
     }
   }
 
@@ -74,14 +74,14 @@ export class LoginComponent implements OnInit {
   finish(e: CountdownEvent) {
     if (e.action == 'done') {
       this.status = "noCode";
-      this.subscription && this.subscription.unsubscribe();
+      this.subscription.unsubscribe();
     }
   }
 
   checkLocalStorage(){
     console.log("check");
     if(this.loginService.getTeacherLogged() != null){
-      this.subscription && this.subscription.unsubscribe();
+      this.subscription.unsubscribe();
       window.location.reload();
     }
   }

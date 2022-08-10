@@ -119,7 +119,7 @@ public class CourseRestController {
             Optional<Teacher> teacher = teacherService.findById(idTeacher);
 
             if(teacher.isPresent()){
-                course.get().deleteTeacher(teacher);
+                course.get().deleteTeacher(teacher.get());
                 if(courseService.save(course.get()) != null){
                     if(teacher.get().getCourseTeachers().isEmpty() && !teacher.get().getRoles().contains("ADMIN")){
                         teacherService.delete(teacher.get());
@@ -141,7 +141,7 @@ public class CourseRestController {
             Optional<Subject> subject = subjectService.findById(idSubject);
 
             if(subject.isPresent()){
-                course.get().deleteSubject(subject);
+                course.get().deleteSubject(subject.get());
                 if(courseService.save(course.get()) != null){
                     if(subject.get().getCourseSubjects().isEmpty()){
                         subjectService.delete(subject.get());
@@ -158,7 +158,10 @@ public class CourseRestController {
     public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()){
-            courseService.deleteById(id);
+            subjectService.deleteSubjectsNotInAnyCourse(course.get());
+            teacherService.deleteTeachersNotInAnyCourse(course.get());
+            courseService.delete(course.get());
+
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

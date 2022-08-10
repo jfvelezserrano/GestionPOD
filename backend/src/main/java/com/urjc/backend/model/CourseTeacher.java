@@ -1,10 +1,16 @@
 package com.urjc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "courseTeacher")
 public class CourseTeacher {
+
+    public interface DataToEdit {
+    }
+
     @EmbeddedId
     CourseTeacherKey id = new CourseTeacherKey();
 
@@ -18,12 +24,14 @@ public class CourseTeacher {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
+    @JsonView(DataToEdit.class)
     @Column(nullable = false)
     private Integer correctedHours;
 
     @Column(nullable = false)
     private Integer originalHours;
 
+    @JsonView(DataToEdit.class)
     private String observation;
 
     public CourseTeacher() {}

@@ -4,6 +4,7 @@ import { CourseService } from 'src/app/services/course.service';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 import Chart from 'chart.js/auto';
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class MyStatisticsComponent implements OnInit {
   public courseChosen: any;
   public courses:any = [];
   public subjects: any;
+  public editableData:any = [];
   public dataGraphsHours: any = [];
   public subjectsGraphHours:  String[] = [];
   public myHoursSubjectsGraphHours: number[] = [];
@@ -32,9 +34,9 @@ export class MyStatisticsComponent implements OnInit {
 
   constructor(
     private statisticsService: StatisticsService,
-    private teacherService: TeacherService,
-    private route: ActivatedRoute
+    private teacherService: TeacherService
   ) {
+    this.editableData = [0, 0];
     this.personalStatistics = [0, 0, 0, 0, 0];
   }
 
@@ -42,25 +44,12 @@ export class MyStatisticsComponent implements OnInit {
     this.getPersonalStatistics();
     this.getMates();
     this.getCourses();
+    this.getEditableData();
   }
 
   ngAfterViewInit():void{
     this.getHoursPerSubject();
     this.getPercentageHours();
-  }
-
-  getCourses(){
-    this.teacherService.getMyCourses()
-    .subscribe({
-      next: (data) => {
-        this.courses = data;
-        this.courseChosen = this.courses[0].id;
-        this.getSubjectsByCourse();
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
   }
 
   getPersonalStatistics() {
@@ -87,6 +76,42 @@ export class MyStatisticsComponent implements OnInit {
     });
   }
 
+  getEditableData(){
+    this.teacherService.getEditableData()
+    .subscribe({
+      next: (data) => {
+        this.editableData = data;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  onSubmit(form:NgForm){
+    this.teacherService.editEditableData(form.value).subscribe({
+      next: (data) => {
+        this.getEditableData();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getCourses(){
+    this.teacherService.getCourses()
+    .subscribe({
+      next: (data) => {
+        this.courses = data;
+        this.courseChosen = this.courses[0].id;
+        this.getSubjectsByCourse();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
   getSubjectsByCourse() {
     this.statisticsService.getMySubjectsByCourse(this.courseChosen)
     .subscribe({

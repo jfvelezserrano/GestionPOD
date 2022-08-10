@@ -131,18 +131,22 @@
         <div class="col-12 col-lg-4 mb-0">
             <div class="box-mis-estadisticas color-card-estadisticas-azul-oscuro h-100 w-100 shadow">
             <h6 class="text-center titulo-mis-estadisticas"><b>Mis Datos</b></h6>
-            <form>
+            <form #formEditEditableData="ngForm" (ngSubmit)="onSubmit(formEditEditableData)">
                 <div class="form-group">
                 <label for="inputHorasEstadisticas">Horas Totales</label>
-                <input type="number" id="inputHorasEstadisticas" class="ml-5 form-control" placeholder="Horas totales">
+                <input type="number" #correctedHours="ngModel" name="correctedHours" [(ngModel)]="editableData[0]" id="inputHorasEstadisticas" 
+                class="ml-5 form-control" placeholder="Horas totales" [value]="editableData[0]" required pattern="[0-9]{1,6}">
                 </div>
 
                 <div class="form-group mt-2">
                 <label for="textareaObservaciones">Mis observaciones</label>
-                <textarea class="form-control" id="textareaObservaciones" rows="2" placeholder="Mis observaciones"></textarea>
+                <textarea class="form-control" #observation="ngModel" name="observation" [(ngModel)]="editableData[1]" id="textareaObservaciones" 
+                rows="2" placeholder="Mis observaciones" [value]="editableData[1]" required pattern="[a-zA-Z0-9- áéíóúÁÉÍÓÚÑñÇç]{0,255}"
+                [ngClass]="!observation.valid && observation.touched ? 'border-error' : ''"></textarea>
+                <i class="fa-solid fa-xmark icon-login-error" *ngIf="!observation.valid && observation.touched" alt="Observación introducida inválida" ngbTooltip="Observación inválida"></i>
                 </div>
                 <div class="text-center mt-3">
-                <button type="submit" onclick="anadirAsignatura()" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="personalStatistics[1] == 0">Guardar</button>
+                <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="personalStatistics[1] == 0 && !formEditEditableData.form.valid">Guardar</button>
                 </div>
             </form>
 

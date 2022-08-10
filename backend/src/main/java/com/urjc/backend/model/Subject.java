@@ -264,4 +264,15 @@ public class Subject {
 
         return recordMap;
     }
+
+    public void unjoinCourse(Course course){
+        CourseSubject courseSubjectToUnjoin = new CourseSubject();
+        for (CourseSubject courseSubject : courseSubjects) {
+            if (courseSubject.getCourse().equals(course) && courseSubject.getSubject().equals(this)) {
+                courseSubjectToUnjoin = courseSubject;
+                break;
+            }
+        }
+        courseSubjects.remove(courseSubjectToUnjoin);
+    }
 }

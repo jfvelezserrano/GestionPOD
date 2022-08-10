@@ -36,7 +36,7 @@ export class StatisticsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getGlobalStatistics();
-    this.getFirstTeachersStatistics();
+    this.getFirstTeachers();
   }
 
   getGlobalStatistics(){
@@ -52,7 +52,7 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
-  getFirstTeachersStatistics(){
+  getFirstTeachers(){
     this.page = 0;
     
     this.statisticsService.getAllTeachersStatistics(this.page,this.typeSort).subscribe({
@@ -65,7 +65,7 @@ export class StatisticsComponent implements OnInit {
     });
   }
   
-  loadMoreSubjects() {
+  loadMoreTeachers() {
     this.page = this.page + 1;
 
     this.statisticsService.getAllTeachersStatistics(this.page,this.typeSort).subscribe({
@@ -85,7 +85,7 @@ export class StatisticsComponent implements OnInit {
     let max = document.documentElement.scrollHeight;
 
     if(pos == max && this.isMore){
-      this.loadMoreSubjects();
+      this.loadMoreTeachers();
     }
   }
 

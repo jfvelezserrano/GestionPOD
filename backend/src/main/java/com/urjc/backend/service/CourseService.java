@@ -56,7 +56,10 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public void deleteById(Long id){ courseRepository.deleteById(id); }
+    public void delete(Course course){
+            courseRepository.delete(course);
+            courseRepository.flush();
+    }
 
     public List<Course> findByTeacherOrderByCreationDate(Long idTeacher){
         return courseRepository.findByTeacherOrderByCreationDateDesc(idTeacher);

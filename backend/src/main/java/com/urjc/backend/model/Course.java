@@ -64,6 +64,14 @@ public class Course {
         this.name = name;
     }
 
+    public Set<CourseTeacher> getCourseTeachers() { return courseTeachers; }
+
+    public void setCourseTeachers(Set<CourseTeacher> courseTeachers) { this.courseTeachers = courseTeachers; }
+
+    public Set<CourseSubject> getCourseSubjects() { return courseSubjects; }
+
+    public void setCourseSubjects(Set<CourseSubject> courseSubjects) { this.courseSubjects = courseSubjects; }
+
     public void addTeacher(Teacher teacher, Integer hours) {
         CourseTeacher newCourseTeacher = new CourseTeacher();
         newCourseTeacher.setCourse(this);
@@ -83,10 +91,10 @@ public class Course {
         this.courseSubjects.add(newCourseSubject);
     }
 
-    public void deleteTeacher(Optional<Teacher> teacher) {
+    public void deleteTeacher(Teacher teacher) {
         CourseTeacher courseTeacherToDelete = new CourseTeacher();
         for (CourseTeacher courseTeacher : courseTeachers) {
-            if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher.get())) {
+            if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher)) {
                 courseTeacherToDelete = courseTeacher;
                 break;
             }
@@ -95,7 +103,7 @@ public class Course {
 
         POD podToDelete = new POD();
         for (POD pod : pods) {
-            if (pod.getCourse().equals(this) && pod.getTeacher().equals(teacher.get())) {
+            if (pod.getCourse().equals(this) && pod.getTeacher().equals(teacher)) {
                 podToDelete = pod;
                 break;
             }
@@ -103,10 +111,10 @@ public class Course {
         pods.remove(podToDelete);
     }
 
-    public void deleteSubject(Optional<Subject> subject) {
+    public void deleteSubject(Subject subject) {
         CourseSubject courseSubjectToDelete = new CourseSubject();
         for (CourseSubject courseSubject : courseSubjects) {
-            if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject.get())) {
+            if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject)) {
                 courseSubjectToDelete = courseSubject;
                 break;
             }
@@ -115,7 +123,7 @@ public class Course {
 
         POD podToDelete = new POD();
         for (POD pod : pods) {
-            if (pod.getCourse().equals(this) && pod.getSubject().equals(subject.get())) {
+            if (pod.getCourse().equals(this) && pod.getSubject().equals(subject)) {
                 podToDelete = pod;
                 break;
             }

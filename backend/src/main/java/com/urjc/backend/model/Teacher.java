@@ -19,15 +19,19 @@ public class Teacher{
     public interface Name {
     }
 
+    public interface DataToEdit {
+    }
+
     @JsonView(Base.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToMany(mappedBy = "teacher", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
+    @JsonView(DataToEdit.class)
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
     private Set<CourseTeacher> courseTeachers;
@@ -136,5 +140,29 @@ public class Teacher{
             }
         }
         return null;
+    }
+
+    public void editEditableData(Course course, Integer correctedHours, String observation) {
+        CourseTeacher courseTeacherToEdit = new CourseTeacher();
+        for (CourseTeacher courseTeacher : courseTeachers) {
+            if (courseTeacher.getTeacher().equals(this) && courseTeacher.getCourse().equals(course)) {
+                courseTeacherToEdit = courseTeacher;
+                break;
+            }
+        }
+
+        courseTeacherToEdit.setCorrectedHours(correctedHours);
+        courseTeacherToEdit.setObservation(observation);
+    }
+
+    public void unjoinCourse(Course course){
+        CourseTeacher courseTeacherToUnjoin = new CourseTeacher();
+        for (CourseTeacher courseTeacher : courseTeachers) {
+            if (courseTeacher.getCourse().equals(course) && courseTeacher.getTeacher().equals(this)) {
+                courseTeacherToUnjoin = courseTeacher;
+                break;
+            }
+        }
+        courseTeachers.remove(courseTeacherToUnjoin);
     }
 }

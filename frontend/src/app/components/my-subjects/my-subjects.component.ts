@@ -98,7 +98,7 @@ export class MySubjectsComponent implements OnInit {
 
   getMySubjects(){
     this.showLoader = true;
-    this.teacherService.getMySubjects(this.typeSort).subscribe({
+    this.teacherService.getSubjects(this.typeSort).subscribe({
       next: (data) => {
         this.showLoader = false;
         this.mySubjects = data;

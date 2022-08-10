@@ -59,6 +59,26 @@ public class TeacherService {
         return teacherRepository.findByEmail(email);
     }
 
+    public List<Teacher> findByCourse(Long idCourse){
+        return teacherRepository.findByCourse(idCourse);
+    }
+
+    public void deleteTeachersNotInAnyCourse(Course course){
+        List<Teacher> teachers = findByCourse(course.getId());
+        for (Teacher teacher: teachers) {
+            if(!teacher.getRoles().contains("ADMIN") && teacher.getCourseTeachers().size() == 1){
+                delete(teacher);
+            }else if(teacher.getCourseTeachers().size() > 1 || teacher.getRoles().contains("ADMIN")){
+                teacher.unjoinCourse(course);
+                save(teacher);
+            }
+        }
+    }
+
+    public Object[] getEditableData(String email, Course course){
+        return ((Object[]) teacherRepository.getEditableData(email, course.getId()));
+    }
+
     public void delete(Teacher teacher){
         teacherRepository.delete(teacher);
     }
@@ -115,7 +135,7 @@ public class TeacherService {
             statistics[1] = 0;
         }
 
-        Integer correctedHours = teacherRepository.findCorrectedHours(idTeacher);
+        Integer correctedHours = teacherRepository.getCorrectedHoursByIdTeacher(idTeacher, course.getId());
 
         Object[] result = new Object[]{ statistics[0], statistics[1], correctedHours, statistics[2], numConflicts };
 

@@ -54,7 +54,7 @@
         <span *ngIf="teachersStatistics">Mostrando {{teachersStatistics.length}} resultados</span>
         <div>
             <span><small>Ordenar por </small></span>
-            <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="getFirstTeachersStatistics()">
+            <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="getFirstTeachers()">
                 <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
             </select>
         </div>

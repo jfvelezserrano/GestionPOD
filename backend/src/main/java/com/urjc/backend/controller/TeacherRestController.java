@@ -5,8 +5,6 @@ import com.urjc.backend.model.*;
 import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
 import com.urjc.backend.service.TeacherService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,9 +21,10 @@ import java.util.Optional;
 @RequestMapping("/api/teachers")
 public class TeacherRestController {
 
-    private static final Logger log = LoggerFactory.getLogger(CourseRestController.class);
-
     interface TeacherBaseWithRoles extends Teacher.Base, Teacher.Roles {
+    }
+
+    interface TeacherDataToEdit extends Teacher.Base, Teacher.DataToEdit, CourseTeacher.DataToEdit {
     }
 
     interface SubjectBase extends Subject.Base, Schedule.Base {
@@ -148,6 +147,32 @@ public class TeacherRestController {
         if (course.isPresent()) {
             List<Course> myCourses = courseService.findByTeacherOrderByCreationDate(teacher.getId());
             return new ResponseEntity<>(myCourses, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @JsonView(TeacherDataToEdit.class)
+    @GetMapping(value = "/myEditableData")
+    public ResponseEntity<Object[]> getEditableData(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<Course> course = courseService.findLastCourse();
+        if (course.isPresent()) {
+            Object[] myEditableData = teacherService.getEditableData(authentication.getName(), course.get());
+            return new ResponseEntity<>(myEditableData, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "/myEditableData")
+    public ResponseEntity<Teacher> editData(@RequestBody EditableDataRequest editableDataRequest){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Teacher teacher = teacherService.findByEmail(authentication.getName());
+        Optional<Course> course = courseService.findLastCourse();
+        if (course.isPresent()) {
+            teacher.editEditableData(course.get(), editableDataRequest.getCorrectedHours(), editableDataRequest.getObservation());
+            teacherService.save(teacher);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

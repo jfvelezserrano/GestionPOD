@@ -4,6 +4,7 @@ import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Schedule;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
+import com.urjc.backend.repository.CourseRepository;
 import com.urjc.backend.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,10 @@ public class SubjectService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
 
     public Subject save(Subject subject) {
         return subjectRepository.save(subject);
@@ -88,6 +93,18 @@ public class SubjectService {
 
     public List<Subject> findByCourse(Long id) {
         return subjectRepository.findByCourse(id);
+    }
+
+    public void deleteSubjectsNotInAnyCourse(Course course){
+        List<Subject> subjects = findByCourse(course.getId());
+        for (Subject subject: subjects) {
+            if(subject.getCourseSubjects().size() == 1){
+                delete(subject);
+            }else if(subject.getCourseSubjects().size() > 1){
+                subject.unjoinCourse(course);
+                save(subject);
+            }
+        }
     }
 
     public List<Object[]> findNameAndQuarterByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort) {

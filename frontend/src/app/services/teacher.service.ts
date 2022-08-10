@@ -47,11 +47,19 @@ export class TeacherService {
     return this.http.get(environment.urlApi + "/teachers?role=" + role, this.httpOptionsCookiesCSRF);
   }
 
-  getMySubjects(typeSort:string){
+  getSubjects(typeSort:string){
     return this.http.get(environment.urlApi + "/teachers/mySubjects?typeSort=" + typeSort, this.httpOptionsCookiesCSRF);
   }
 
-  getMyCourses(){
+  getCourses(){
     return this.http.get(environment.urlApi + "/teachers/myCourses", this.httpOptionsCookiesCSRF);
+  }
+
+  getEditableData(){
+    return this.http.get(environment.urlApi + "/teachers/myEditableData", this.httpOptionsCookiesCSRF);
+  }
+
+  editEditableData(form:any){
+    return this.http.put(environment.urlApi + "/teachers/myEditableData", form, this.httpOptionsCookiesCSRF);
   }
 }
