@@ -11,8 +11,8 @@ import { LoginService } from '../../services/login.service';
 })
 export class VerifyComponent implements OnInit {
 
-  public status: any;
-  public code:any;
+  public status: string;
+  public code: number;
 
   constructor(
     private route: ActivatedRoute,

@@ -33,5 +33,4 @@ export class LocalStorageService {
   removeLocalStorage(key:any){
     ls.remove(key);
   }
-
 }

@@ -4,7 +4,7 @@
         <a class="navbar-brand" href="asignaturas.html">
           <img src="assets/images/URJC-Logo.jpg" width="175" height="87" class="d-inline-block align-top" alt="Logo URJC">
         </a>
-        <span class="navbar-brand mb-0 h1">Gestión POD</span>
+        <span class="navbar-brand h1 my-auto">Gestión POD</span>
 
       
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
             </li>
 
           </ul>
-          <div class="nav navbar-nav truncar" *ngIf="email">
+          <div class="nav navbar-nav truncar" *ngIf="teacher">
             <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm blanco d-lg-none"></i>{{email}}</span> 
             <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg rojo"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
           </div>

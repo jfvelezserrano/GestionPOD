@@ -1,180 +1,195 @@
 <app-navbar></app-navbar>
-<main class="container-fluid contenido-todo col-md-10 offset-md-1">
-    <div class="row">
+<main class="container-fluid contenido-principal contenido-todo">
 
-    <section class="col-12 col-md-4 col-xl-3 mb-5">
-        <div class="sticky mx-4 mx-md-0 mb-4 mb-md-0">
+    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
+        <p><i class="fa-solid fa-2xl fa-book"></i></p>
+        <p>No hay ningún curso aún</p>
+    </div>
+    <div class="center-vertically center-horizontally" *ngIf="showLoaderCourse">
+        <app-loader></app-loader>
+    </div>
 
-        <div class="pt-1 d-flex justify-content-between">
-            <h3><b>Filtrar</b></h3>
-            <button type="button" class="col-2 btn boton" [disabled]="!occupation && !quarter && !titleChosen && !turn && !idTeacherChosen" 
-            (click)="cleanFilter(formSearchSubject)" placement="end" ngbTooltip="Limpiar filtro"><i class="fa-solid fa-trash"></i></button>
-        </div>
+    <div class="row" *ngIf="isCourse && !showLoaderCourse">
 
-        <form #formSearchSubject="ngForm" (ngSubmit)="searchSubjects()">
-            <div class="border-top py-2 my-2 ml-3">
-                <label for="searchOccupation" class="titulo-seccion">Ocupación</label>
+        <section class="col-12 col-md-4 col-xl-3">
+            <div class="sticky-top">
 
-                <div id="searchOccupation">
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Libre" [(ngModel)]="occupation" id="option-libre">
-                        <label class="form-check-label lbl-filtrar" for="option-libre">Libre</label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Completa" [(ngModel)]="occupation" id="option-completa">
-                        <label class="form-check-label lbl-filtrar" for="option-completa">Completa</label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Conflicto" [(ngModel)]="occupation" id="option-conflicto">
-                        <label class="form-check-label lbl-filtrar" for="option-conflicto">Conflicto</label>
-                    </div>
-
-                </div>
+            <div class="pt-1 d-flex justify-content-between">
+                <h3><b>Filtrar</b></h3>
+                <button type="button" class="col-2 btn boton" [disabled]="!occupation && !quarter && !titleChosen && !turn && !idTeacherChosen" 
+                (click)="cleanFilter(formSearchSubject)" placement="bottom" ngbTooltip="Limpiar filtro"><i class="fa-solid fa-trash"></i></button>
             </div>
 
-            <div class="border-top py-2 my-2 ml-3">
-                <label for="searchQuarter" class="titulo-seccion">Cuatrimestre</label>
+            <form #formSearchSubject="ngForm" (ngSubmit)="searchSubjects()">
+                <div class="border-top py-2 my-2 ml-3">
+                    <label for="searchOccupation" class="titulo-seccion">Ocupación</label>
 
-                <div id="searchQuarter">
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="quarter" value="Primer Cuatrimestre" [(ngModel)]="quarter" id="option-first">
-                        <label class="form-check-label lbl-filtrar" for="option-first">Primer Cuatrimestre</label>
+                    <div id="searchOccupation">
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Libre" [(ngModel)]="occupation" id="option-libre">
+                            <label class="form-check-label lbl-filtrar" for="option-libre">Libre</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Completa" [(ngModel)]="occupation" id="option-completa">
+                            <label class="form-check-label lbl-filtrar" for="option-completa">Completa</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="occupation" value="Conflicto" [(ngModel)]="occupation" id="option-conflicto">
+                            <label class="form-check-label lbl-filtrar" for="option-conflicto">Conflicto</label>
+                        </div>
+
                     </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="quarter" value="Segundo Cuatrimestre" [(ngModel)]="quarter" id="option-second">
-                        <label class="form-check-label lbl-filtrar" for="option-second">Segundo Cuatrimestre</label>
-                    </div>
-
                 </div>
-            </div>
 
-            <div class="border-top py-2 my-2 ml-3">
-                <div class="form-group">
-                    <label for="inputTitle" class="form-label titulo-seccion">Titulación</label>
+                <div class="border-top py-2 my-2 ml-3">
+                    <label for="searchQuarter" class="titulo-seccion">Cuatrimestre</label>
+
+                    <div id="searchQuarter">
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="quarter" value="Primer Cuatrimestre" [(ngModel)]="quarter" id="option-first">
+                            <label class="form-check-label lbl-filtrar" for="option-first">Primer Cuatrimestre</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="quarter" value="Segundo Cuatrimestre" [(ngModel)]="quarter" id="option-second">
+                            <label class="form-check-label lbl-filtrar" for="option-second">Segundo Cuatrimestre</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="border-top py-2 my-2 ml-3">
+                    <div class="form-group">
+                        <label for="inputTitle" class="form-label titulo-seccion">Titulación</label>
+                        <div class="custom-wrapper">
+                            <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[0-9a-zA-Z- .()áéíóúÁÉÍÓÚÑñÇç]{5,80}" #title="ngModel"
+                            name="title" [(ngModel)]="titleChosen" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
+                            <i class="fa-solid fa-xmark icon-login-error" *ngIf="!title.valid && title.touched" alt="Titulación inválida" ngbTooltip="Titulación inválida"></i>
+                        </div>
+                        <datalist id="titleList">
+                        <option *ngFor="let itemTitle of titles" [ngValue]="itemTitle">{{itemTitle}}</option>
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="border-top py-2 my-2 ml-3">
+                    <label for="searchTurn" class="titulo-seccion">Turno</label>
+
+                    <div id="searchTurn">
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="turn" value="M" [(ngModel)]="turn" id="option-morning">
+                            <label class="form-check-label lbl-filtrar" for="option-morning">Mañana</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input int-filtrar" type="radio" name="turn" value="T" [(ngModel)]="turn" id="option-evening">
+                            <label class="form-check-label lbl-filtrar" for="option-evening">Tarde</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="border-top py-2 my-2 ml-3">
+                    <label for="inputTeacher" class="form-label titulo-seccion">Docente</label>
                     <div class="custom-wrapper">
-                        <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[0-9a-zA-Z- .()áéíóúÁÉÍÓÚÑñÇç]{5,80}" #title="ngModel"
-                        name="title" [(ngModel)]="titleChosen" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
-                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!title.valid && title.touched" alt="Titulación inválida" ngbTooltip="Titulación inválida"></i>
+                        <input type="text" class="form-control" list="teacherList" id="inputTeacher" placeholder="Docente" pattern="[0-9]{1,3}" #idTeacher="ngModel"
+                        name="idTeacher" [(ngModel)]="idTeacherChosen" [ngClass]="!idTeacher.valid && idTeacher.touched ? 'border-error' : ''">
+                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!idTeacher.valid && idTeacher.touched" alt="Docente inválido" ngbTooltip="Docente inválido"></i>
                     </div>
-                    <datalist id="titleList">
-                    <option *ngFor="let itemTitle of titles" [ngValue]="itemTitle">{{itemTitle}}</option>
+                    <datalist id="teacherList">
+                        <option *ngFor="let item of teachers" [value]="item.id">{{item.name}}</option>
                     </datalist>
                 </div>
+
+                <div class="d-flex justify-content-center pt-3">
+                    <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo" 
+                    [disabled]="!formSearchSubject.form.valid">Filtrar</button>
+                </div>
+
+            </form>
             </div>
+        </section>
 
-            <div class="border-top py-2 my-2 ml-3">
-                <label for="searchTurn" class="titulo-seccion">Turno</label>
+        <div class="col-md-1 mx-3 p-0 d-none d-md-block" style="width: 1px;">
+            <div class="vr min-vh-75 h-100"></div>
+        </div>
 
-                <div id="searchTurn">
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="turn" value="M" [(ngModel)]="turn" id="option-morning">
-                        <label class="form-check-label lbl-filtrar" for="option-morning">Mañana</label>
-                    </div>
+        <hr class="d-block d-md-none my-5">
 
-                    <div class="form-check">
-                        <input class="form-check-input int-filtrar" type="radio" name="turn" value="T" [(ngModel)]="turn" id="option-evening">
-                        <label class="form-check-label lbl-filtrar" for="option-evening">Tarde</label>
-                    </div>
+        <section class="col-12 col-md-7 col-xl-8">
+            <div class="row">
 
+            <div class="col-12 d-flex justify-content-between">
+                <span *ngIf="!subjectsTeachersStatus" class="my-auto">Mostrando 0 resultados</span>
+                <span *ngIf="subjectsTeachersStatus" class="my-auto">Mostrando {{subjectsTeachersStatus.length}} resultados</span>
+                <div>
+                    <span class="my-auto me-2"><small>Ordenar por</small></span>
+                    <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="searchSubjects()">
+                        <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
+                    </select>
+                    <button id="createPOD" (click)="exportCSV()" class="ms-2 btn boton my-auto" placement="bottom" ngbTooltip="Descargar pod actual"><i class="fa fa-file-csv fa-lg"></i></button>
                 </div>
             </div>
 
-            <div class="border-top py-2 my-2 ml-3">
-                <label for="inputTeacher" class="form-label titulo-seccion">Docente</label>
-                <div class="custom-wrapper">
-                    <input type="text" class="form-control" list="teacherList" id="inputTeacher" placeholder="Docente" pattern="[0-9]{1,3}" #idTeacher="ngModel"
-                    name="idTeacher" [(ngModel)]="idTeacherChosen" [ngClass]="!idTeacher.valid && idTeacher.touched ? 'border-error' : ''">
-                    <i class="fa-solid fa-xmark icon-login-error" *ngIf="!idTeacher.valid && idTeacher.touched" alt="Docente inválido" ngbTooltip="Docente inválido"></i>
-                </div>
-                <datalist id="teacherList">
-                    <option *ngFor="let item of teachers" [value]="item.id">{{item.name}}</option>
-                </datalist>
-            </div>
+            <div class="col-12 contenido-asignaturas-docentes">
+                <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
 
-            <div class="d-flex justify-content-center pt-3">
-                <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo" 
-                [disabled]="!formSearchSubject.form.valid">Filtrar</button>
-            </div>
-
-        </form>
-        </div>
-    </section>
-
-    <section class="col-12 col-md-8 col-xl-9">
-        <div class="row">
-
-        <div class="col-12 d-flex justify-content-between">
-            <span *ngIf="!subjects">Mostrando 0 resultados</span>
-            <span *ngIf="subjects">Mostrando {{subjects.length}} resultados</span>
-            <div>
-            <button id="createPOD" (click)="exportCSV()" title="Generar CSV" class="col btn boton"><i class="fa fa-file-csv fa-lg"></i></button>
-            <span><small>Ordenar por </small></span>
-            <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="searchSubjects()">
-                <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
-            </select>
-            </div>
-        </div>
-
-        <div class="col-12 contenido-asignaturas-docentes">
-            <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
-
-                <div class="col" *ngFor="let subject of subjects">
-                    <div [ngClass]="{'card-asignatura-colision': 0 > subject[1], 'card-asignatura-libre' : subject[1] > 0, 'card-asignatura-completa' : 0 == subject[1]}" class="card h-100 w-100 shadow">
-                        <div class="card-body contenido-cards">
-                        <ul class="list-group list-group-flush carta-asignatura">
-                            <li class="list-group-item detalles1">
-                            <div>
-                                <h4 class="card-title"><b>{{subject[0].name}} ({{subject[0].code}})</b></h4>
-                                <h6 class="card-subtitle mb-2 text-muted">{{subject[0].title}}
-                                <small *ngIf="0 > subject[1]" class="truncar estado-asignatura colision">Colisión docente</small>
-                                <small *ngIf="subject[1] > 0" class="truncar estado-asignatura libre">Libre</small> 
-                                <small *ngIf="0 == subject[1]" class="truncar estado-asignatura completa">Completa</small>
-                                </h6>
-                                <small><i class="fa fa-clock fa-sm"></i>{{subject[0].totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subject[0].campus}}</small>
-                                <p class="card-text" *ngIf="subject[0].turn == 'T'"><small class="text-muted">Curso {{subject[0].year}} | {{subject[0].quarter}} | {{subject[0].type}} | Turno Tarde</small></p>
-                                <p class="card-text" *ngIf="subject[0].turn == 'M'"><small class="text-muted">Curso {{subject[0].year}} | {{subject[0].quarter}} | {{subject[0].type}} | Turno Mañana</small></p>
-                                <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{subject[0].career}}</span></p>
-                                <p class="titulo-grupo" *ngIf="subject[0].assitanceCareers && subject[0].assitanceCareers.length != 0">
-                                    <small><b>GRUPOS ASISTENCIA</b></small>
-                                    <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subject[0].assitanceCareers">{{career}}</span>
-                                </p>
+                    <div class="col" *ngFor="let subjectTeacher of subjectsTeachersStatus">
+                        <div [ngClass]="{'card-asignatura-colision': 0 > subjectTeacher.leftHours, 'card-asignatura-libre' : subjectTeacher.leftHours > 0, 'card-asignatura-completa' : 0 == subjectTeacher.leftHours}" class="card h-100 w-100 shadow">
+                            <div class="card-body contenido-cards">
+                            <ul class="list-group list-group-flush carta-asignatura">
+                                <li class="list-group-item detalles1">
+                                <div>
+                                    <h4 class="card-title"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h4>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{subjectTeacher.subject.title}}
+                                    <small *ngIf="0 > subjectTeacher.leftHours" class="truncar estado-asignatura colision">Colisión docente</small>
+                                    <small *ngIf="subjectTeacher.leftHours > 0" class="truncar estado-asignatura libre">Libre</small> 
+                                    <small *ngIf="0 == subjectTeacher.leftHours" class="truncar estado-asignatura completa">Completa</small>
+                                    </h6>
+                                    <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacher.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacher.subject.campus}}</small>
+                                    <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
+                                    <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
+                                    <p class="titulo-grupo" *ngIf="subjectTeacher.subject.career"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{subjectTeacher.subject.career}}</span></p>
+                                    <p class="titulo-grupo" *ngIf="subjectTeacher.subject.assistanceCareers && subjectTeacher.subject.assistanceCareers.length != 0">
+                                        <small><b>GRUPOS ASISTENCIA</b></small>
+                                        <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
+                                    </p>
+                                </div>
+                                </li>
+                                <li class="list-group-item detalles2" *ngIf="subjectTeacher.joinedTeachers">
+                                    <p class="card-text">
+                                    <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                    </p>
+                                </li>
+                                <li class="list-group-item detalles3" *ngIf="subjectTeacher.subject.schedules && subjectTeacher.subject.schedules.length != 0">
+                                    <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                                    <small class="text-muted" *ngFor="let schedule of subjectTeacher.subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
+                                    </p>
+                                </li>
+                            </ul>
                             </div>
-                            </li>
-                            <li class="list-group-item detalles2" *ngIf="subject[2]">
-                                <p class="card-text">
-                                  <span *ngFor="let teacher of subject[2]"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
-                                </p>
-                              </li>
-                            <li class="list-group-item detalles3" *ngIf="subject[0].schedules && subject[0].schedules.length != 0">
-                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                                  <small class="text-muted" *ngFor="let schedule of subject[0].schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
-                                </p>
-                            </li>
-                        </ul>
+                            <div class="card-footer text-muted">
+                                <div class="row justify-content-end">
+                                <button type="button" (click)="openRecord(record, subjectTeacher)" class="btn boton-asignatura-libre" placement="bottom" ngbTooltip="Ver"><i class="fa fa-eye fa-lg"></i></button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-footer p-0 text-muted">
-                            <div class="row justify-content-end">
-                              <button type="button" (click)="openRecord(record, subject)" title="Ver" class="col-2 m-2 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                            </div>
-                            </div>
                     </div>
                 </div>
-            </div>
-            <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                <div class="col-2 mt-5">
-                  <app-loader></app-loader>
+                <div class="row justify-content-center mt-5" *ngIf="showLoader">
+                    <div class="col-2 mt-5">
+                    <app-loader></app-loader>
+                    </div>
+                </div>
+                <div class="text-center no-data center-vertically" *ngIf="subjectsTeachersStatus && subjectsTeachersStatus.length == 0 && !showLoader">
+                    <p><i class="fa-solid fa-2xl fa-magnifying-glass"></i></p>
+                    <p>No hay resultados</p>
                 </div>
             </div>
-            <div class="text-center no-data" *ngIf="subjects && subjects.length == 0 && !showLoader">
-                <p><i class="fa-solid fa-2xl fa-magnifying-glass"></i></p>
-                <p>No hay resultados</p>
             </div>
-        </div>
-        </div>
-    </section>
+        </section>
     
     </div>
 </main>
@@ -186,17 +201,25 @@
       <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
     </div>
     <div class="offcanvas-body">
-      <p><b>{{subjectToShow[0].name}}</b></p>
+      <p><b>{{subjectToShow.subject.name}}</b></p>
       <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
         <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
-          <p>
-            <span class="fa-stack fa-2x">
-              <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
-              <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
-            </span>
-            <span class="course-history color-libre">{{item.key}}</span><br>
-            <span *ngFor="let teacherName of getValues(item.value)"><span class="teacher-history truncar">{{teacherName}}</span><br></span>
-          </p>
+            <div class="col-12 d-flex justify-content-start">
+                <div class="row">
+                    <div class="col-4">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x color-libre-claro"></i>
+                        <i class="fa fa-2xs fa-graduation-cap fa-stack-1x color-libre"></i>
+                        </span>
+                    </div>
+                    <div class="col-8">
+                        <span class="course-history color-libre">{{item.key}}</span><br>
+                        <div *ngFor="let teacherName of getValues(item.value)">
+                            <span class="teacher-history truncar">{{teacherName}}</span><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </li>
       </ul>
       <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>

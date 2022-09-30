@@ -1,6 +1,10 @@
 package com.urjc.backend.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.urjc.backend.dto.SubjectDTO;
+import com.urjc.backend.dto.SubjectTeacherDTO;
+import com.urjc.backend.mapper.ISubjectMapper;
 import com.urjc.backend.model.*;
 import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
@@ -18,7 +22,10 @@ import java.util.*;
 @RequestMapping("/api/subjects")
 public class SubjectRestController {
 
-    interface SubjectBase extends Subject.Base, Schedule.Base {
+    interface SubjectTeacherDTOStatus extends SubjectTeacherDTO.Base, SubjectTeacherDTO.Status {
+    }
+
+    interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
 
     @Autowired
@@ -27,17 +34,20 @@ public class SubjectRestController {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    ISubjectMapper subjectMapper;
+
 
     @GetMapping(value = "/titles")
     public ResponseEntity<List<String>> getTitles(){
         return new ResponseEntity<>(subjectService.getTitles(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/currentTitles")
+    @GetMapping(value = "/currentTitles")
     public ResponseEntity<List<String>> getTitlesCurrentCourse() {
 
         Optional<Course> course = courseService.findLastCourse();
-        if(course.isPresent()) {
+        if(course.isPresent()){
              return new ResponseEntity<>(subjectService.getTitlesByCourse(course.get().getId()), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -53,32 +63,34 @@ public class SubjectRestController {
         return new ResponseEntity<>(subjectService.getTypes(), HttpStatus.OK);
     }
 
-    @JsonView(SubjectBase.class)
+    @JsonView(SubjectTeacherDTOBase.class)
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object[]> getByIdInCurrentCourse(@PathVariable Long id){
+    public ResponseEntity<SubjectTeacherDTO> getByIdInCurrentCourse(@PathVariable Long id){
         Optional<Subject> subjectOptional = subjectService.findById(id);
         if(subjectOptional.isPresent()){
             Optional<Course> course = courseService.findLastCourse();
             if (course.isPresent() && course.get().isSubjectInCourse(subjectOptional.get())) {
                 List<String> teachers = subjectOptional.get().recordSubject().get(course.get().getName());
-                Object[] obj = new Object[] { subjectOptional.get(), teachers};
-                return new ResponseEntity<>(obj, HttpStatus.OK);
+
+                SubjectTeacherDTO subjectTeacherDTO = subjectMapper.toSubjectTeacherDTO(subjectOptional.get(), teachers, 0, null);
+
+                return new ResponseEntity<>(subjectTeacherDTO, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(SubjectBase.class)
     @GetMapping(value = "")
-    public ResponseEntity<List<Subject>> findAllInCurrentCourse(){
+    public ResponseEntity<List<SubjectDTO>> findAllInCurrentCourse(){
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()){
-            return new ResponseEntity<>(subjectService.findByCourse(course.get().getId()), HttpStatus.OK);
+            List<Subject> subjects = subjectService.findByCourse(course.get().getId());
+            List<SubjectDTO> subjectDTOS = subjectMapper.listSubjectDTO(subjects);
+            return new ResponseEntity<>(subjectDTOS, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(SubjectBase.class)
     @GetMapping(value = "{id}/record")
     public ResponseEntity<Map<String, List<String>>> recordSubject(@PathVariable Long id){
         Optional<Subject> subjectOptional = subjectService.findById(id);
@@ -89,9 +101,9 @@ public class SubjectRestController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(SubjectBase.class)
+    @JsonView(SubjectTeacherDTOStatus.class)
     @GetMapping("/search")
-    public ResponseEntity<List<Object[]>> search(@RequestParam(value="occupation", required = false, defaultValue = "") String occupation,
+    public ResponseEntity<List<SubjectTeacherDTO>> search(@RequestParam(value="occupation", required = false, defaultValue = "") String occupation,
                                     @RequestParam(value="quarter", required = false, defaultValue = "") String quarter,
                                     @RequestParam(value="turn", required = false, defaultValue = "") String turn,
                                     @RequestParam(value="title", required = false, defaultValue = "") String title,
@@ -103,8 +115,9 @@ public class SubjectRestController {
             Sort sort = Sort.by(typeSort).ascending();
             List<Object[]> list = subjectService.searchByCourse(course.get(), occupation, quarter, turn, title, teacher, sort);
 
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            List<SubjectTeacherDTO> subjectTeacherDTOS = subjectMapper.listSubjectTeacherDTOs(list);
+            return new ResponseEntity<>(subjectTeacherDTOS, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

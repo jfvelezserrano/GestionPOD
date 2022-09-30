@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { SubjectTeacherBase } from 'src/app/models/subject-teacher-base.model';
+import { SubjectTeacherConflicts } from 'src/app/models/subject-teacher-conflicts.model';
+import { Subject } from 'src/app/models/subject.model';
 import { SubjectService } from 'src/app/services/subject.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 
@@ -12,15 +15,18 @@ import { TeacherService } from 'src/app/services/teacher.service';
 })
 export class MySubjectsComponent implements OnInit {
 
-  public subjects:any|undefined;
-  public mySubjects:any|undefined;
-  public idChosenSubject:number|any;
-  public subject:any;
-  public subjectToDelete:any;
-  public subjectToEdit:any;
-  public typeSort:any;
-  public records:any;
-  public showLoader:boolean;
+  public subjects: Subject[];
+  public mySubjects: SubjectTeacherConflicts[];
+  public idChosenSubject: number;
+  public subjectTeacher: SubjectTeacherBase;
+  public subjectToShowAlert: SubjectTeacherConflicts;
+  public subjectToDelete: SubjectTeacherConflicts;
+  public subjectToEdit: SubjectTeacherConflicts;
+  public isCourse: boolean;
+  public showLoaderCourse: boolean;
+  public typeSort: string;
+  public records: Map<String, String[]>;
+  public showLoader: boolean;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -36,6 +42,8 @@ export class MySubjectsComponent implements OnInit {
       this.typeSort = "name";
       this.showLoader = false;
       this.records = new Map<String, String[]>(null);
+      this.showLoaderCourse = true;
+      this.isCourse = true;
   }
 
   ngOnInit(): void {
@@ -44,8 +52,9 @@ export class MySubjectsComponent implements OnInit {
   }
 
   getSubjectsInCurrentCourse(){
-    this.subjectService.getAllCurrentCourse().subscribe({
+    this.subjectService.getAllInCurrentCourse().subscribe({
       next: (data) => {
+        this.showLoaderCourse = false;
         this.subjects = data;
       }
     });
@@ -57,7 +66,7 @@ export class MySubjectsComponent implements OnInit {
   }
 
   onSubmitEdit(form:NgForm){
-    this.idChosenSubject = this.subjectToEdit[0].id;
+    this.idChosenSubject = this.subjectToEdit.subject.id;
     this.joinSubject(form);
     form.reset();
   }
@@ -66,7 +75,8 @@ export class MySubjectsComponent implements OnInit {
     this.teacherService.joinSubject(this.idChosenSubject, form.value).subscribe({
       next: (data) => {
         this.getMySubjects();
-        this.subject=null;
+        //this.subject=null;
+        form.reset;
       },
       error: (error) => {
         console.error(error);
@@ -88,7 +98,7 @@ export class MySubjectsComponent implements OnInit {
   getSubjectById(){
     this.subjectService.getById(this.idChosenSubject).subscribe({
       next: (data) => {
-        this.subject = data;
+        this.subjectTeacher = data;
       },
       error: (error) => {
         console.error(error);
@@ -101,16 +111,21 @@ export class MySubjectsComponent implements OnInit {
     this.teacherService.getSubjects(this.typeSort).subscribe({
       next: (data) => {
         this.showLoader = false;
+        this.showLoaderCourse = false;
         this.mySubjects = data;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCourse = false;
+        if(error === '404'){
+          this.showLoader = false;
+          this.isCourse = false;
+        }
       }
     });
   }
 
   getRecordSubject(){
-    this.subjectService.getRecordSubject(this.subject[0].id).subscribe({
+    this.subjectService.getRecordSubject(this.subjectTeacher.subject.id).subscribe({
       next: (data) => {
         this.records = data;
       }
@@ -125,25 +140,25 @@ export class MySubjectsComponent implements OnInit {
     return 1;
   }
 
-  openDelete(model:any, subjectToDelete:any) {
+  openDelete(model:any, subjectToDelete: SubjectTeacherConflicts) {
     this.modalService.open(model, {});
     this.subjectToDelete = subjectToDelete;
   }
 
-  openEdit(model:any, subject:any) {
+  openEdit(model:any, subject: SubjectTeacherConflicts) {
     this.modalService.open(model, {});
     this.subjectToEdit = subject;
   }
 
-  openRecord(model:any, subject:any) {
+  openRecord(model:any, subject: SubjectTeacherConflicts) {
     this.offcanvasService.open(model, { position: 'end' });
-    this.subject = subject;
+    this.subjectTeacher = subject;
     this.getRecordSubject();
   }
 
-  openAlert(model:any, subject:any) {
+  openAlert(model:any, subject: SubjectTeacherConflicts) {
     this.modalService.open(model, {});
-    this.subject = subject;
+    this.subjectToShowAlert = subject;
   }
 
   openJoinSubject(model:any) {

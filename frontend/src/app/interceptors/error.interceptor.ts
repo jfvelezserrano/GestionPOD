@@ -5,13 +5,13 @@ import { catchError, retry } from 'rxjs/operators';
 import { NavigationExtras, Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
 import { LocalStorageService } from '../services/localstorage.service';
-import { Teacher } from '../models/teacher';
+import { TeacherRoles } from '../models/teacher-roles.model';
 
 @Injectable()
 
-export class ErrorIntercept implements HttpInterceptor {
-  public status:any | undefined;
-  public errorMessage:any | undefined;
+export class ErrorInterceptor implements HttpInterceptor {
+  public status: number ;
+  public errorMessage: string;
 
   constructor(
     private router:Router,
@@ -19,35 +19,57 @@ export class ErrorIntercept implements HttpInterceptor {
     private localStorageService: LocalStorageService
   ) { }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
       return next.handle(request).pipe(
               retry(1),
               catchError((error: HttpErrorResponse) => {
 
                 if (error.status === 403) {
-                  let teacher:Teacher|any = this.loginService.getTeacherLogged();
 
-                  teacher.roles.forEach((value:any,index: any)=>{
-                    if(value=="ADMIN") teacher.roles.splice(index,1);
+                  this.loginService.getTeacherLoggedDDBB().subscribe({
+                    next: (data) => {
+                      let teacherLocalStorage: any = this.loginService.getTeacherLogged();
+
+                      let isAdmin:boolean = false;
+
+                      teacherLocalStorage.roles.forEach((value:any)=>{
+                        if(value=="ADMIN") isAdmin = true;
+                      });
+
+                      data.roles.forEach((value:any)=>{
+                        if((value=="ADMIN" && !isAdmin) || (value!="ADMIN" && isAdmin)){
+                          this.loginService.logout().subscribe(
+                            response => {
+                              this.router.navigate(['']);
+                            }
+                          );
+                        }
+                      });
+                    },
+                    error: (error) => {
+                      console.error(error);
+                    }
                   });
-
-                  this.localStorageService.setInLocalStorage("teacher", teacher);
                 }
 
                 if (error.error instanceof ErrorEvent) {
-                    this.errorMessage = error.error;
+                    this.errorMessage = error.message;
                 } else {
-                    this.errorMessage = error.error;
+                    this.errorMessage = error.message;
                     this.status = error.status;
                 }
 
-                const navigationExtras: NavigationExtras = {
-                  state: {status: this.status, message: this.errorMessage}
-                };
+                if((error.status != 400) && (error.status != 401) && (error.status != 403) && (error.status != 404)){
 
-                this.router.navigate(['error'], navigationExtras);
+                  const navigationExtras: NavigationExtras = {
+                    state: {status: this.status, message: this.errorMessage}
+                  };
+                
+                  this.router.navigate(['error'], navigationExtras);
+                  
+                }
 
-                return throwError(() => new Error(error.error));
+                return throwError(() => new Error(this.status.toString()));
               })
     )
   }

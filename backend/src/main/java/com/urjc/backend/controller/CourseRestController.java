@@ -1,6 +1,10 @@
 package com.urjc.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.urjc.backend.dto.*;
+import com.urjc.backend.mapper.ICourseMapper;
+import com.urjc.backend.mapper.ISubjectMapper;
+import com.urjc.backend.mapper.ITeacherMapper;
 import com.urjc.backend.model.*;
 import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
@@ -18,27 +22,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/pods")
 public class CourseRestController {
 
-    interface CourseBase extends Course.Base {
+    interface TeacherBase extends TeacherDTO.Base {
     }
 
-    interface TeacherBase extends Teacher.Base {
+    interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
 
-    interface SubjectBase extends Subject.Base, Schedule.Base {
-    }
+    private final String mainAdmin = "a.merinom.2017@alumnos.urjc.es";
 
     @Autowired
     private CourseService courseService;
@@ -49,9 +46,18 @@ public class CourseRestController {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    ITeacherMapper teacherMapper;
 
-    @PostMapping(value = "/pods", consumes = { "multipart/form-data"})
-    public ResponseEntity<?> createPOD(@RequestPart("course") String course,
+    @Autowired
+    ICourseMapper courseMapper;
+
+    @Autowired
+    ISubjectMapper subjectMapper;
+
+
+    @PostMapping(value = "", consumes = { "multipart/form-data"})
+    public ResponseEntity<Void> createPOD(@RequestPart("course") String course,
                                                      @RequestPart("fileSubjects") MultipartFile fileSubjects,
                                                      @RequestPart("fileTeachers") MultipartFile fileTeachers) {
 
@@ -59,10 +65,14 @@ public class CourseRestController {
             Course newCourse = new Course(course);
             courseService.save(newCourse);
 
+            teacherService.deleteAdmins();
+
             if (!subjectService.saveAll(fileSubjects, newCourse)) {
+                deleteCourse(newCourse.getId());
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             if (!teacherService.saveAll(fileTeachers, newCourse)) {
+                deleteCourse(newCourse.getId());
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -74,43 +84,47 @@ public class CourseRestController {
 
     }
 
-    @JsonView(CourseBase.class)
-    @GetMapping(value = "/pods")
-    public List<Course> getCourses(){
-        return courseService.findAllOrderByCreationDate();
+    @GetMapping(value = "")
+    public ResponseEntity<List<CourseDTO>> getCourses(){
+
+        List<Course> courses = courseService.findAllOrderByCreationDate();
+        return new ResponseEntity<>(courseMapper.map(courses), HttpStatus.OK);
     }
 
-    @JsonView(SubjectBase.class)
-    @GetMapping("/pods/{id}/subjects")
-    public ResponseEntity<?> getSubjectsByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    @JsonView(SubjectTeacherDTOBase.class)
+    @GetMapping("/{id}/subjects")
+    public ResponseEntity<List<SubjectTeacherDTO>> getSubjectsByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @PathVariable Long id, @RequestParam(defaultValue = "name") String typeSort) {
 
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
             Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
             List<Object[]> list = subjectService.findByCoursePage(course.get(), pageable);
+            List<SubjectTeacherDTO> subjectTeacherDTOList = subjectMapper.listSubjectTeacherDTOs(list);
 
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            return new ResponseEntity<>(subjectTeacherDTOList, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @JsonView(TeacherBase.class)
-    @GetMapping("/pods/{id}/teachers")
-    public ResponseEntity<List<Teacher>> getTeachersByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
+    @GetMapping("/{id}/teachers")
+    public ResponseEntity<List<TeacherDTO>> getTeachersByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @PathVariable Long id, @RequestParam(defaultValue = "name") String typeSort) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
             Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
             List<Teacher> list = teacherService.findAllByCourse(id, pageable);
 
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            List<TeacherDTO> listDTO = teacherMapper.map(list);
+
+            return new ResponseEntity<>(listDTO, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/pods/{idPod}/teachers/{idTeacher}")
-    public ResponseEntity<?> deleteTeacherInCourse(@PathVariable Long idPod, @PathVariable Long idTeacher) {
+    @DeleteMapping("/{idPod}/teachers/{idTeacher}")
+    public ResponseEntity<Void> deleteTeacherInCourse(@PathVariable Long idPod, @PathVariable Long idTeacher) {
 
         Optional<Course> course = courseService.findById(idPod);
 
@@ -121,18 +135,23 @@ public class CourseRestController {
             if(teacher.isPresent()){
                 course.get().deleteTeacher(teacher.get());
                 if(courseService.save(course.get()) != null){
+                    if(!teacher.get().getEmail().equals(mainAdmin) &&
+                            courseService.findLastCourse().get() == course.get() && teacher.get().getRoles().contains("ADMIN")){
+                        teacher.get().getRoles().remove("ADMIN");
+                        teacherService.save(teacher.get());
+                    }
                     if(teacher.get().getCourseTeachers().isEmpty() && !teacher.get().getRoles().contains("ADMIN")){
                         teacherService.delete(teacher.get());
                     }
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/pods/{idPod}/subjects/{idSubject}")
-    public ResponseEntity<?> deleteSubjectInCourse(@PathVariable Long idPod, @PathVariable Long idSubject) {
+    @DeleteMapping("/{idPod}/subjects/{idSubject}")
+    public ResponseEntity<Void> deleteSubjectInCourse(@PathVariable Long idPod, @PathVariable Long idSubject) {
 
         Optional<Course> course = courseService.findById(idPod);
 
@@ -146,7 +165,7 @@ public class CourseRestController {
                     if(subject.get().getCourseSubjects().isEmpty()){
                         subjectService.delete(subject.get());
                     }
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -154,8 +173,8 @@ public class CourseRestController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/pods/{id}")
-    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()){
             subjectService.deleteSubjectsNotInAnyCourse(course.get());
@@ -168,8 +187,8 @@ public class CourseRestController {
         }
     }
 
-    @PostMapping("/pods/{id}/teachers")
-    public ResponseEntity<?> addNewTeacherToCourse(@RequestBody TeacherRequest teacherRequest, @PathVariable Long id) {
+    @PostMapping("/{id}/teachers")
+    public ResponseEntity<Void> addNewTeacherToCourse(@RequestBody TeacherRequestDTO teacherRequest, @PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
             Teacher newTeacher = new Teacher(teacherRequest.getName(), teacherRequest.getEmail());
@@ -198,10 +217,11 @@ public class CourseRestController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/pods/{id}/subjects")
-    public ResponseEntity<Course> addNewSubjectToCourse(@RequestBody Subject subject, @PathVariable Long id) {
+    @PostMapping("/{id}/subjects")
+    public ResponseEntity<Void> addNewSubjectToCourse(@RequestBody SubjectDTO subjectDTO, @PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
+            Subject subject = subjectMapper.toSubject(subjectDTO);
 
             Subject alreadyExists = subjectService.findSubjectIfExists(subject);
 
@@ -228,7 +248,7 @@ public class CourseRestController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(value = "/pods/exportCSV")
+    @GetMapping(value = "/exportCSV")
     public ResponseEntity<Resource> exportCSV() {
 
         Optional<Course> course = courseService.findLastCourse();

@@ -1,6 +1,10 @@
 package com.urjc.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.urjc.backend.dto.*;
+import com.urjc.backend.mapper.ICourseMapper;
+import com.urjc.backend.mapper.ISubjectMapper;
+import com.urjc.backend.mapper.ITeacherMapper;
 import com.urjc.backend.model.*;
 import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
@@ -21,16 +25,8 @@ import java.util.Optional;
 @RequestMapping("/api/teachers")
 public class TeacherRestController {
 
-    interface TeacherBaseWithRoles extends Teacher.Base, Teacher.Roles {
-    }
-
-    interface TeacherDataToEdit extends Teacher.Base, Teacher.DataToEdit, CourseTeacher.DataToEdit {
-    }
-
-    interface SubjectBase extends Subject.Base, Schedule.Base {
-    }
-
-    interface CourseBase extends Course.Base{
+    interface SubjectTeacherDTOStatusAndConflicts extends SubjectTeacherDTO.Base, SubjectTeacherDTO.Status,
+            SubjectTeacherDTO.Conflicts {
     }
 
     @Autowired
@@ -42,10 +38,17 @@ public class TeacherRestController {
     @Autowired
     private SubjectService subjectService;
 
+    @Autowired
+    ITeacherMapper teacherMapper;
 
-    @JsonView(TeacherBaseWithRoles.class)
-    @PutMapping("/admin")
-    public ResponseEntity<?> updateRole(@RequestBody Teacher teacher) {
+    @Autowired
+    ISubjectMapper subjectMapper;
+
+    @Autowired
+    ICourseMapper courseMapper;
+
+    @PutMapping("/role")
+    public ResponseEntity<TeacherDTO> updateRole(@RequestBody Teacher teacher) {
 
         Teacher teacherIfExists = teacherService.getTeacherIfExists(teacher);
         if(teacherIfExists != null) {
@@ -53,29 +56,33 @@ public class TeacherRestController {
             if (teacherDDBB != null || (teacherIfExists.getRoles().contains("ADMIN") && teacherIfExists.getRoles() != teacher.getRoles())) {
                 teacherIfExists.setRoles(teacher.getRoles());
                 teacherService.save(teacherIfExists);
-                return new ResponseEntity<>(teacherIfExists, HttpStatus.OK);
+
+                TeacherDTO teacherDTO = teacherMapper.toTeacherDTO(teacherIfExists);
+                return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(TeacherBaseWithRoles.class)
     @GetMapping(value = "")
-    public ResponseEntity<List<Teacher>> findAllByRole(@RequestParam(value = "role", required = false) String role){
+    public ResponseEntity<List<TeacherDTO>> findAllByRole(@RequestParam(value = "role", required = false) String role){
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()) {
             if (role == null) {
-                return new ResponseEntity<>(teacherService.findAllByCourse(course.get().getId(), Pageable.unpaged()), HttpStatus.OK);
+                List<Teacher> teachers = teacherService.findAllByCourse(course.get().getId(), Pageable.unpaged());
+
+                return new ResponseEntity<>(teacherMapper.map(teachers), HttpStatus.OK);
             } else {
                 List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
-                return new ResponseEntity<>(teachersWithRole, HttpStatus.OK);
+
+                return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
             }
         }
         else{ return new ResponseEntity<>(HttpStatus.NOT_FOUND); }
     }
 
     @PostMapping("/join/{idSubject}")
-    public ResponseEntity<?> joinSubject(@RequestBody TeacherRequest teacherRequest, @PathVariable Long idSubject) {
+    public ResponseEntity<Void> joinSubject(@RequestBody TeacherRequestDTO teacherRequest, @PathVariable Long idSubject) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -94,14 +101,14 @@ public class TeacherRestController {
                     teacher.addChosenSubject(subject.get(), course.get(), teacherRequest.getHours());
                 }
                 teacherService.save(teacher);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/unjoin/{idSubject}")
-    public ResponseEntity<?> unjoinSubject(@PathVariable Long idSubject) {
+    public ResponseEntity<Void> unjoinSubject(@PathVariable Long idSubject) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -118,59 +125,61 @@ public class TeacherRestController {
                     teacher.deleteChosenSubject(pod);
                 }
                 teacherService.save(teacher);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(SubjectBase.class)
+    @JsonView(SubjectTeacherDTOStatusAndConflicts.class)
     @GetMapping(value = "/mySubjects")
-    public ResponseEntity<?> findAllMySubjects(@RequestParam(defaultValue = "name") String typeSort){
+    public ResponseEntity<List<SubjectTeacherDTO>> findAllMySubjects(@RequestParam(defaultValue = "name") String typeSort){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Sort sort = Sort.by(typeSort).ascending();
             List<Object[]> mySubjects = subjectService.findByTeacherAndCourse(teacher.getId(), course.get(), sort);
-            return new ResponseEntity<>(mySubjects, HttpStatus.OK);
+
+            List<SubjectTeacherDTO> subjectTeacherDTOs = subjectMapper.listSubjectTeacherDTOs(mySubjects);
+            return new ResponseEntity<>(subjectTeacherDTOs, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(CourseBase.class)
     @GetMapping(value = "/myCourses")
-    public ResponseEntity<List<Course>> findAllMyCourses(){
+    public ResponseEntity<List<CourseDTO>> findAllMyCourses(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             List<Course> myCourses = courseService.findByTeacherOrderByCreationDate(teacher.getId());
-            return new ResponseEntity<>(myCourses, HttpStatus.OK);
+            return new ResponseEntity<>(courseMapper.map(myCourses), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @JsonView(TeacherDataToEdit.class)
     @GetMapping(value = "/myEditableData")
-    public ResponseEntity<Object[]> getEditableData(){
+    public ResponseEntity<CourseTeacherDTO> getEditableData(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Object[] myEditableData = teacherService.getEditableData(authentication.getName(), course.get());
-            return new ResponseEntity<>(myEditableData, HttpStatus.OK);
+
+            CourseTeacherDTO courseTeacherDTO = teacherMapper.toTeacherEditableDataDTO(((Integer) myEditableData[0]), ((String) myEditableData[1]));
+            return new ResponseEntity<>(courseTeacherDTO, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping(value = "/myEditableData")
-    public ResponseEntity<Teacher> editData(@RequestBody EditableDataRequest editableDataRequest){
+    public ResponseEntity<Void> editData(@RequestBody CourseTeacherDTO courseTeacherDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
-            teacher.editEditableData(course.get(), editableDataRequest.getCorrectedHours(), editableDataRequest.getObservation());
+            teacher.editEditableData(course.get(), courseTeacherDTO.getCorrectedHours(), courseTeacherDTO.getObservation());
             teacherService.save(teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

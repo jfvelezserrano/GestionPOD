@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, JsonpClientBackend } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { SubjectModel } from '../models/subject';
+import { Subject } from '../models/subject.model';
+import { catchError } from 'rxjs/operators';
+import { SubjectTeacherBase } from '../models/subject-teacher-base.model';
+import { SubjectTeacherStatus } from '../models/subject-teacher-status.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,43 +23,60 @@ export class SubjectService {
     private http: HttpClient
   ) { }
   
-  getSubjectsByPOD(id:number, page:number, typeSort:string){
-    return this.http.get(environment.urlApi + "/pods/" + id + "/subjects?page=" + page + "&typeSort=" + typeSort, this.httpOptionsCookiesCSRF);
+  getSubjectsByPOD(id:number, page:number, typeSort:string):Observable<SubjectTeacherBase[]>{
+    return this.http.get<SubjectTeacherBase[]>(environment.urlApi + "/pods/" + id + "/subjects?page=" + page + "&typeSort=" + typeSort, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<SubjectTeacherBase[]>;
   }
 
-  getTitles(){
-    return this.http.get(environment.urlApi + "/subjects/titles", this.httpOptionsCookiesCSRF);
+  getTitles(): Observable<string[]>{
+    return this.http.get<string[]>(environment.urlApi + "/subjects/titles", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<string[]>;
   }
 
-  getTitlesCurrentCourse(){
-    return this.http.get(environment.urlApi + "/subjects/currentTitles", this.httpOptionsCookiesCSRF);
+  getTitlesCurrentCourse(): Observable<string[]>{
+    return this.http.get<string[]>(environment.urlApi + "/subjects/currentTitles", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<string[]>;
   }
 
-  getCampus(){
-    return this.http.get(environment.urlApi + "/subjects/campus", this.httpOptionsCookiesCSRF);
+  getCampus(): Observable<string[]>{
+    return this.http.get<string[]>(environment.urlApi + "/subjects/campus", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<string[]>;
   }
 
-  getTypes(){
-    return this.http.get(environment.urlApi + "/subjects/types" , this.httpOptionsCookiesCSRF);
+  getTypes(): Observable<string[]>{
+    return this.http.get<string[]>(environment.urlApi + "/subjects/types" , this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<string[]>;
   }
 
-  getAllCurrentCourse(){
-    return this.http.get(environment.urlApi + "/subjects" , this.httpOptionsCookiesCSRF);
+  getAllInCurrentCourse(): Observable<Subject[]>{
+    return this.http.get<Subject[]>(environment.urlApi + "/subjects" , this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<Subject[]>;
   }
 
-  createSubject(subject:SubjectModel, idPod:number){
-    return this.http.post(environment.urlApi + "/pods/" + idPod + "/subjects", subject, this.httpOptionsCookiesCSRF);
+  createSubject(subject:Subject, idPod:number){
+    return this.http.post(environment.urlApi + "/pods/" + idPod + "/subjects", subject, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error)));
   }
 
-  getById(id:number){
-    return this.http.get(environment.urlApi + "/subjects/" + id, this.httpOptionsCookiesCSRF);
+  getById(id:number): Observable<SubjectTeacherBase>{
+    return this.http.get<SubjectTeacherBase>(environment.urlApi + "/subjects/" + id, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<SubjectTeacherBase>;
   }
 
-  getRecordSubject(id:number){
-    return this.http.get(environment.urlApi + "/subjects/" + id + "/record", this.httpOptionsCookiesCSRF);
+  getRecordSubject(id:number): Observable<Map<String, String[]>>{
+    return this.http.get<Map<String, String[]>>(environment.urlApi + "/subjects/" + id + "/record", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<Map<String, String[]>>;
   }
 
-  search(typeSort:string, occupation?:string, quarter?:string, turn?:string, title?:string, idTeacher?:number){
+  search(typeSort:string, occupation?:string, quarter?:string, turn?:string, title?:string, idTeacher?:number): Observable<SubjectTeacherStatus[]>{
     var params:any = {};
     if (occupation) params.occupation = occupation;
     if (quarter) params.quarter = quarter;
@@ -65,10 +85,15 @@ export class SubjectService {
     if (idTeacher) params.teacher = idTeacher;
     params.typeSort = typeSort;
 
-    return this.http.get(environment.urlApi + "/subjects/search", { 
+    return this.http.get<SubjectTeacherStatus[]>(environment.urlApi + "/subjects/search", { 
       params: params,
       headers: new HttpHeaders({ 'X-XSRF-TOKEN': this.csrfToken}),
       withCredentials: true
-    }); 
+    }).pipe(catchError(error => this.handleError(error))
+		) as Observable<SubjectTeacherStatus[]>; 
   }
+
+  handleError(error: Error) {
+    return throwError(() => { return error.message; });
+	}
 }

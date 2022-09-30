@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Course } from '../models/course.model';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -30,26 +32,36 @@ export class CourseService {
   ) { }
 
   createPOD(pod:FormData) {
-    return this.http.post(environment.urlApi + "/pods", pod, this.httpOptionsCookiesCSRF);
+    return this.http.post(environment.urlApi + "/pods", pod, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		);
   }
 
-  getPODs(){
-    return this.http.get(environment.urlApi + "/pods", this.httpOptionsCookiesCSRF);
+  getPODs(): Observable<Course[]>{
+    return this.http.get<Course[]>(environment.urlApi + "/pods", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<Course[]>;
   }
 
   deleteTeacherInPod(idPod:any, idTeacher:any){
-    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCookiesCSRF);
+    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		);
   }
 
   deleteSubjectInPod(idPod:number, idSubject:number){
-    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/subjects/" + idSubject, this.httpOptionsCookiesCSRF);
+    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/subjects/" + idSubject, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		);
   }
 
   deletePod(id: any) {
-    return this.http.delete(environment.urlApi + "/pods/" + id, this.httpOptionsCookiesCSRF);
+    return this.http.delete(environment.urlApi + "/pods/" + id, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		);
   }
 
-  exportCSV(): Observable<Blob|String|any> {
+  exportCSV(): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.append('Accept', 'text/csv; charset=UTF-8;');
     
@@ -58,6 +70,10 @@ export class CourseService {
       headers: headers,
       observe: 'response',
       responseType: 'blob'
-    });
+    }).pipe(catchError(error => this.handleError(error)));
   }
+
+  handleError(error: Error) {
+    return throwError(() => { return error.message; });
+	}
 }

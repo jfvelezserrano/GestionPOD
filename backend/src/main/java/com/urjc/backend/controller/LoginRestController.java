@@ -1,7 +1,9 @@
 package com.urjc.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.urjc.backend.model.EmailRequestResponse;
+import com.urjc.backend.dto.EmailRequestDTO;
+import com.urjc.backend.dto.TeacherDTO;
+import com.urjc.backend.mapper.ITeacherMapper;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.security.JWT;
 import com.urjc.backend.security.AuthenticateProvider;
@@ -13,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -24,10 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class LoginRestController {
-    //private static final Logger log = LoggerFactory.getLogger(LoginRestController.class);
-
-    interface TeacherLogin extends Teacher.Base, Teacher.Roles {
-    }
 
     @Autowired
     private AuthenticateProvider authenticationManager;
@@ -38,9 +38,12 @@ public class LoginRestController {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    ITeacherMapper teacherMapper;
+
 
     @PostMapping(value = "/access")
-    public ResponseEntity<?> sendEmailLogin(@RequestBody EmailRequestResponse loginRequest, HttpServletRequest request) {
+    public ResponseEntity<Void> sendEmailLogin(@RequestBody EmailRequestDTO loginRequest, HttpServletRequest request) {
 
         try {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), null);
@@ -66,9 +69,8 @@ public class LoginRestController {
 
     }
 
-    @JsonView(TeacherLogin.class)
     @GetMapping(value = "/verify/{code}")
-    public ResponseEntity<?> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<TeacherDTO> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
 
        if(mailBoxService.getCodesEmails().isCorrect(code, request.getRemoteAddr())){
             String email = mailBoxService.getCodesEmails().getEmailByCode(code);
@@ -85,8 +87,24 @@ public class LoginRestController {
             cookie.setMaxAge(60 * 60 * 24);
             response.addCookie(cookie);
 
-           return new ResponseEntity<>(teacher,HttpStatus.OK);
+            TeacherDTO teacherDTO = teacherMapper.toTeacherDTO(teacher);
+
+           return new ResponseEntity<>(teacherDTO,HttpStatus.OK);
         }
-       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping(value = "/teacherLogged")
+    public ResponseEntity<TeacherDTO> getTeacherLogged() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Teacher teacherLogged = teacherService.findByEmail(authentication.getName());
+
+        return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherLogged),HttpStatus.OK);
     }
 }

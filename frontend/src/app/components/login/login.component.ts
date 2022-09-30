@@ -3,6 +3,7 @@ import { LoginService } from '../../services/login.service';
 import { CountdownComponent, CountdownEvent } from 'ngx-countdown';
 import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
+import { Teacher } from 'src/app/models/teacher.model';
 
 @Component({
   selector: 'app-login',
@@ -15,13 +16,13 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('countdown') counter!: CountdownComponent;
   
-  public pageTitle: any;
-  public status: any;
-  public teacher: any;
-  public emailTeacher: any;
-  public code: any;
-  public checking:any;
-  public subscription: Subscription | any;
+  public pageTitle: string;
+  public status: string;
+  public emailTeacher: string;
+  public checking: boolean;
+  public subscription: Subscription;
+  public existsTeacher: boolean;
+  public isMailSent: boolean;
 
   constructor(
     private loginService: LoginService,
@@ -29,13 +30,14 @@ export class LoginComponent implements OnInit {
 
   ) {
     this.pageTitle = 'Iniciar sesión';
+    this.existsTeacher = true;
+    this.isMailSent = true;
   }
 
   ngOnInit(): void {
     if(this.loginService.getTeacherLogged() != null){
       this.router.navigate(['subjects']);
     }
-
     this.checking = false;
   }
 
@@ -45,10 +47,10 @@ export class LoginComponent implements OnInit {
     }
 
     if(this.status == "sentCode" && this.checking){
-      console.log("iniciado");
       const intervalTime = interval(10000);
       this.subscription = intervalTime.subscribe(val => this.checkLocalStorage());
       this.checking = false;
+      this.existsTeacher = true;
     }
   }
 
@@ -59,15 +61,22 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(form:any) {
+    this.existsTeacher = true;
+    this.isMailSent = true;
     this.loginService.access(form.value).subscribe({
       next: (data) => {
         form.reset();
         this.status = "sentCode";
         this.checking = true;
-      }/*,
+      },
       error: (error) => {
-        console.error(error);
-      }*/
+        if(error === '404'){
+          this.existsTeacher = false;
+        }
+        if(error === '400'){
+          this.isMailSent = false;
+        }
+      }
     });
   }
 
@@ -79,7 +88,6 @@ export class LoginComponent implements OnInit {
   }
 
   checkLocalStorage(){
-    console.log("check");
     if(this.loginService.getTeacherLogged() != null){
       this.subscription.unsubscribe();
       window.location.reload();

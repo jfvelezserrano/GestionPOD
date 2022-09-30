@@ -4,9 +4,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CourseService } from 'src/app/services/course.service';
 import { SubjectService } from 'src/app/services/subject.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { SubjectModel } from 'src/app/models/subject';
+import { SubjectTeacherBase } from 'src/app/models/subject-teacher-base.model';
 import { NgForm } from '@angular/forms';
-import { Schedule } from 'src/app/models/schedule';
+import { Schedule } from 'src/app/models/schedule.model';
+import { Subject } from 'src/app/models/subject.model';
 
 
 
@@ -17,21 +18,21 @@ import { Schedule } from 'src/app/models/schedule';
 })
 export class AdminSubjectsComponent implements OnInit {
 
-  public subjects:any = [];
-  public idPod:any;
-  public subject:SubjectModel|any;
-  public titles:any;
-  public allCampus:any;
-  public types:any;
-  public newSubject:SubjectModel|any;
-  public scheduleList:Array<Schedule> = [];
-  public assistanceCareersList:Array<string> = [];
-  public page:any;
-  public typeSort:any;
-  public isMore:any;
-  public records:any;
-  public showLoader:boolean|any = false;
-  public valuesSorting:any = [
+  public subjectsTeachersBase: Array<SubjectTeacherBase> = [];
+  public idPod: number;
+  public subject: Subject;
+  public titles: string[];
+  public allCampus: string[];
+  public types: string[];
+  public newSubject: Subject;
+  public scheduleList: Array<Schedule> = [];
+  public assistanceCareersList: Array<string> = [];
+  public page: number;
+  public typeSort:string;
+  public isMore: boolean;
+  public records: Map<String, String[]>;
+  public showLoader: boolean = false;
+  public valuesSorting: any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
     {value: 'title', name: "Titulación"},
@@ -46,8 +47,10 @@ export class AdminSubjectsComponent implements OnInit {
     private modalService: NgbModal,
     private offcanvasService: NgbOffcanvas) { 
       this.typeSort = "name";
+
       this.records = new Map<String, String[]>(null);
-      this.newSubject = new SubjectModel(null, '', '', '', null, '', null, '', '', '', '', null, null, [], []);
+      this.subject = new Subject(null, '', '', '', null, '', null, '', '', '', '', [], []);
+      this.newSubject = new Subject(null, '', '', '', null, '', null, '', '', '', '', [], []);
     }
 
   ngOnInit(): void {
@@ -66,7 +69,7 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.getSubjectsByPOD(this.idPod, this.page,this.typeSort).subscribe({
       next: (data) => {
         this.showLoader = false;
-        this.subjects = data;
+        this.subjectsTeachersBase = data;
       }
     });
   }
@@ -77,7 +80,7 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.getSubjectsByPOD(this.idPod, this.page,this.typeSort)
     .subscribe({
       next: (data) => {
-        this.subjects = this.subjects.concat(data);
+        this.subjectsTeachersBase = this.subjectsTeachersBase.concat(data);
         this.isMore = Object.keys(data).length == 12;
       },
       error: (error) => {
@@ -177,12 +180,12 @@ export class AdminSubjectsComponent implements OnInit {
 
   onSubmit(form:NgForm){
     this.newSubject.schedules = this.scheduleList;
-    this.newSubject.assitanceCareers = this.assistanceCareersList;
+    this.newSubject.assistanceCareers = this.assistanceCareersList;
 
     this.subjectService.createSubject(this.newSubject, this.idPod).subscribe({
       next: (data) => {
         this.getSubjectsInPod();
-        this.newSubject = null;
+        //this.newSubject = {};
         form.reset;
       },
       error: (error) => {

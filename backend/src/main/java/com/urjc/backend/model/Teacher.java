@@ -1,28 +1,20 @@
 package com.urjc.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.urjc.backend.dto.TeacherDTO;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "teacher")
 public class Teacher{
 
-    public interface Base {
-    }
-
-    public interface Roles {
-    }
-
-    public interface Name {
-    }
-
-    public interface DataToEdit {
-    }
-
-    @JsonView(Base.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -31,20 +23,16 @@ public class Teacher{
     @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
-    @JsonView(DataToEdit.class)
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
     private Set<CourseTeacher> courseTeachers;
 
-    @JsonView(Roles.class)
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    @JsonView({Base.class, Name.class})
     @Column(nullable = false)
     private String name;
 
-    @JsonView(Base.class)
     @Email
     @Column(nullable = false, unique = true)
     private String email;
@@ -69,54 +57,6 @@ public class Teacher{
     public Teacher() {
         this.courseTeachers = new HashSet<>();
         this.pods = new HashSet<>();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
-    public Set<POD> getPods() {
-        return pods;
-    }
-
-    public void setPods(Set<POD> pods) {
-        this.pods = pods;
-    }
-
-    public Set<CourseTeacher> getCourseTeachers() {
-        return courseTeachers;
-    }
-
-    public void setCourseTeachers(Set<CourseTeacher> courseTeachers) {
-        this.courseTeachers = courseTeachers;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void addChosenSubject(Subject subject, Course course, Integer hours) {

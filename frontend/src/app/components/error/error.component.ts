@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
 })
 export class ErrorComponent implements OnInit {
 
-  public pageTitle: any;
-  public status:any;
-  public message:any;
+  public pageTitle: string;
+  public status: number;
+  public message: string;
 
   constructor(
     private router: Router

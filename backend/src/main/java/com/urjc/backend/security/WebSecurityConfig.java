@@ -3,6 +3,7 @@ package com.urjc.backend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -30,12 +31,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public AuthenticateProvider authenticateProvider;
 
+    /*@Autowired
+    public void configureGlobalSecurity(AuthenticationManagerBuilder auth)
+            throws Exception {
+        auth.inMemoryAuthentication().withUser("in28Minutes").password("dummy")
+                .roles("USER", "ADMIN");
+    }*/
+
     private final JwtTokenFilter jwtTokenFilter;
 
     public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
     }
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -50,9 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.antMatcher("/api/**");
 
         http.authorizeRequests().antMatchers("/api/pods/**").hasRole("ADMIN");
-        http.authorizeRequests().antMatchers("/api/subjects/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/teachers/**").hasRole("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/teachers/**").hasRole("TEACHER");
+        http.authorizeRequests().antMatchers("/api/subjects/**").hasAnyRole("TEACHER");
+        http.authorizeRequests().antMatchers("/api/subjects/**").hasAnyRole("TEACHER");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/teachers/role").hasAnyRole("ADMIN");
+        http.authorizeRequests().regexMatchers(HttpMethod.GET,"/.*role=.*").hasAnyRole("ADMIN");
+        http.authorizeRequests().regexMatchers("/api/teachers").hasAnyRole("TEACHER");
+        http.authorizeRequests().antMatchers("/api/teachers/**").hasAnyRole("TEACHER");
+        http.authorizeRequests().antMatchers("/api/statistics/**").hasRole("TEACHER");
 
         http.authorizeRequests().anyRequest().permitAll();
 

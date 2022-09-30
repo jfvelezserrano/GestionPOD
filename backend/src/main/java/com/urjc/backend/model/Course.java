@@ -5,24 +5,19 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.service.TeacherService;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "course")
 public class Course {
 
-    public interface Base {
-    }
-
-    public interface Name {
-    }
-
-
-    @JsonView(Base.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @JsonView({Base.class, Name.class})
     @Column(nullable = false, unique = true)
     String name;
 
@@ -47,30 +42,6 @@ public class Course {
         this.name = name;
         this.creationDate = new Date();
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<CourseTeacher> getCourseTeachers() { return courseTeachers; }
-
-    public void setCourseTeachers(Set<CourseTeacher> courseTeachers) { this.courseTeachers = courseTeachers; }
-
-    public Set<CourseSubject> getCourseSubjects() { return courseSubjects; }
-
-    public void setCourseSubjects(Set<CourseSubject> courseSubjects) { this.courseSubjects = courseSubjects; }
 
     public void addTeacher(Teacher teacher, Integer hours) {
         CourseTeacher newCourseTeacher = new CourseTeacher();

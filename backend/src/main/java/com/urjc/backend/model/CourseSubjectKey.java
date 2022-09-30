@@ -1,11 +1,16 @@
 package com.urjc.backend.model;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Embeddable
 class CourseSubjectKey implements Serializable {
 
@@ -20,22 +25,6 @@ class CourseSubjectKey implements Serializable {
 
     public CourseSubjectKey(Long subjectId, Long courseId) {
         this.subjectId = subjectId;
-        this.courseId = courseId;
-    }
-
-    public Long getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Long subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
 

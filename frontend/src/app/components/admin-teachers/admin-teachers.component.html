@@ -1,66 +1,65 @@
 <app-navbar></app-navbar>
-  <main class="container-fluid">
+  <main class="container-fluid contenido-todo">
     <div class="row">
       
-      <div class="col py-3">  
+      <div class="col">  
 
         <section class="col-12 col-md-10 offset-md-1 margen-top-contenido">
           <div class="row">
 
             <div class="col-12 d-flex justify-content-between">
-              <span *ngIf="!teachers">Mostrando 0 resultados</span>
-              <span *ngIf="teachers">Mostrando {{teachers.length}} resultados</span>
+              <span *ngIf="!teachers" class="my-auto">Mostrando 0 resultados</span>
+              <span *ngIf="teachers" class="my-auto">Mostrando {{teachers.length}} resultados</span>
               <div>
-                <button type="button" title="Añadir asignatura" class="btn boton" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
-
-                <ng-template #modalCreateTeacher let-modal>
-                  <div class="modal-dialog-centered modal-md" role="document">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <form #createTeacher="ngForm" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
-                                <h5 class="modal-title" id="titleModal"><b>Añadir Nuevo Docente</b></h5>
-                                
-                                <fieldset>
-                                  <legend>Identificación</legend>
-                                  <div class="row">
-                                    <div class="form-group col-12">
-                                        <label for="inputNombre" class="form-label titulo-seccion">Nombre *</label>
-                                        <div class="custom-wrapper">
-                                          <input type="text" class="form-control" id="inputNombre" required pattern="[a-zA-Z- ,áéíóúÁÉÍÓÚÑñÇç]{5,60}" placeholder="Nombre del docente" #name="ngModel" name="name" ngModel
-                                          [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                                          <i class="fa-solid fa-xmark icon-login-error" *ngIf="!name.valid && name.touched" alt="Nombre inválido" placement="end" ngbTooltip="Nombre de docente inválido"></i>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-12">
-                                        <label for="inputEmail" class="form-label titulo-seccion">Correo Electrónico *</label>
-                                        <div class="custom-wrapper">
-                                          <input type="email" class="form-control" id="inputEmail" required email placeholder="Email del docente" #email="ngModel" name="email" ngModel
-                                          [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
-                                          <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" placement="end" ngbTooltip="Email inválido"></i>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-12">
-                                      <label for="inputHoras" class="form-label titulo-seccion">Horas *</label>
-                                      <input type="number" class="form-control" id="inputHoras" required placeholder="Horas totales" #hours="ngModel" name="hours" ngModel>
-                                    </div>
-                                  </div>
-                                </fieldset>
-                                <button (click)="modal.dismiss(createTeacherInPod(createTeacher))" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!createTeacher.form.valid">Añadir</button>
-                            </form>
-                          </div>
-                      </div>
-                  </div>
-                </ng-template>
-
-                <span><small>Ordenar por </small></span>
-                <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
+                <span class="my-auto me-2"><small>Ordenar por</small></span>
+                <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
                   <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
+                <button type="button" title="Añadir asignatura" class="ms-2 btn boton my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
               </div>
             </div>
+
+            <ng-template #modalCreateTeacher let-modal>
+              <div class="modal-dialog-centered modal-md" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form #createTeacher="ngForm" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                            <h5 class="modal-title" id="titleModal"><b>Añadir Nuevo Docente</b></h5>
+                            
+                            <fieldset>
+                              <legend>Identificación</legend>
+                              <div class="row">
+                                <div class="form-group col-12">
+                                    <label for="inputNombre" class="form-label titulo-seccion">Nombre *</label>
+                                    <div class="custom-wrapper">
+                                      <input type="text" class="form-control" id="inputNombre" required pattern="[a-zA-Z- ,áéíóúÁÉÍÓÚÑñÇç]{5,60}" placeholder="Nombre del docente" #name="ngModel" name="name" ngModel
+                                      [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!name.valid && name.touched" alt="Nombre inválido" placement="end" ngbTooltip="Nombre de docente inválido"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label for="inputEmail" class="form-label titulo-seccion">Correo Electrónico *</label>
+                                    <div class="custom-wrapper">
+                                      <input type="email" class="form-control" id="inputEmail" required email placeholder="Email del docente" #email="ngModel" name="email" ngModel
+                                      [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
+                                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" placement="end" ngbTooltip="Email inválido"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group col-12">
+                                  <label for="inputHoras" class="form-label titulo-seccion">Horas *</label>
+                                  <input type="number" class="form-control" id="inputHoras" required placeholder="Horas totales" #hours="ngModel" name="hours" ngModel>
+                                </div>
+                              </div>
+                            </fieldset>
+                            <button (click)="modal.dismiss(createTeacherInPod(createTeacher))" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!createTeacher.form.valid">Añadir</button>
+                        </form>
+                      </div>
+                  </div>
+              </div>
+            </ng-template>
 
             <ng-template #deleteTeacher let-modal>
               <div class="modal-dialog-centered" role="document">
@@ -97,9 +96,9 @@
                           </li>
                       </ul>
                       </div>
-                      <div class="card-footer p-0 text-muted">
+                      <div class="card-footer text-muted">
                       <div class="row justify-content-end">
-                          <button type="button" (click)="open(deleteTeacher, teacher)" title="Eliminar" class="col-2 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
+                          <button type="button" (click)="openToDelete(deleteTeacher, teacher)" title="Eliminar" class="btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
                       </div>
                       </div>
                   </div>

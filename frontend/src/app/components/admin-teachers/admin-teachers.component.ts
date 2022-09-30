@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Teacher } from 'src/app/models/teacher';
+import { Teacher } from 'src/app/models/teacher.model';
 import { CourseService } from 'src/app/services/course.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 
@@ -16,14 +16,14 @@ export class AdminTeachersComponent implements OnInit {
 
   @ViewChild('teacherToDelete') teacherToDelete!: ElementRef;
   
-  public teachers:any|undefined;
-  public id:any;
-  public idTeacher:any;
-  public teacher:Teacher|any;
-  public page:any;
-  public typeSort:any;
-  public isMore:any;
-  public showLoader:boolean|any = false;
+  public teachers: Teacher[];
+  public id: number;
+  public idTeacher: number;
+  public teacher:Teacher;
+  public page: number;
+  public typeSort: string;
+  public isMore: boolean;
+  public showLoader:boolean = false;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'email', name: "Email"}
@@ -98,7 +98,7 @@ export class AdminTeachersComponent implements OnInit {
     });
   }
 
- open(model:any, teacherToDeleteInPod:any) {
+  openToDelete(model:any, teacherToDeleteInPod:any) {
   this.modalService.open(model, {});
   this.teacher = teacherToDeleteInPod;
   }

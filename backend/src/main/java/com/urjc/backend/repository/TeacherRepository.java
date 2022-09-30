@@ -45,7 +45,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "AND ctT.course.id = :idCourse AND teacher.id <> :idTeacher")
     List<Object[]> findMatesByTeacherAndCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse);
 
-    @Query(value = "SELECT teacher.id, teacher.name, ct.originalHours, ct.correctedHours, ct.observation FROM Teacher teacher " +
+    @Query(value = "SELECT teacher, ct FROM Teacher teacher " +
             "JOIN teacher.courseTeachers ct JOIN ct.course c WHERE c.id = :idCourse ")
     Page<Object[]> allTeachersStatistics(@Param("idCourse") Long idCourse, Pageable pageable);
 

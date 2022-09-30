@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, Params } from '@angular/router';
+import { Course } from 'src/app/models/course.model';
 
 @Component({
   selector: 'app-pods-admin',
@@ -14,15 +14,18 @@ export class PodsAdminComponent implements OnInit {
   @ViewChild('fileTeachers') fileTeachers!: any;
   @ViewChild('course') course!: any;
 
-  public pods:any|undefined;
-  public pod: any;
-  public showLoader:boolean|any = false;
-  public showLoaderCreate:boolean|any = false;
+  public pods: Course[];
+  public pod: Course;
+  public showLoader:boolean;
+  public showLoaderCreate:boolean;
   
   constructor(
     private courseService: CourseService,
     private modalService: NgbModal
-  ) {}
+  ) {
+    this.showLoader = false;
+    this.showLoaderCreate = false;
+  }
 
   ngOnInit(): void {
     this.getPods();

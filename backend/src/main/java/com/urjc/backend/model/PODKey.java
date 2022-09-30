@@ -1,10 +1,15 @@
 package com.urjc.backend.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Embeddable
 class PODKey implements Serializable {
 
@@ -22,30 +27,6 @@ class PODKey implements Serializable {
     public PODKey(Long subjectId, Long courseId, Long teacherId) {
         this.subjectId = subjectId;
         this.courseId = courseId;
-        this.teacherId = teacherId;
-    }
-
-    public Long getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Long subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
-
-    public Long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
     }
 

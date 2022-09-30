@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Teacher } from '../models/teacher';
+import { Teacher } from '../models/teacher.model';
+import { StatisticsPersonal } from '../models/statistics-personal.model';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { StatisticsMates } from '../models/statistics-mates.model';
+import { SubjectNameAndQuarter } from '../models/subject-name-and-quarter.model';
+import { StatisticsGraphHours } from '../models/statistics-graph-hours.model';
+import { StatisticsGraphPercentage } from '../models/statistics-graph-percentage.model';
+import { StatisticsGlobal } from '../models/statistics-global.model';
+import { StatisticsTeacher } from '../models/statistics-teacher.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,31 +28,49 @@ export class StatisticsService {
     private http: HttpClient
   ) { }
 
-  getPersonalStatistics(){
-    return this.http.get(environment.urlApi + "/statistics/myData", this.httpOptionsCookiesCSRF);
+  getPersonalStatistics(): Observable<StatisticsPersonal>{
+    return this.http.get<StatisticsPersonal>(environment.urlApi + "/statistics/myData", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<StatisticsPersonal>;
   }
 
-  getMates(){
-    return this.http.get(environment.urlApi + "/statistics/myMates", this.httpOptionsCookiesCSRF);
+  getMates(): Observable<StatisticsMates[]>{
+    return this.http.get<StatisticsMates[]>(environment.urlApi + "/statistics/myMates", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<StatisticsMates[]>;
   }
 
-  getMySubjectsByCourse(idCourse:number){
-    return this.http.get(environment.urlApi + "/statistics/mySubjects/" + idCourse, this.httpOptionsCookiesCSRF);
+  getMySubjectsByCourse(idCourse:number): Observable<SubjectNameAndQuarter[]>{
+    return this.http.get<SubjectNameAndQuarter[]>(environment.urlApi + "/statistics/mySubjects/" + idCourse, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<SubjectNameAndQuarter[]>;
   }
 
-  graphHoursPerSubject(){
-    return this.http.get(environment.urlApi + "/statistics/myHoursPerSubject", this.httpOptionsCookiesCSRF);
+  graphHoursPerSubject(): Observable<StatisticsGraphHours[]>{
+    return this.http.get<StatisticsGraphHours[]>(environment.urlApi + "/statistics/myHoursPerSubject", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<StatisticsGraphHours[]>;
   }
 
-  graphPercentageHours(){
-    return this.http.get(environment.urlApi + "/statistics/myPercentageHoursSubjects", this.httpOptionsCookiesCSRF);
+  graphPercentageHours(): Observable<StatisticsGraphPercentage[]>{
+    return this.http.get<StatisticsGraphPercentage[]>(environment.urlApi + "/statistics/myPercentageHoursSubjects", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<StatisticsGraphPercentage[]>;
   }
 
-  getGlobalStatistics(){
-    return this.http.get(environment.urlApi + "/statistics", this.httpOptionsCookiesCSRF);
+  getGlobalStatistics(): Observable<StatisticsGlobal>{
+    return this.http.get<StatisticsGlobal>(environment.urlApi + "/statistics", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<StatisticsGlobal>;
   }
 
-  getAllTeachersStatistics(page:number, typeSort:string){
-    return this.http.get(environment.urlApi + "/statistics/teachersStatistics?page=" + page + "&typeSort=" + typeSort, this.httpOptionsCookiesCSRF);
+  getAllTeachersStatistics(page:number, typeSort:string): Observable<StatisticsTeacher[]>{
+    return this.http.get<StatisticsTeacher[]>(environment.urlApi + "/statistics/teachersStatistics?page=" + page + "&typeSort=" + typeSort, this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<StatisticsTeacher[]>;
   }
+
+  handleError(error: Error) {
+    return throwError(() => { return error.message; });
+	}
 }

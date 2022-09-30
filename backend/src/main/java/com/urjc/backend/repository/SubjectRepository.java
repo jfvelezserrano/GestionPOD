@@ -37,10 +37,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     List<Subject> findByTeacherAndCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse, Sort typeSort);
 
-    @Query("SELECT subject.name, subject.quarter FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
-            " WHERE c.id = :idCourse AND t.id = :idTeacher")
-    List<Object[]> findNameAndQuarterByTeacherAndCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse, Sort typeSort);
-
     @Query("SELECT DISTINCT subject.title FROM Subject subject")
     List<String> getTitles();
 
@@ -57,7 +53,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     List<Object[]> hoursPerSubjectByTeacherAndCourse(Long idTeacher, Long idCourse, Sort typeSort);
 
-    @Query("SELECT subject.name, (pods.chosenHours/:total)*100 FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
+    @Query("SELECT subject.name, (pods.chosenHours/:total)*100 as percentage FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     List<Object[]> percentageHoursByTeacherAndCourse(Long idTeacher, Long idCourse, Integer total, Sort typeSort);
 

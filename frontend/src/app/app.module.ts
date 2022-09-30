@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
 import { ScrollUpComponent } from './components/scroll-up/scroll-up.component';
 import { VerifyComponent } from './components/verify/verify.component';
 import { CountdownModule } from 'ngx-countdown';
-import { ErrorIntercept } from './interceptors/error.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { ErrorComponent } from './components/error/error.component';
 import { PodsAdminComponent } from './components/pods-admin/pods-admin.component';
 import { AdminSubjectsComponent } from './components/admin-subjects/admin-subjects.component';
@@ -55,7 +55,7 @@ import { MySubjectsComponent } from './components/my-subjects/my-subjects.compon
     NgbModule
   ],
   providers: [AppRoutingProviders, 
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorIntercept, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
     
   ],
   bootstrap: [AppComponent]

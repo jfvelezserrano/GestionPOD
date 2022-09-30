@@ -4,11 +4,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { CourseService } from 'src/app/services/course.service';
 import { SubjectService } from 'src/app/services/subject.service';
-import { SubjectModel } from 'src/app/models/subject';
+import { Subject } from 'src/app/models/subject.model';
 import { NgForm } from '@angular/forms';
-import { Schedule } from 'src/app/models/schedule';
+import { Schedule } from 'src/app/models/schedule.model';
 import { saveAs } from 'file-saver';
 import { TeacherService } from 'src/app/services/teacher.service';
+import { SubjectTeacherStatus } from 'src/app/models/subject-teacher-status.model';
+import { TeacherRoles } from 'src/app/models/teacher-roles.model';
 
 @Component({
   selector: 'app-subjects',
@@ -17,19 +19,21 @@ import { TeacherService } from 'src/app/services/teacher.service';
 })
 export class SubjectsComponent implements OnInit {
 
-  public pageTitle:string = "";
-  public occupation:any;
-  public quarter:any;
-  public titleChosen:any;
-  public subjects: any;
-  public subjectToShow: any;
-  public titles:any;
-  public idTeacherChosen:any;
-  public teachers:any;
-  public turn:any;
-  public records:any;
-  public showLoader:boolean = false;
-  public typeSort:any;
+  public pageTitle: string;
+  public occupation: string;
+  public quarter: string;
+  public titleChosen: string;
+  public subjectsTeachersStatus: SubjectTeacherStatus[];
+  public subjectToShow: SubjectTeacherStatus;
+  public titles: string[];
+  public idTeacherChosen: number;
+  public teachers: TeacherRoles[];
+  public turn: string;
+  public records: Map<String, String[]>;
+  public showLoader: boolean;
+  public showLoaderCourse: boolean;
+  public isCourse: boolean;
+  public typeSort: string;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -44,14 +48,17 @@ export class SubjectsComponent implements OnInit {
     private courseService: CourseService,
     private offcanvasService: NgbOffcanvas
   ) {
+    this.showLoader = false;
+    this.showLoaderCourse = true;
+    this.isCourse = true;
     this.pageTitle = 'Asignaturas';
-    this.typeSort = "name";
+    this.typeSort = 'name';
     this.records = new Map<String, String[]>(null);
   }
 
   ngOnInit(): void {
-    this.getAllTeachers();
     this.getAllTitles();
+    this.getAllTeachers();
     this.searchSubjects();
   }
 
@@ -61,10 +68,15 @@ export class SubjectsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.showLoader = false;
-        this.subjects = data;
+        this.subjectsTeachersStatus = data;
+        this.showLoaderCourse = false;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCourse = false;
+        if(error === '404'){
+          this.showLoader = false;
+          this.isCourse = false;
+        }
       }
     });
   }
@@ -73,9 +85,11 @@ export class SubjectsComponent implements OnInit {
     this.subjectService.getTitlesCurrentCourse().subscribe({
       next: (data) => {
         this.titles = data;
+        this.showLoaderCourse = false;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCourse = false;
+        this.isCourse = false;
       }
     });
   }
@@ -83,10 +97,12 @@ export class SubjectsComponent implements OnInit {
   getAllTeachers(){
     this.teacherService.getAllTeachersCurrentCourse().subscribe({
       next: (data) => {
+        this.showLoaderCourse = false;
         this.teachers = data;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCourse = false;
+        this.isCourse = false;
       }
     });
   }
@@ -106,7 +122,7 @@ export class SubjectsComponent implements OnInit {
   }
 
   getRecordSubject(){
-    this.subjectService.getRecordSubject(this.subjectToShow[0].id).subscribe({
+    this.subjectService.getRecordSubject(this.subjectToShow.subject.id).subscribe({
       next: (data) => {
         this.records = data;
       }

@@ -1,7 +1,12 @@
 package com.urjc.backend.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "courseSubject")
 public class CourseSubject {
@@ -17,28 +22,4 @@ public class CourseSubject {
     @MapsId("subjectId")
     @JoinColumn(name = "subject_id")
     private Subject subject;
-
-    public CourseSubjectKey getId() {
-        return id;
-    }
-
-    public void setId(CourseSubjectKey id) {
-        this.id = id;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
 }

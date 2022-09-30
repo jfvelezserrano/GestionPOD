@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Teacher } from 'src/app/models/teacher';
+import { TeacherRoles } from 'src/app/models/teacher-roles.model';
+import { Teacher } from 'src/app/models/teacher.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { NgForm } from '@angular/forms';
@@ -11,17 +12,21 @@ import { NgForm } from '@angular/forms';
 })
 export class ManagementAdminComponent implements OnInit {
 
-  public teachers:any = [];
-  public admins:any = [];
-  public adminTeacher: Teacher|any;
-  public emailNewAdmin:string|any;
+  public teachers:TeacherRoles[] = [];
+  public admins: TeacherRoles[] = [];
+  public adminTeacher: TeacherRoles;
+  public emailNewAdmin: string;
+  public showLoaderCourse: boolean;
+  public isCourse: boolean;
 
   constructor(
     private teacherService: TeacherService,
     private modalService: NgbModal
     ) { 
       this.emailNewAdmin = "";
-      this.adminTeacher = new Teacher(null, "", "", [], null, null);
+      this.adminTeacher = new TeacherRoles(-1, "", "", []);
+      this.showLoaderCourse = true;
+      this.isCourse = true;
     }
 
   ngOnInit(): void {
@@ -34,9 +39,13 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.teachers = data;
+        this.showLoaderCourse = false;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCourse = false;
+        if(error === '404'){
+          this.isCourse = false;
+        }
       }
     });
   }
@@ -46,9 +55,13 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.admins = data;
+        this.showLoaderCourse = false;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCourse = false;
+        if(error === '404'){
+          this.isCourse = false;
+        }
       }
     });
   }
@@ -82,7 +95,7 @@ export class ManagementAdminComponent implements OnInit {
     });
   }
 
-  open(model:any, admin:Teacher) {
+  openToDelete(model:any, admin:TeacherRoles) {
     this.modalService.open(model, {});
     this.adminTeacher = admin;
   }

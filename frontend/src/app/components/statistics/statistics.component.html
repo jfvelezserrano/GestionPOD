@@ -1,14 +1,21 @@
 <app-navbar></app-navbar>
 <main class="container-fluid contenido-todo">
-<div class="row g-4 justify-content-center contenido-principal">
+    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
+        <p><i class="fa-solid fa-2xl fa-book"></i></p>
+        <p>No hay ningún curso aún</p>
+    </div>
+    <div class="center-vertically center-horizontally" *ngIf="showLoaderCourse">
+        <app-loader></app-loader>
+    </div>
+<div class="row justify-content-center contenido-principal" *ngIf="isCourse && !showLoaderCourse">
 
     <div class="col-md-6 col-xl-3">
     <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
         <div class="card-body">
         <i class="fa fa-calendar-check fa-2x iconos-estadisticas-azul"></i> 
-        <h1 class="card-title"><b>{{globalStatistics[0]}}%</b></h1>
+        <h1 class="card-title"><b>{{globalStatistics.percentageCharge}}%</b></h1>
         <p class="card-text"><b>Carga Docente</b></p>
-        <p class="card-text texto-fraccion"><b>{{globalStatistics[1]}}/{{globalStatistics[2]}}</b></p>
+        <p class="card-text texto-fraccion"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCharge}}</b></p>
         </div>
     </div>
     </div>
@@ -17,9 +24,9 @@
     <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
         <div class="card-body">
         <i class="fa fa-calendar fa-2x gris iconos-estadisticas-gris"></i> 
-        <h1 class="card-title"><b>{{globalStatistics[3]}}%</b></h1>
+        <h1 class="card-title"><b>{{globalStatistics.percentageForce}}%</b></h1>
         <p class="card-text"><b>Fuerza Docente</b></p>
-        <p class="card-text texto-fraccion"><b>{{globalStatistics[1]}}/{{globalStatistics[4]}}</b></p>
+        <p class="card-text texto-fraccion"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCorrectHours}}</b></p>
         </div>
     </div>
     </div>
@@ -28,9 +35,9 @@
     <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
         <div class="card-body">
         <i class="fa fa-book-open fa-2x iconos-estadisticas-azul"></i> 
-        <h1 class="card-title"><b>{{globalStatistics[5]}}%</b></h1>
+        <h1 class="card-title"><b>{{globalStatistics.percentageCompletations}}%</b></h1>
         <p class="card-text"><b>Asignaturas</b></p>
-        <p class="card-text texto-fraccion"><b>{{globalStatistics[6]}}/{{globalStatistics[7]}}</b></p>
+        <p class="card-text texto-fraccion"><b>{{globalStatistics.numCompletations}}/{{globalStatistics.numSubjects}}</b></p>
         </div>
     </div>
     </div>
@@ -39,7 +46,7 @@
     <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
         <div class="card-body">
         <i class="fa fa-times fa-2x iconos-estadisticas-gris"></i> 
-        <h1 class="card-title"><b>{{globalStatistics[8]}}</b></h1>
+        <h1 class="card-title"><b>{{globalStatistics.numConflicts}}</b></h1>
         <p class="card-text"><b>Colisiones Docentes</b></p>
         </div>
     </div>
@@ -47,14 +54,14 @@
 
 </div>
 
-<div class="bloque-despues-estadisticas row justify-content-center g-4">
+<div class="bloque-despues-estadisticas row justify-content-center g-4" *ngIf="isCourse && !showLoaderCourse">
 
     <div class="col-12 col-xl-8 d-flex justify-content-between">
-        <span *ngIf="!teachersStatistics">Mostrando 0 resultados</span>
-        <span *ngIf="teachersStatistics">Mostrando {{teachersStatistics.length}} resultados</span>
+        <span *ngIf="!teachersStatistics" class="my-auto">Mostrando 0 resultados</span>
+        <span *ngIf="teachersStatistics" class="my-auto">Mostrando {{teachersStatistics.length}} resultados</span>
         <div>
-            <span><small>Ordenar por </small></span>
-            <select class="form-select-sm text-muted desplegable-buscador" [(ngModel)]="typeSort" (change)="getFirstTeachers()">
+            <span class="my-auto me-2"><small>Ordenar por</small></span>
+            <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="getFirstTeachers()">
                 <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
             </select>
         </div>
@@ -64,26 +71,26 @@
     <div class="card cards-estadisticas shadow h-100 w-100">
         <div class="card-body">
         <div class="row justify-content-around">
-            <h4 ><b>{{teacherStatistics[0]}}</b></h4>
+            <h4 ><b>{{teacherStatistics.name}}</b></h4>
             
-            <h6><span class="gris-muy-claro truncar" title="fuerza original"><i class="fa fa-user fa-sm azul"></i><small>{{teacherStatistics[1]}} horas</small></span>
-                <span class="gris-muy-claro truncar" title="fuerza corregida"><i class="fa fa-user-edit fa-sm azul"></i><small>{{teacherStatistics[2]}} horas</small></span>
-                <span class="gris-muy-claro truncar" title="asignaturas asignadas"><i class="fa fa-book-open fa-sm azul"></i><small>{{teacherStatistics[6]}} asignatura(s)</small></span></h6>
+            <h6><span class="gris-muy-claro truncar" title="fuerza original"><i class="fa fa-user fa-sm azul"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
+                <span class="gris-muy-claro truncar" title="fuerza corregida"><i class="fa fa-user-edit fa-sm azul"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
+                <span class="gris-muy-claro truncar" title="asignaturas asignadas"><i class="fa fa-book-open fa-sm azul"></i><small>{{teacherStatistics.numSubjects}} asignatura(s)</small></span></h6>
             
 
             <div class="row justify-content-start">
                 <div class="col-12 col-xl-12">
                 <div class="d-flex justify-content-between">
                     <span><small>Horas asignadas</small></span>
-                    <h5><b>{{teacherStatistics[4]}}%</b></h5>
+                    <h5><b>{{teacherStatistics.percentage}}%</b></h5>
                 </div>
                 <div class="col-12">
                     <div class="progress" style="height: 8px;">
-                    <div class="progress-bar" role="progressbar" [style.width]="teacherStatistics[4] +'%'" style="height: 100%;" aria-valuenow="teacherStatistics[4]" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar" role="progressbar" [style.width]="teacherStatistics.percentage +'%'" style="height: 100%;" aria-valuenow="teacherStatistics.percentage" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-1">
-                    <small class="color-libre"><b>{{teacherStatistics[5]}} horas</b></small>
+                    <small class="color-libre"><b>{{teacherStatistics.charge}} horas</b></small>
                 </div>
                 </div>
             </div>
@@ -91,8 +98,8 @@
             <hr class="mt-2">
             <h5 class="titulo-seccion">OBSERVACIONES</h5>
             <p class="observaciones">
-                <small *ngIf="teacherStatistics[3] != ''">{{teacherStatistics[3]}}</small>
-                <small *ngIf="teacherStatistics[3] == ''">No hay observaciones</small>
+                <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
+                <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
             </p>
 
         </div>
