@@ -11,8 +11,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ITeacherMapper {
 
-    ITeacherMapper INSTANCE = Mappers.getMapper(ITeacherMapper.class);
-
     TeacherDTO toTeacherDTO(Teacher teacher);
 
     List<TeacherDTO> map(List<Teacher> teachers);

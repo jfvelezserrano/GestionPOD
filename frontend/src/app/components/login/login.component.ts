@@ -3,7 +3,7 @@ import { LoginService } from '../../services/login.service';
 import { CountdownComponent, CountdownEvent } from 'ngx-countdown';
 import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
-import { Teacher } from 'src/app/models/teacher.model';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +21,7 @@ export class LoginComponent implements OnInit {
   public emailTeacher: string;
   public checking: boolean;
   public subscription: Subscription;
-  public existsTeacher: boolean;
-  public isMailSent: boolean;
+  public error: string;
 
   constructor(
     private loginService: LoginService,
@@ -30,8 +29,7 @@ export class LoginComponent implements OnInit {
 
   ) {
     this.pageTitle = 'Iniciar sesión';
-    this.existsTeacher = true;
-    this.isMailSent = true;
+    this.error='';
   }
 
   ngOnInit(): void {
@@ -50,7 +48,6 @@ export class LoginComponent implements OnInit {
       const intervalTime = interval(10000);
       this.subscription = intervalTime.subscribe(val => this.checkLocalStorage());
       this.checking = false;
-      this.existsTeacher = true;
     }
   }
 
@@ -60,9 +57,8 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  onSubmit(form:any) {
-    this.existsTeacher = true;
-    this.isMailSent = true;
+  onSubmit(form:NgForm) {
+    this.error = '';
     this.loginService.access(form.value).subscribe({
       next: (data) => {
         form.reset();
@@ -70,12 +66,8 @@ export class LoginComponent implements OnInit {
         this.checking = true;
       },
       error: (error) => {
-        if(error === '404'){
-          this.existsTeacher = false;
-        }
-        if(error === '400'){
-          this.isMailSent = false;
-        }
+        var splitted = error.split(";"); 
+        this.error = splitted[1];
       }
     });
   }

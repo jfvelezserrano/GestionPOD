@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -50,7 +51,7 @@ public class SubjectRestController {
         if(course.isPresent()){
              return new ResponseEntity<>(subjectService.getTitlesByCourse(course.get().getId()), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @GetMapping(value = "/campus")
@@ -76,8 +77,9 @@ public class SubjectRestController {
 
                 return new ResponseEntity<>(subjectTeacherDTO, HttpStatus.OK);
             }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
     }
 
     @GetMapping(value = "")
@@ -88,7 +90,7 @@ public class SubjectRestController {
             List<SubjectDTO> subjectDTOS = subjectMapper.listSubjectDTO(subjects);
             return new ResponseEntity<>(subjectDTOS, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @GetMapping(value = "{id}/record")
@@ -98,7 +100,7 @@ public class SubjectRestController {
             Map<String, List<String>> record = subjectOptional.get().recordSubject();
             return new ResponseEntity<>(record, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ");
     }
 
     @JsonView(SubjectTeacherDTOStatus.class)
@@ -118,6 +120,6 @@ public class SubjectRestController {
             List<SubjectTeacherDTO> subjectTeacherDTOS = subjectMapper.listSubjectTeacherDTOs(list);
             return new ResponseEntity<>(subjectTeacherDTOS, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 }

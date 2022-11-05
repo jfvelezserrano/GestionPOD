@@ -31,5 +31,8 @@ export class ErrorComponent implements OnInit {
 
 
   ngOnInit(): void {
+    if(!this.status){
+      this.router.navigate(['subjects']);
+    }
   }
 }

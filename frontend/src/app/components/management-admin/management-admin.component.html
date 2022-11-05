@@ -1,16 +1,9 @@
 <app-navbar></app-navbar>
 <main class="container-fluid contenido-principal contenido-todo">
 
-  <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
-    <p><i class="fa-solid fa-2xl fa-book"></i></p>
-    <p>No hay ningún curso aún</p>
-  </div>
-  <div class="center-vertically center-horizontally" *ngIf="showLoaderCourse">
-      <app-loader></app-loader>
-  </div>
 
-    <div class="row" *ngIf="isCourse && !showLoaderCourse">
 
+  <div class="row">
       <section class="col-12 col-xl-4">
         <div class="sticky-top">
 
@@ -18,21 +11,19 @@
             <h3><b>Añadir Administrador</b></h3>
           </div>
 
-          <form #formAddAdmin="ngForm" (ngSubmit)="onSubmit(formAddAdmin)">
+          <form #formAddAdmin="ngForm" ngNativeValidate (ngSubmit)="onSubmit(formAddAdmin)">
             <div class="form-group mb-3">
                 <label for="elegirAdministrador" class="form-label titulo-seccion">Correo Electrónico</label>
-                <div class="custom-wrapper">
-                    <input type="text" class="form-control" required #email="ngModel" name="email" [(ngModel)]="emailNewAdmin" list="teachersList" id="elegirAdministrador" 
+                    <input type="email" class="form-control" required #email="ngModel" name="email" [(ngModel)]="emailNewAdmin" list="teachersList" id="elegirAdministrador" 
                     placeholder="example@example.com" email [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
-                    <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" ngbTooltip="Email de docente inválido"></i>
-                </div>
                 <datalist id="teachersList">
                 <option *ngFor="let item of teachers" [ngValue]="item.email">{{item.email}}</option>
                 </datalist>
+                <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
             </div>
 
             <div class="d-flex justify-content-center pt-3">
-              <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formAddAdmin.form.valid">Añadir</button>
+              <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="email.errors?.['required']">Añadir</button>
             </div>
 
           </form>
@@ -61,15 +52,16 @@
                 <tbody>
                   
                   <tr *ngFor="let admin of admins">
-                    <td class="td-icon"><i class="fa fa-user-shield icono-mis-estadisticas"></i> </td>
+                    <td class="centrar"><i class="fa fa-user-shield icono-mis-estadisticas"></i> </td>
                     <td>
-                      <div>
-                        <span><b>{{admin.name}}</b></span><br>
-                        <span><small class="text-muted">{{admin.email}}</small></span>
-                      </div>
+                      <span><b>{{admin.name}}</b></span><br>
+                      <span><small class="text-muted">{{admin.email}}</small></span>
                     </td>
-                    <td>
-                      <button type="button" (click)="openToDelete(modalRemoveRoleAdmin, admin)" title="Eliminar" class="btn boton-asignatura-libre"><i class="fa fa-trash fa-lg mt-3"></i></button>
+                    <td class="centrar">
+                      <button type="button" (click)="openToDelete(modalRemoveRoleAdmin, admin)" placement="bottom" ngbTooltip="Eliminar administrador" *ngIf="admin.email != mainAdmin" class="btn boton-asignatura-libre">
+                        <i class="fa fa-trash fa-lg"></i>
+                      </button>
+                      <i *ngIf="admin.email == mainAdmin" class="fa fa-crown fa-lg color-conflicto"></i>
                     </td>
                   </tr>
 

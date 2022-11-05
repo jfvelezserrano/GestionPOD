@@ -63,11 +63,9 @@
                 <div class="border-top py-2 my-2 ml-3">
                     <div class="form-group">
                         <label for="inputTitle" class="form-label titulo-seccion">Titulación</label>
-                        <div class="custom-wrapper">
-                            <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[0-9a-zA-Z- .()áéíóúÁÉÍÓÚÑñÇç]{5,80}" #title="ngModel"
+                            <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[-0-9a-zA-Z(){}, Á-üÑñÇç]{0,70}" #title="ngModel"
                             name="title" [(ngModel)]="titleChosen" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
-                            <i class="fa-solid fa-xmark icon-login-error" *ngIf="!title.valid && title.touched" alt="Titulación inválida" ngbTooltip="Titulación inválida"></i>
-                        </div>
+                            <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">Algunos caracteres especiales no están permitidos</span>
                         <datalist id="titleList">
                         <option *ngFor="let itemTitle of titles" [ngValue]="itemTitle">{{itemTitle}}</option>
                         </datalist>
@@ -93,19 +91,16 @@
 
                 <div class="border-top py-2 my-2 ml-3">
                     <label for="inputTeacher" class="form-label titulo-seccion">Docente</label>
-                    <div class="custom-wrapper">
-                        <input type="text" class="form-control" list="teacherList" id="inputTeacher" placeholder="Docente" pattern="[0-9]{1,3}" #idTeacher="ngModel"
+                        <input type="text" class="form-control" list="teacherList" id="inputTeacher" placeholder="Docente" pattern="[-a-zA-Z0-9, Á-üÑñÇç]{0,80}" #idTeacher="ngModel"
                         name="idTeacher" [(ngModel)]="idTeacherChosen" [ngClass]="!idTeacher.valid && idTeacher.touched ? 'border-error' : ''">
-                        <i class="fa-solid fa-xmark icon-login-error" *ngIf="!idTeacher.valid && idTeacher.touched" alt="Docente inválido" ngbTooltip="Docente inválido"></i>
-                    </div>
+                        <span class="error-message-txt m-0" role="alert" *ngIf="idTeacher.errors?.['pattern']">Los números y algunos caracteres especiales no están permitidos</span>
                     <datalist id="teacherList">
                         <option *ngFor="let item of teachers" [value]="item.id">{{item.name}}</option>
                     </datalist>
                 </div>
 
                 <div class="d-flex justify-content-center pt-3">
-                    <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo" 
-                    [disabled]="!formSearchSubject.form.valid">Filtrar</button>
+                    <button type="submit" class="btn mx-auto boton-general tema-urjc-rojo" [disabled]="!formSearchSubject.form.valid">Filtrar</button>
                 </div>
 
             </form>
@@ -171,15 +166,14 @@
                             </ul>
                             </div>
                             <div class="card-footer text-muted">
-                                <div class="row justify-content-end">
-                                <button type="button" (click)="openRecord(record, subjectTeacher)" class="btn boton-asignatura-libre" placement="bottom" ngbTooltip="Ver"><i class="fa fa-eye fa-lg"></i></button>
-                                </div>
+                                <button type="button" (click)="openRecord(record, subjectTeacher)" [ngClass]="{'boton-asignatura-colision': 0 > subjectTeacher.leftHours, 'boton-asignatura-libre' : subjectTeacher.leftHours > 0, 'boton-asignatura-completa' : 0 == subjectTeacher.leftHours}"
+                                    class="btn" tooltipClass="custom-tooltip-class" placement="bottom" ngbTooltip="Ver"><i class="fa fa-eye fa-lg"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                    <div class="col-2 mt-5">
+                <div class="row center-vertically center-horizontally" *ngIf="showLoader">
+                    <div class="col-2 center-horizontally">
                     <app-loader></app-loader>
                     </div>
                 </div>

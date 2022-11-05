@@ -17,13 +17,12 @@
               <div class="form-group">
                   <h1 id="tituloLogin">Gestión POD</h1>
 
-                  <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Correo electrónico"
+                  <input type="email" class="form-control" id="inputEmail" aria-describedby="email" placeholder="Correo electrónico"
                   #email="ngModel" name="email" [(ngModel)]="emailTeacher" required email maxlength="30">
 
-                  <div *ngIf="(!isMailSent || !existsTeacher)">
-                    <div class="mt-3 alert alert-danger error-message" role="alert" >
-                      <span *ngIf="!existsTeacher">El email es incorrecto.</span>
-                      <span *ngIf="!isMailSent">No se ha podido mandar el correo de verificación. Inténtelo de nuevo.</span>
+                  <div *ngIf="(error)">
+                    <div class="mt-3 error-message">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
                     </div>
                   </div>
               </div>

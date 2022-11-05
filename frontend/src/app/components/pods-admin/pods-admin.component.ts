@@ -18,6 +18,7 @@ export class PodsAdminComponent implements OnInit {
   public pod: Course;
   public showLoader:boolean;
   public showLoaderCreate:boolean;
+  public error:string;
   
   constructor(
     private courseService: CourseService,
@@ -57,10 +58,15 @@ export class PodsAdminComponent implements OnInit {
     this.courseService.createPOD(formData).subscribe({
       next: (data) => {
         this.showLoaderCreate = false;
+        this.error = '';
         this.getPods();
       },
       error: (error) => {
-        console.error(error);
+        this.showLoaderCreate = false;
+        var splitted = error.split(";"); 
+        if(splitted[0] == '400'){
+          this.error = splitted[1];
+        }
       }
     });
   }
@@ -76,7 +82,7 @@ export class PodsAdminComponent implements OnInit {
         this.getPods();
       },
       error: (error) => {
-        console.error(error);
+        
       }
     });
   }

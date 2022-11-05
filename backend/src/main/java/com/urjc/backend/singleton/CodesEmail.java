@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CodesEmail {
 
-    ConcurrentHashMap<Long, List<String>> map = new ConcurrentHashMap<Long, List<String>>();
+    ConcurrentHashMap<Long, List<String>> map = new ConcurrentHashMap<>();
 
     private static CodesEmail codesEmail;
 
@@ -31,7 +31,6 @@ public class CodesEmail {
     public Boolean isCorrect(Long code, String ip) {
         if(existsCode(code)){
             List<String> values = map.get(code);
-            Boolean hola = values.get(1).equals(ip);
 
             return (values.get(1).equals(ip) && !isDateExpired(values.get(2)));
         }
@@ -40,10 +39,9 @@ public class CodesEmail {
 
     public void addCode(Long code, String email, String ip){
         if(!existsCode(code)){
-            map.put(code, new ArrayList<String>());
+            map.put(code, new ArrayList<>());
             map.get(code).add(email);
             map.get(code).add(ip);
-
             map.get(code).add(getDateExpiration());
         }
     }

@@ -1,10 +1,12 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Teacher } from 'src/app/models/teacher.model';
 import { CourseService } from 'src/app/services/course.service';
 import { TeacherService } from 'src/app/services/teacher.service';
+import { environment } from 'src/environments/environment';
+
 
 
 @Component({
@@ -13,7 +15,6 @@ import { TeacherService } from 'src/app/services/teacher.service';
   styleUrls: ['./admin-teachers.component.css']
 })
 export class AdminTeachersComponent implements OnInit {
-
   @ViewChild('teacherToDelete') teacherToDelete!: ElementRef;
   
   public teachers: Teacher[];
@@ -23,7 +24,11 @@ export class AdminTeachersComponent implements OnInit {
   public page: number;
   public typeSort: string;
   public isMore: boolean;
+  public isCourse: boolean;
+  public error: string;
+  public mainAdmin: string = environment.main_admin;
   public showLoader:boolean = false;
+
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'email', name: "Email"}
@@ -35,6 +40,7 @@ export class AdminTeachersComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: NgbModal)
     { 
+      this.showLoader = true;
       this.typeSort = "name";
     }
 
@@ -55,9 +61,14 @@ export class AdminTeachersComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.teachers = data;
+        this.isCourse = true;
       },
       error: (error) => {
-        console.error(error);
+        this.showLoader = false;
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
+          this.isCourse = false;
+        }
       }
     });
   }
@@ -72,7 +83,7 @@ export class AdminTeachersComponent implements OnInit {
         this.isMore = Object.keys(data).length == 12;
       },
       error: (error) => {
-        console.error(error);
+        
       }
     });
   }
@@ -93,7 +104,7 @@ export class AdminTeachersComponent implements OnInit {
         this.getTeachersInPod();
       },
       error: (error) => {
-        console.error(error);
+        
       }
     });
   }
@@ -107,13 +118,18 @@ export class AdminTeachersComponent implements OnInit {
     this.modalService.open(model, {});
   }
 
-  createTeacherInPod(form:NgForm) {
+  onSubmit(form:NgForm) {
     this.teacherService.createTeacher(form.value, this.id).subscribe({
-      next: (_) => {
+      next: (data) => {
         this.getTeachersInPod();
+        this.error = '';
+        form.reset();
       },
       error: (error) => {
-        console.error(error);
+        var splitted = error.split(";"); 
+        if(splitted[0] == '409'){
+          this.error = splitted[1];
+        }
       }
     });
   }

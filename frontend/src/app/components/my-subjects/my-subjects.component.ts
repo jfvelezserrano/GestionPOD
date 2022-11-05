@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject } from 'rxjs';
 import { SubjectTeacherBase } from 'src/app/models/subject-teacher-base.model';
 import { SubjectTeacherConflicts } from 'src/app/models/subject-teacher-conflicts.model';
 import { Subject } from 'src/app/models/subject.model';
@@ -14,19 +15,20 @@ import { TeacherService } from 'src/app/services/teacher.service';
   styleUrls: ['./my-subjects.component.css']
 })
 export class MySubjectsComponent implements OnInit {
-
   public subjects: Subject[];
   public mySubjects: SubjectTeacherConflicts[];
   public idChosenSubject: number;
-  public subjectTeacher: SubjectTeacherBase;
+  public chosenHours: number;
+  public subjectTeacher: SubjectTeacherBase | any;
   public subjectToShowAlert: SubjectTeacherConflicts;
   public subjectToDelete: SubjectTeacherConflicts;
   public subjectToEdit: SubjectTeacherConflicts;
-  public isCourse: boolean;
-  public showLoaderCourse: boolean;
   public typeSort: string;
   public records: Map<String, String[]>;
   public showLoader: boolean;
+  public isCourse: boolean;
+  public error: string;
+  public testEmitter: BehaviorSubject<boolean>;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -40,21 +42,24 @@ export class MySubjectsComponent implements OnInit {
     private modalService: NgbModal,
     private offcanvasService: NgbOffcanvas) { 
       this.typeSort = "name";
-      this.showLoader = false;
+      this.error = "";
+      this.showLoader = true;
       this.records = new Map<String, String[]>(null);
-      this.showLoaderCourse = true;
-      this.isCourse = true;
+      this.testEmitter = new BehaviorSubject<boolean>(this.isCourse);
   }
 
   ngOnInit(): void {
     this.getMySubjects();
-    this.getSubjectsInCurrentCourse();
+    this.testEmitter.subscribe(data => {
+      if(data != undefined && data){
+        this.getSubjectsInCurrentCourse();
+      };
+    })
   }
 
   getSubjectsInCurrentCourse(){
     this.subjectService.getAllInCurrentCourse().subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.subjects = data;
       }
     });
@@ -62,26 +67,28 @@ export class MySubjectsComponent implements OnInit {
 
   onSubmit(form:NgForm){
     this.joinSubject(form);
-    form.reset();
   }
 
   onSubmitEdit(form:NgForm){
     this.idChosenSubject = this.subjectToEdit.subject.id;
     this.joinSubject(form);
-    form.reset();
   }
 
   joinSubject(form:NgForm){
     this.teacherService.joinSubject(this.idChosenSubject, form.value).subscribe({
       next: (data) => {
         this.getMySubjects();
-        //this.subject=null;
-        form.reset;
+        this.subjectTeacher = undefined;
+        this.error = '';
       },
       error: (error) => {
-        console.error(error);
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
+          this.error = splitted[1];
+        }
       }
     });
+    form.resetForm();
   }
 
   unjoinToSubject(id:number){
@@ -90,18 +97,29 @@ export class MySubjectsComponent implements OnInit {
         this.getMySubjects();
       },
       error: (error) => {
-        console.error(error);
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
+          this.error = splitted[1];
+        }
       }
     });
+  }
+
+  setUndefinedValue(){
+    this.subjectTeacher = undefined;
   }
 
   getSubjectById(){
     this.subjectService.getById(this.idChosenSubject).subscribe({
       next: (data) => {
         this.subjectTeacher = data;
+        this.error = '';
       },
       error: (error) => {
-        console.error(error);
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
+          this.error = splitted[1];
+        }
       }
     });
   }
@@ -111,14 +129,16 @@ export class MySubjectsComponent implements OnInit {
     this.teacherService.getSubjects(this.typeSort).subscribe({
       next: (data) => {
         this.showLoader = false;
-        this.showLoaderCourse = false;
+        this.isCourse = true;
+        this.testEmitter.next(this.isCourse);
         this.mySubjects = data;
       },
       error: (error) => {
-        this.showLoaderCourse = false;
-        if(error === '404'){
-          this.showLoader = false;
+        this.showLoader = false;
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
           this.isCourse = false;
+          this.testEmitter.next(this.isCourse);
         }
       }
     });

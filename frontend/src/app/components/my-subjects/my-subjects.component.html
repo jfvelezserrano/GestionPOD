@@ -1,200 +1,217 @@
 <app-navbar></app-navbar>
 <main class="container-fluid contenido-todo">
-    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
+    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
         <p><i class="fa-solid fa-2xl fa-book"></i></p>
         <p>No hay ningún curso aún</p>
     </div>
-    <div class="center-vertically center-horizontally" *ngIf="showLoaderCourse">
+    <div class="center-vertically center-horizontally" *ngIf="showLoader">
         <app-loader></app-loader>
     </div>
-<div class="row" *ngIf="isCourse && !showLoaderCourse">
-    
-    <div class="col">  
+    <div class="row" *ngIf="isCourse && !showLoader">
+        
+        <div class="col">  
 
-    <section class="col-12 col-md-10 offset-md-1">
-        <div class="row">
+        <section class="col-12 col-md-10 offset-md-1">
+            <div class="row">
 
-        <div class="col-12 d-flex justify-content-between my-auto">
-            <span *ngIf="!mySubjects" class="my-auto">Mostrando 0 resultados</span>
-            <span *ngIf="mySubjects" class="my-auto">Mostrando {{mySubjects.length}} resultados</span>
-            <div>
-                <span class="my-auto me-2"><small>Ordenar por</small></span>
-                <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="getMySubjects()">
-                    <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
-                </select>
-                <button type="button" title="Añadir asignatura" class="ms-2 btn boton my-auto" (click)="openJoinSubject(joinSubject)"><i class="fa fa-plus fa-sm"></i></button>
+            <div class="col-12 d-flex justify-content-between my-auto">
+                <span *ngIf="!mySubjects" class="my-auto">Mostrando 0 resultados</span>
+                <span *ngIf="mySubjects" class="my-auto">Mostrando {{mySubjects.length}} resultados</span>
+                <div>
+                    <span class="my-auto me-2"><small>Ordenar por</small></span>
+                    <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="getMySubjects()">
+                        <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
+                    </select>
+                    <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn boton my-auto" (click)="openJoinSubject(joinSubject)"><i class="fa fa-plus fa-sm"></i></button>
+                </div>
             </div>
-        </div>
 
-        <ng-template #joinSubject let-modal>
-            <div class="modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form #formChooseSubject="ngForm" (ngSubmit)="modal.close(onSubmit(formChooseSubject))" >
-                        <div class="mb-3 px-4">
-                            <h5 class="modal-title" id="titleModal"><b>Añadir Asignatura</b></h5>
-                            <div class="mb-3">
-                                <div class="custom-wrapper">
-                                    <input type="text" class="form-control" list="grados" (change)="getSubjectById()" required pattern="[0-9a-zA-Z- ()áéíóúÁÉÍÓÚÑñÇç]{0,150}" id="inputGrado" placeholder="(2061) Grado Ingeniería Informática (O)"
-                                    #name="ngModel" name="name" [(ngModel)]="idChosenSubject" [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                                    <i class="fa-solid fa-xmark icon-login-error" *ngIf="!name.valid && name.touched" alt="Asignatura inválida" ngbTooltip="Asignatura inválida"></i>
-                                </div>
-                                <datalist id="grados">
-                                <option *ngFor="let item of subjects" [value]="item.id">({{item.code}}) {{item.name}}</option>
-                                </datalist>
-                            </div>
-
-                            <div class="card" *ngIf="subjectTeacher && subjectTeacher.subject.name && name.value">
-                                <div class="row g-0">
-                                <div class="col">
-                                    <div class="card-body">
-                                    <ul class="list-group list-group-flush carta-asignatura">
-                                        <li class="list-group-item detalles1">
-                                        <div>
-                                            <h6 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h6>
-                                            <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacher.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacher.subject.campus}}</small>
-                                            <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
-                                            <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
-                                            <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{subjectTeacher.subject.career}}</span></p>
-                                            <p class="titulo-grupo" *ngIf="subjectTeacher.subject.assistanceCareers && subjectTeacher.subject.assistanceCareers.length != 0">
-                                                <small><b>GRUPOS ASISTENCIA</b></small>
-                                                <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
-                                            </p>
+            <ng-template #joinSubject let-modal>
+                <div class="modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form #formChooseSubject="ngForm" (ngSubmit)="onSubmit(formChooseSubject)" >
+                            <div class="mb-3 px-4">
+                                <h5 class="modal-title" id="titleModal"><b>Añadir Asignatura</b></h5>
+                                <div class="container mb-3">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <input type="text" class="form-control h-100" list="grados" (change)="setUndefinedValue()" required pattern="[0-9a-zA-Z- ()áéíóúÁÉÍÓÚÑñÇç]{0,150}" id="inputGrado" placeholder="Titulación"
+                                            #name="ngModel" name="name" [(ngModel)]="idChosenSubject" [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                                            <datalist id="grados">
+                                            <option *ngFor="let item of subjects" [value]="item.id">({{item.code}}) {{item.name}}</option>
+                                            </datalist>
                                         </div>
-                                        </li>
-                                        <li class="list-group-item detalles2" *ngIf="subjectTeacher.joinedTeachers">
-                                            <p class="card-text">
-                                              <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
-                                            </p>
-                                          </li>
-                                        <li class="list-group-item detalles3" *ngIf="subjectTeacher.subject.schedules && subjectTeacher.subject.schedules.length != 0">
-                                            <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                                              <span class="text-muted" *ngFor="let schedule of subjectTeacher.subject.schedules"><small class="truncar"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
-                                            </p>
-                                        </li>
-                                    </ul>
+                                        <div class="col-2">
+                                            <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn boton" [disabled]="!idChosenSubject" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <div class="text-center mt-2" *ngIf="error != ''">
+                                    <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
                                 </div>
-                            </div>
 
-                            <div class="mt-4 div-input d-flex justify-content-center" *ngIf="subjectTeacher">
-                                <label for="horas_anadidas"><b>Horas deseadas</b></label>
-                                <input type="number" class="form-control" #hours="ngModel" min="0" max="{{subjectTeacher.subject.totalHours}}" name="hours" ngModel required id="inputHoras" placeholder="20">
-                                <span> h</span>
-                            </div>
+                                <div class="card" *ngIf="subjectTeacher && error == ''">
+                                    <div class="row g-0">
+                                    <div class="col">
+                                        <div class="card-body">
+                                        <ul class="list-group list-group-flush carta-asignatura">
+                                            <li class="list-group-item detalles1">
+                                            <div>
+                                                <h6 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h6>
+                                                <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacher.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacher.subject.campus}}</small>
+                                                <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
+                                                <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
+                                                <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{subjectTeacher.subject.career}}</span></p>
+                                                <p class="titulo-grupo" *ngIf="subjectTeacher.subject.assistanceCareers && subjectTeacher.subject.assistanceCareers.length != 0">
+                                                    <small><b>GRUPOS ASISTENCIA</b></small>
+                                                    <span class="badge fondo-grupos-asignaturas" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
+                                                </p>
+                                            </div>
+                                            </li>
+                                            <li class="list-group-item detalles2" *ngIf="subjectTeacher.joinedTeachers">
+                                                <p class="card-text">
+                                                <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                                </p>
+                                            </li>
+                                            <li class="list-group-item detalles3" *ngIf="subjectTeacher.subject.schedules && subjectTeacher.subject.schedules.length != 0">
+                                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                                                <span class="text-muted" *ngFor="let schedule of subjectTeacher.subject.schedules"><small class="truncar"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
+                                                </p>
+                                            </li>
+                                        </ul>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
 
-                            <div class="modal-footer">
-                                <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formChooseSubject.form.valid">Añadir</button>
-                            </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </ng-template>
+                                <div class="mt-4" *ngIf="subjectTeacher && error == ''">
+                                    <div class="div-input d-flex justify-content-center">
+                                        <label for="addedHours"><b>Horas deseadas</b></label>
+                                        <input type="number" class="form-control" #hours="ngModel" min="0" max="{{subjectTeacher.subject.totalHours}}" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
+                                        [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
+                                        <span> h</span>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo de horas es de {{subjectTeacher.subject.totalHours}}</span>
+                                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo de horas es de 0</span>
+                                    </div>
+                                </div>
 
-        <ng-template #alertConflicts let-modal>
-            <div class="modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                    <div class="mb-3 px-4">
-                        <h5 class="modal-title centrar" id="titleModal4"><b>Conflictos de horario</b></h5>
-                        <a>La asignatura de <b>{{subjectToShowAlert.subject.name}}</b> presenta los siguientes conflictos de horario:</a>
-                        <ul class="list-group list-group-flush" *ngIf="subjectToShowAlert.joinedTeachers">
-                            
-                            <li class="list-group-item" *ngFor="let conflict of subjectToShowAlert.conflicts">
-                                <p class="card-text">
-                                  <span><small class="text-muted"><b>{{conflict}}</b></small><br></span>
-                                </p>
-                            </li>
-                            
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button (click)="modal.dismiss()" class="btn mx-auto boton-general tema-urjc-rojo">Aceptar</button>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </ng-template>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!subjectTeacher || !formChooseSubject.form.valid || error != ''">Añadir</button>
+                                </div>
 
-        <div class="col-12 contenido-asignaturas-docentes">
-            <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
-            
-                <div class="col" *ngFor="let mySubject of mySubjects">
-                    <div [ngClass]="{'card-asignatura-colision': 0 > mySubject.leftHours, 'card-asignatura-libre' : mySubject.leftHours > 0, 'card-asignatura-completa' : 0 == mySubject.leftHours}" class="card h-100 w-100 shadow">
-                        <div class="card-body contenido-cards">
-                        <ul class="list-group list-group-flush carta-asignatura">
-                            <li class="list-group-item detalles1">
-                            <div>
-                                <h4 class="card-title"><b>{{mySubject.subject.name}} ({{mySubject.subject.code}})</b>
-                                    <button *ngIf="mySubject.conflicts.length > 0" type="button" title="Alerta conflicto" class="col-1 btn color-colision boton-alerta" (click)="openAlert(alertConflicts, mySubject)">
-                                    <i class="fa fa-exclamation-circle fa-lg"></i>
-                                  </button></h4>
-                                <h6 class="card-subtitle mb-2 text-muted">{{mySubject.subject.title}}
-                                <small *ngIf="0 > mySubject.leftHours" class="truncar estado-asignatura colision">Colisión docente</small>
-                                <small *ngIf="mySubject.leftHours > 0" class="truncar estado-asignatura libre">Libre</small> 
-                                <small *ngIf="0 == mySubject.leftHours" class="truncar estado-asignatura completa">Completa</small>
-                                </h6>
-                                <small><i class="fa fa-clock fa-sm"></i>{{mySubject.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{mySubject.subject.campus}}</small>
-                                <p class="card-text" *ngIf="mySubject.subject.turn == 'T'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Tarde</small></p>
-                                <p class="card-text" *ngIf="mySubject.subject.turn == 'M'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Mañana</small></p>
-                                <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{mySubject.subject.career}}</span></p>
-                                <p class="titulo-grupo" *ngIf="mySubject.subject.assistanceCareers && mySubject.subject.assistanceCareers.length != 0">
-                                    <small><b>GRUPOS ASISTENCIA</b></small>
-                                    <span class="badge fondo-grupos-asignaturas" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
-                                </p>
                             </div>
-                            </li>
-                            <li class="list-group-item detalles2" *ngIf="mySubject.joinedTeachers">
-                                <p class="card-text">
-                                  <span *ngFor="let teacher of mySubject.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
-                                </p>
-                              </li>
-                            <li class="list-group-item detalles3" *ngIf="mySubject.subject.schedules && mySubject.subject.schedules.length != 0">
-                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                                  <small class="text-muted" *ngFor="let schedule of mySubject.subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
-                                </p>
-                            </li>
-                        </ul>
-                        </div>
-                        <div class="card-footer text-muted">
-                            <div class="row justify-content-end">
-                              <button type="button" (click)="openRecord(record, mySubject)" title="Ver" class="col-4 btn boton-asignatura-libre"><i class="fa fa-eye fa-lg"></i></button>
-                              <button type="button" (click)="openEdit(editPOD, mySubject)" title="Editar" class="col-4 btn boton-asignatura-libre"><i class="fa fa-pencil fa-lg"></i></button>
-                              <button type="button" (click)="openDelete(deletePOD, mySubject)" title="Eliminar" class="col-4 btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
+            </ng-template>
+
+            <ng-template #alertConflicts let-modal>
+                <div class="modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        <div class="mb-3 px-4">
+                            <h5 class="modal-title centrar" id="titleModal4"><b>Conflictos de horario</b></h5>
+                            <a>La asignatura de <b>{{subjectToShowAlert.subject.name}}</b> presenta los siguientes conflictos de horario:</a>
+                            <ul class="list-group list-group-flush" *ngIf="subjectToShowAlert.joinedTeachers">
+                                
+                                <li class="list-group-item" *ngFor="let conflict of subjectToShowAlert.conflicts">
+                                    <p class="card-text">
+                                    <span><small class="text-muted"><b>{{conflict}}</b></small><br></span>
+                                    </p>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button (click)="modal.dismiss()" class="btn mx-auto boton-general tema-urjc-rojo">Aceptar</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+            <div class="col-12 contenido-asignaturas-docentes">
+                <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
+                
+                    <div class="col" *ngFor="let mySubject of mySubjects">
+                        <div [ngClass]="{'card-asignatura-colision': 0 > mySubject.leftHours, 'card-asignatura-libre' : mySubject.leftHours > 0, 'card-asignatura-completa' : 0 == mySubject.leftHours}" class="card h-100 w-100 shadow">
+                            <div class="card-body contenido-cards">
+                            <ul class="list-group list-group-flush carta-asignatura">
+                                <li class="list-group-item detalles1">
+                                <div>
+                                    <h4 class="card-title"><b>{{mySubject.subject.name}} ({{mySubject.subject.code}})</b>
+                                        <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Alerta conflicto" class="col-1 btn color-colision boton-alerta" (click)="openAlert(alertConflicts, mySubject)">
+                                        <i class="fa fa-exclamation-circle fa-lg"></i>
+                                    </button></h4>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{mySubject.subject.title}}
+                                    <small *ngIf="0 > mySubject.leftHours" class="truncar estado-asignatura colision">Colisión docente</small>
+                                    <small *ngIf="mySubject.leftHours > 0" class="truncar estado-asignatura libre">Libre</small> 
+                                    <small *ngIf="0 == mySubject.leftHours" class="truncar estado-asignatura completa">Completa</small>
+                                    </h6>
+                                    <small><i class="fa fa-clock fa-sm"></i>{{mySubject.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{mySubject.subject.campus}}</small>
+                                    <p class="card-text" *ngIf="mySubject.subject.turn == 'T'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Tarde</small></p>
+                                    <p class="card-text" *ngIf="mySubject.subject.turn == 'M'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Mañana</small></p>
+                                    <p class="titulo-grupo"><small><b>GRUPO</b></small><span class="badge fondo-grupos-asignaturas">{{mySubject.subject.career}}</span></p>
+                                    <p class="titulo-grupo" *ngIf="mySubject.subject.assistanceCareers && mySubject.subject.assistanceCareers.length != 0">
+                                        <small><b>GRUPOS ASISTENCIA</b></small>
+                                        <span class="badge fondo-grupos-asignaturas" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
+                                    </p>
+                                </div>
+                                </li>
+                                <li class="list-group-item detalles2" *ngIf="mySubject.joinedTeachers">
+                                    <p class="card-text">
+                                    <span *ngFor="let teacher of mySubject.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                    </p>
+                                </li>
+                                <li class="list-group-item detalles3" *ngIf="mySubject.subject.schedules && mySubject.subject.schedules.length != 0">
+                                    <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                                    <small class="text-muted" *ngFor="let schedule of mySubject.subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}}) </small>
+                                    </p>
+                                </li>
+                            </ul>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <button type="button" (click)="openRecord(record, mySubject)" placement="bottom" ngbTooltip="Ver" [ngClass]="{'boton-asignatura-colision': 0 > mySubject.leftHours, 'boton-asignatura-libre' : mySubject.leftHours > 0, 'boton-asignatura-completa' : 0 == mySubject.leftHours}"
+                                class="col-4 btn"><i class="fa fa-eye fa-lg"></i></button>
+                                <button type="button" (click)="openEdit(editPOD, mySubject)" placement="bottom" ngbTooltip="Editar" [ngClass]="{'boton-asignatura-colision': 0 > mySubject.leftHours, 'boton-asignatura-libre' : mySubject.leftHours > 0, 'boton-asignatura-completa' : 0 == mySubject.leftHours}"
+                                class="col-4 btn"><i class="fa fa-pencil fa-lg"></i></button>
+                                <button type="button" (click)="openDelete(deletePOD, mySubject)" placement="bottom" ngbTooltip="Eliminar" [ngClass]="{'boton-asignatura-colision': 0 > mySubject.leftHours, 'boton-asignatura-libre' : mySubject.leftHours > 0, 'boton-asignatura-completa' : 0 == mySubject.leftHours}"
+                                class="col-4 btn"><i class="fa fa-trash fa-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-center mt-5" *ngIf="showLoader">
+                    <div class="col-2 mt-5">
+                    <app-loader></app-loader>
+                    </div>
+                </div>
+                <div class="text-center no-data center-vertically" *ngIf="(!mySubjects && !showLoader) || (mySubjects && mySubjects.length == 0 && !showLoader)">
+                    <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
+                    <p>No hay asignaturas aún</p>
+                </div>
 
             </div>
 
-            <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                <div class="col-2 mt-5">
-                  <app-loader></app-loader>
-                </div>
-              </div>
-              <div class="text-center no-data center-vertically" *ngIf="(!mySubjects && !showLoader) || (mySubjects && mySubjects.length == 0 && !showLoader)">
-                <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
-                <p>No hay asignaturas aún</p>
-              </div>
+            </div>
+        </section>
 
         </div>
-
-        </div>
-    </section>
 
     </div>
-
-</div>
 
 </main>
 <app-scroll-up></app-scroll-up>
@@ -242,19 +259,24 @@
                         </ul>
                         <hr>
                         
-                        <div class="div-input d-flex justify-content-center ">
-                        <label for="horas_asignatura"><b>Horas asignatura</b></label>
-                        <input type="number" id="horas_asignatura" disabled placeholder="{{subjectToEdit.subject.totalHours}}" class="text-muted p-2"/>
-                        <span> h</span>
+                        <div class="mt-2 div-input d-flex justify-content-center ">
+                            <label for="horas_asignatura"><b>Horas asignatura</b></label>
+                            <input type="number" id="horas_asignatura" disabled placeholder="{{subjectToEdit.subject.totalHours}}" class="text-muted p-2"/>
+                            <span> h</span>
                         </div>
 
                         <div class="mt-2 div-input d-flex justify-content-center">
-                        <label for="inputHoras"><b>Horas escogidas</b></label>
-                        <input class="form-control" type="number" required class="p-2" min="0" max="{{subjectToEdit.subject.totalHours}}" #hours="ngModel" name="hours" ngModel
-                        id="inputHoras"/>
-                        <span> h</span>
+                            <label for="inputHoras"><b>Horas escogidas</b></label>
+                            <input class="form-control p-2" type="number" required min="0" max="{{subjectToEdit.subject.totalHours}}" #hours="ngModel" name="hours" ngModel
+                            id="inputHoras" [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''"/>
+                            <span> h</span>
                         </div>
 
+                        <div class="mt-2 div-input d-flex justify-content-center" *ngIf="hours.errors?.['max']">
+                            <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo de horas es de {{subjectToEdit.subject.totalHours}}</span>
+                            <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo de horas es de 0</span>
+
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formEditSubject.form.valid">Editar</button>

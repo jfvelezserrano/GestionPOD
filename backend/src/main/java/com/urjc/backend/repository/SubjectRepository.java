@@ -33,6 +33,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
     @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id ")
     List<Subject> findByCourse(@Param("id") Long id);
 
+    @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id AND subject.code = :code ")
+    Subject findByCourseAndCode(@Param("id") Long id, @Param("code") String code);
+
     @Query("SELECT subject FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
     List<Subject> findByTeacherAndCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse, Sort typeSort);

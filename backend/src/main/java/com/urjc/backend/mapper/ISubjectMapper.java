@@ -11,7 +11,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ISubjectMapper {
-    ISubjectMapper INSTANCE = Mappers.getMapper(ISubjectMapper.class);
 
     SubjectDTO toSubjectDTO(Subject subject);
 

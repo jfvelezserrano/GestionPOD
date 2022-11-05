@@ -1,11 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CourseService } from 'src/app/services/course.service';
+import { Component, OnInit, Input} from '@angular/core';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 import Chart from 'chart.js/auto';
 import { NgForm } from '@angular/forms';
-import { Subject } from 'src/app/models/subject.model';
 import { StatisticsPersonal } from 'src/app/models/statistics-personal.model';
 import { StatisticsMates } from 'src/app/models/statistics-mates.model';
 import { Course } from 'src/app/models/course.model';
@@ -13,6 +10,7 @@ import { CourseTeacher } from 'src/app/models/course-teacher.model';
 import { SubjectNameAndQuarter } from 'src/app/models/subject-name-and-quarter.model';
 import { StatisticsGraphHours } from 'src/app/models/statistics-graph-hours.model';
 import { StatisticsGraphPercentage } from 'src/app/models/statistics-graph-percentage.model';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -21,7 +19,6 @@ import { StatisticsGraphPercentage } from 'src/app/models/statistics-graph-perce
   styleUrls: ['./my-statistics.component.css']
 })
 export class MyStatisticsComponent implements OnInit {
-
   public personalStatistics: StatisticsPersonal;
   public mates: StatisticsMates[] = [];
   public courseChosen: number;
@@ -43,6 +40,7 @@ export class MyStatisticsComponent implements OnInit {
 
   public showLoaderCourse: boolean;
   public isCourse: boolean;
+  public testEmitter: BehaviorSubject<boolean>;
 
   constructor(
     private statisticsService: StatisticsService,
@@ -50,32 +48,45 @@ export class MyStatisticsComponent implements OnInit {
   ) {
     this.editableData = new CourseTeacher(0, "");
     this.showLoaderCourse = true;
-    this.isCourse = true;
+    this.testEmitter = new BehaviorSubject<boolean>(this.isCourse);
   }
 
   ngOnInit(): void {
     this.getPersonalStatistics();
-    this.getMates();
-    this.getCourses();
-    this.getEditableData();
+    this.testEmitter.subscribe(data => {
+      if(data != undefined && data){
+        this.getMates();
+      this.getCourses();
+      this.getEditableData();
+      };
+    })
   }
 
   ngAfterViewInit():void{
-    this.getHoursPerSubject();
-    this.getPercentageHours();
+    this.testEmitter.subscribe(data => {
+      if(data != undefined && data){
+        this.getHoursPerSubject();
+        this.getPercentageHours();
+      };
+    })
   }
 
   getPersonalStatistics() {
+    this.showLoaderCourse = true;
     this.statisticsService.getPersonalStatistics()
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.personalStatistics = data;
+        this.showLoaderCourse = false;
+        this.isCourse = true;
+        this.testEmitter.next(this.isCourse);
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        if(error === '404'){
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
           this.isCourse = false;
+          this.testEmitter.next(this.isCourse);
         }
       }
     });
@@ -85,13 +96,10 @@ export class MyStatisticsComponent implements OnInit {
     this.statisticsService.getMates()
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.mates = data;
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -101,13 +109,10 @@ export class MyStatisticsComponent implements OnInit {
     this.teacherService.getEditableData()
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.editableData = data;
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -119,9 +124,7 @@ export class MyStatisticsComponent implements OnInit {
         this.getEditableData();
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -131,15 +134,12 @@ export class MyStatisticsComponent implements OnInit {
     this.teacherService.getCourses()
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.courses = data;
         this.courseChosen = this.courses[0].id;
         this.getSubjectsByCourse();
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -148,13 +148,10 @@ export class MyStatisticsComponent implements OnInit {
     this.statisticsService.getMySubjectsByCourse(this.courseChosen)
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.subjects = data;
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -164,7 +161,6 @@ export class MyStatisticsComponent implements OnInit {
     this.statisticsService.graphHoursPerSubject()
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.dataGraphsHours = data;
         this.dataGraphsHours.forEach((element: StatisticsGraphHours) => {
           this.subjectsGraphHours.push(String(element.subjectName));
@@ -177,9 +173,7 @@ export class MyStatisticsComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -244,7 +238,6 @@ export class MyStatisticsComponent implements OnInit {
     this.statisticsService.graphPercentageHours()
     .subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.dataGraphsPercentage = data;
         this.dataGraphsPercentage.forEach((element: StatisticsGraphPercentage) => {
           var matches = element.subjectName;
@@ -259,9 +252,7 @@ export class MyStatisticsComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.showLoaderCourse = false;
         if(error === '404'){
-          this.isCourse = false;
         }
       }
     });

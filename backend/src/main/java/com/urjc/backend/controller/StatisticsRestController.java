@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +56,7 @@ public class StatisticsRestController {
             Integer[] myStatistics = teacherService.findPersonalStatistics(teacher.getId(), course.get());
             return new ResponseEntity<>(statisticsMapper.toStatisticsPersonalDTO(myStatistics), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @GetMapping(value = "/myMates")
@@ -68,7 +69,7 @@ public class StatisticsRestController {
 
             return new ResponseEntity<>(statisticsMapper.listStatisticsMatesDTO(myStatistics), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @JsonView(SubjectNameAndQuarter.class)
@@ -82,7 +83,7 @@ public class StatisticsRestController {
             List<Subject> mySubjects = subjectService.findNameAndQuarterByTeacherAndCourse(teacher.getId(), course.get(), sort);
             return new ResponseEntity<>(subjectMapper.listSubjectDTO(mySubjects), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ");
     }
 
     @GetMapping(value = "/myHoursPerSubject")
@@ -95,7 +96,7 @@ public class StatisticsRestController {
             List<Object[]> subjects = subjectService.hoursPerSubjectByTeacherAndCourse(teacher, course.get(), sort);
             return new ResponseEntity<>(statisticsMapper.listStatisticsGraphHoursDTO(subjects), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @GetMapping(value = "/myPercentageHoursSubjects")
@@ -108,7 +109,7 @@ public class StatisticsRestController {
             List<Object[]> subjects = subjectService.percentageHoursByTeacherAndCourse(teacher, course.get(), sort);
             return new ResponseEntity<>(statisticsMapper.listStatisticsGraphPercentageDTO(subjects), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @GetMapping(value = "/teachersStatistics")
@@ -123,7 +124,7 @@ public class StatisticsRestController {
             List<StatisticsTeacherDTO> statisticsTeacherDTOS = statisticsMapper.listStatisticsTeachersDTO(teachersStatistics);
             return new ResponseEntity<>(statisticsTeacherDTOS, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 
     @GetMapping(value = "")
@@ -133,6 +134,6 @@ public class StatisticsRestController {
             Integer[] myStatistics = courseService.getGlobalStatistics(course.get());
             return new ResponseEntity<>(statisticsMapper.toStatisticsGlobalDTO(myStatistics), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
     }
 }

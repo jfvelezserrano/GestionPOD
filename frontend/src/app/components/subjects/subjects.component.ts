@@ -1,16 +1,13 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from '@angular/core';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { CourseService } from 'src/app/services/course.service';
 import { SubjectService } from 'src/app/services/subject.service';
-import { Subject } from 'src/app/models/subject.model';
 import { NgForm } from '@angular/forms';
-import { Schedule } from 'src/app/models/schedule.model';
 import { saveAs } from 'file-saver';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { SubjectTeacherStatus } from 'src/app/models/subject-teacher-status.model';
 import { TeacherRoles } from 'src/app/models/teacher-roles.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-subjects',
@@ -18,7 +15,6 @@ import { TeacherRoles } from 'src/app/models/teacher-roles.model';
   styleUrls: ['./subjects.component.css']
 })
 export class SubjectsComponent implements OnInit {
-
   public pageTitle: string;
   public occupation: string;
   public quarter: string;
@@ -34,6 +30,7 @@ export class SubjectsComponent implements OnInit {
   public showLoaderCourse: boolean;
   public isCourse: boolean;
   public typeSort: string;
+  public testEmitter: BehaviorSubject<boolean>;
   public valuesSorting:any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -50,16 +47,20 @@ export class SubjectsComponent implements OnInit {
   ) {
     this.showLoader = false;
     this.showLoaderCourse = true;
-    this.isCourse = true;
     this.pageTitle = 'Asignaturas';
     this.typeSort = 'name';
     this.records = new Map<String, String[]>(null);
+    this.testEmitter = new BehaviorSubject<boolean>(this.isCourse);
   }
 
   ngOnInit(): void {
     this.getAllTitles();
-    this.getAllTeachers();
-    this.searchSubjects();
+    this.testEmitter.subscribe(data => {
+      if(data != undefined && data){
+        this.getAllTeachers();
+        this.searchSubjects();
+      };
+    })
   }
 
   searchSubjects(){
@@ -69,27 +70,26 @@ export class SubjectsComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.subjectsTeachersStatus = data;
-        this.showLoaderCourse = false;
-      },
-      error: (error) => {
-        this.showLoaderCourse = false;
-        if(error === '404'){
-          this.showLoader = false;
-          this.isCourse = false;
-        }
       }
     });
   }
 
   getAllTitles(){
+    this.showLoaderCourse = true;
     this.subjectService.getTitlesCurrentCourse().subscribe({
       next: (data) => {
-        this.titles = data;
         this.showLoaderCourse = false;
+        this.isCourse = true;
+        this.testEmitter.next(this.isCourse);
+        this.titles = data;
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        this.isCourse = false;
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
+          this.isCourse = false;
+          this.testEmitter.next(this.isCourse);
+        }
       }
     });
   }
@@ -97,12 +97,7 @@ export class SubjectsComponent implements OnInit {
   getAllTeachers(){
     this.teacherService.getAllTeachersCurrentCourse().subscribe({
       next: (data) => {
-        this.showLoaderCourse = false;
         this.teachers = data;
-      },
-      error: (error) => {
-        this.showLoaderCourse = false;
-        this.isCourse = false;
       }
     });
   }

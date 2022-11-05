@@ -12,7 +12,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface IStatisticsMapper {
-    IStatisticsMapper INSTANCE = Mappers.getMapper(IStatisticsMapper.class);
 
     StatisticsMatesDTO toStatisticsMatesDTO(String mateName, String mateSubject, Integer matePercentage);
 

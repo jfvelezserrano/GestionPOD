@@ -32,9 +32,6 @@ public class SubjectServiceImpl implements SubjectService{
     @Autowired
     private SubjectRepository subjectRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
-
     @Override
     public Subject save(Subject subject) {
         return subjectRepository.save(subject);
@@ -101,7 +98,7 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public void deleteSubjectsNotInAnyCourse(Course course){
+    public void deleteSubjectsByCourse(Course course){
         List<Subject> subjects = findByCourse(course.getId());
         for (Subject subject: subjects) {
             if(subject.getCourseSubjects().size() == 1){
@@ -202,53 +199,49 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public Boolean saveAll(MultipartFile file, Course course){
+    public void saveAll(MultipartFile file, Course course) throws IOException{
         BufferedReader br;
-        try {
-            if(!file.isEmpty()){
-            String line;
-            InputStream is = file.getInputStream();
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                line = line.replaceAll("[\"=\'#!]", "");
-                String[] values = line.split(";", -1);
+        String line;
+        InputStream is = file.getInputStream();
+        br = new BufferedReader(new InputStreamReader(is));
 
-                if (!(values[0].equals("Codigo")) && !(values[0].equals("Código"))) {
+        while ((line = br.readLine()) != null) {
+            line = line.replaceAll("[\"=\'#!]", "");
+            String[] values = line.split(";", -1);
 
-                    Subject subject;
+            if (!(values[0].equals("Codigo")) && !(values[0].equals("Código"))) {
 
-                    setNullValues(values);
+                Subject subject;
 
-                    try {
-                        subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
-                                values[2], Integer.parseInt(values[3]), values[4], values[6], values[9], values[8]);
-                    } catch (Exception e) {
-                        return false;
-                    }
-                    if (!values[10].equals("")) {
-                        subject.setSchedulesByString(values[10]);
-                    }
-                    if (!values[11].equals("")) {
-                        subject.setAssistanceCareersByString(values[11]);
-                    }
+                setNullValues(values);
+                subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
+                        values[2], Integer.parseInt(values[3]), values[4], values[6], values[9], values[8]);
 
-                    Subject newSubject = findSubjectIfExists(subject);
-                    if (newSubject != null) {
-                        course.addSubject(newSubject);
-                        save(newSubject);
+                if (!values[10].equals("")) {
+                    subject.setSchedulesByString(values[10]);
+                }
+                if (!values[11].equals("")) {
+                    subject.setAssistanceCareersByString(values[11]);
+                }
+
+                if(!isCodeInCourse(course.getId(), subject.getCode())) {
+                    Subject subjectDDBB = findSubjectIfExists(subject);
+
+                    if (subjectDDBB != null) {
+                        course.addSubject(subjectDDBB);
+                        save(subjectDDBB);
                     } else {
                         course.addSubject(subject);
                         save(subject);
                     }
                 }
             }
-                return true;
-            }
-            return true;
-
-        } catch (IOException e) {
-            return false;
         }
+    }
+
+    @Override
+    public Boolean isCodeInCourse(Long idCourse, String code) {
+        return subjectRepository.findByCourseAndCode(idCourse, code) != null;
     }
 
     private void setNullValues(String[] values){
@@ -269,7 +262,6 @@ public class SubjectServiceImpl implements SubjectService{
             if(exists){
                 return storedSubject;
             }
-
         }
 
         return null;
@@ -315,8 +307,7 @@ public class SubjectServiceImpl implements SubjectService{
 
     @Override
     public List<String> getTitles() {
-        List<String> a = subjectRepository.getTitles();
-        return a;
+        return subjectRepository.getTitles();
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.junit.Assert;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
@@ -29,6 +30,9 @@ public class SubjectControllerTest {
 
     private Cookie cookie;
 
+    @Autowired
+    JWT jwt;
+
     @InjectMocks
     SubjectRestController subjectRestController;
 
@@ -40,7 +44,7 @@ public class SubjectControllerTest {
 
     @BeforeEach
     public void addCookie(){
-        String token = JWT.createJWT("a.merinom.2017@alumnos.urjc.es");
+        String token = jwt.createJWT("a.merinom.2017@alumnos.urjc.es");
         this.cookie = new Cookie("token", token);
     }
 

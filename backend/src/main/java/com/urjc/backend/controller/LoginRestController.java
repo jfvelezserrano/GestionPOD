@@ -11,23 +11,30 @@ import com.urjc.backend.service.MailBoxService;
 import com.urjc.backend.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Collectors;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class LoginRestController {
+
+    @Autowired
+    JWT jwt;
 
     @Autowired
     private AuthenticateProvider authenticationManager;
@@ -45,11 +52,10 @@ public class LoginRestController {
     @PostMapping(value = "/access")
     public ResponseEntity<Void> sendEmailLogin(@RequestBody EmailRequestDTO loginRequest, HttpServletRequest request) {
 
-        try {
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), null);
-            authenticationManager.authenticate(authentication);
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Teacher teacher = teacherService.findIfIsInCurrentCourse(loginRequest.getEmail());
+
+        if(teacher == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La dirección de correo es incorrecta");
         }
 
         String ip = request.getRemoteAddr();
@@ -58,13 +64,11 @@ public class LoginRestController {
 
         mailBoxService.addCodeEmail(randomCode, loginRequest.getEmail(), ip);
 
-        Teacher teacher = teacherService.findByEmail(loginRequest.getEmail());
-
         try{
             mailBoxService.sendEmail(randomCode, teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Algo ha fallado. Revise que la dirección de correo es correcta.");
         }
 
     }
@@ -78,7 +82,11 @@ public class LoginRestController {
             mailBoxService.getCodesEmails().removeCode(code);
             Teacher teacher = teacherService.findByEmail(email);
 
-            String token = JWT.createJWT(teacher.getEmail());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null,
+                    teacher.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+            authenticationManager.authenticate(authentication);
+
+            String token = jwt.createJWT(teacher.getEmail());
 
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
@@ -91,7 +99,7 @@ public class LoginRestController {
 
            return new ResponseEntity<>(teacherDTO,HttpStatus.OK);
         }
-       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(value = "/teacherLogged")
@@ -100,7 +108,7 @@ public class LoginRestController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication == null){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
         Teacher teacherLogged = teacherService.findByEmail(authentication.getName());

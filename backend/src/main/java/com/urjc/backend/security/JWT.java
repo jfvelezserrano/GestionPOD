@@ -1,54 +1,43 @@
 package com.urjc.backend.security;
 
-import com.auth0.jwt.interfaces.Claim;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
-
+@Component
 public class JWT {
 
-    private static String SECRET_KEY = "aWR1ZmhvaXkzODkyM3VyZmhvc2lkamZvaUZQT0lTVUZmZ3NzZGZzZGYzNEc1NkVSRkdTMzIzNGdkZ3NkZnMtLWdydHcyMzUzNDYyMzQyNWRmc2ZHREdSWTM0NTQ2U0ZTLXdldzU2MzQ=";
-    private static final int EXPIRATION_TIME =  24 * 60 * 60 * 1000;
-    private static SignatureAlgorithm algorithm = SignatureAlgorithm.HS256;
+    @Value("${jwt.secret.key}")
+    private String SECRET_KEY;
 
+    @Value("#{T(java.lang.Integer).parseInt('${jwt.expiration.time}')}")
+    private int EXPIRATION_TIME;
 
-    public static String createJWT(String email) {
+    @Value("#{T(io.jsonwebtoken.SignatureAlgorithm).forName('${jwt.algorithm}')}")
+    private SignatureAlgorithm ALGORITHM;
 
+    public String createJWT(String email) {
         byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
-        Key finalKey = new SecretKeySpec(secretKeyBytes, algorithm.getJcaName());
+        Key finalKey = new SecretKeySpec(secretKeyBytes, ALGORITHM.getJcaName());
 
         return Jwts.builder()
                 .setHeaderParam("typ","JWT")
                 .setIssuedAt(new Date(new Date().getTime()))
                 .setExpiration(new Date(new Date().getTime() + EXPIRATION_TIME))
                 .setSubject(email)
-                .signWith(algorithm, finalKey)
+                .signWith(ALGORITHM, finalKey)
                 .compact();
     }
 
-    public static Authentication getAuthentication(List<String> authorities, Claims claims) {
-
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
-                authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-
-        return auth;
-    }
-
-    public static Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(token)
@@ -57,19 +46,19 @@ public class JWT {
                 .before(new Date());
     }
 
-    public static Claims decodeJWT(String token) {
+    public Claims decodeJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token).getBody();
         return claims;
     }
 
-    public static boolean isCorrect(String token){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(DatatypeConverter.parseBase64Binary(SECRET_KEY), algorithm.getJcaName());
+    public boolean isSignatureVerified(String token){
+        SecretKeySpec secretKeySpec = new SecretKeySpec(DatatypeConverter.parseBase64Binary(SECRET_KEY), ALGORITHM.getJcaName());
         String[] chunks = token.split("\\.");
         String tokenWithoutSignature = chunks[0] + "." + chunks[1];
         String signature = chunks[2];
-        DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(algorithm, secretKeySpec);
+        DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(ALGORITHM, secretKeySpec);
 
         return validator.isValid(tokenWithoutSignature, signature);
     }

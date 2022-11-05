@@ -7,6 +7,7 @@ import com.urjc.backend.repository.CourseRepository;
 import com.urjc.backend.repository.SubjectRepository;
 import com.urjc.backend.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,7 +28,8 @@ import java.util.Optional;
 @Transactional
 public class TeacherServiceImpl implements TeacherService{
 
-    private final String mainAdmin = "a.merinom.2017@alumnos.urjc.es";
+    @Value("${email.main.admin}")
+    private String emailMainAdmin;
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -70,17 +72,12 @@ public class TeacherServiceImpl implements TeacherService{
     }
 
     @Override
-    public void deleteTeachersNotInAnyCourse(Course course){
+    public void deleteTeachersByCourse(Course course){
         List<Teacher> teachers = findByCourse(course.getId());
         for (Teacher teacher: teachers) {
-            if(!teacher.getEmail().equals(mainAdmin) &&
-                    course == courseRepository.findFirst1ByOrderByCreationDateDesc().get() && teacher.getRoles().contains("ADMIN")){
-                teacher.getRoles().remove("ADMIN");
-                save(teacher);
-            }
-            if(!teacher.getRoles().contains("ADMIN") && teacher.getCourseTeachers().size() == 1){
+            if(!teacher.getEmail().equals(emailMainAdmin) && teacher.getCourseTeachers().size() == 1){
                 delete(teacher);
-            }else if(teacher.getCourseTeachers().size() > 1 || teacher.getRoles().contains("ADMIN")){
+            }else {
                 teacher.unjoinCourse(course);
                 save(teacher);
             }
@@ -98,14 +95,19 @@ public class TeacherServiceImpl implements TeacherService{
     }
 
     @Override
-    public void deleteAdmins(){
+    public void updateAdminsInLastCourse(){
+        Optional<Course> lastCourse = courseRepository.findFirst1ByOrderByCreationDateDesc();
+        if(lastCourse.isPresent()) {
+            List<Teacher> admins = teacherRepository.findByRole("ADMIN");
 
-        List<Teacher> admins = teacherRepository.findByRole("ADMIN");
-
-        for (Teacher teacher:admins) {
-            if(!teacher.getEmail().equals(mainAdmin)){
-                teacher.getRoles().remove("ADMIN");
-                save(teacher);
+            for (Teacher teacher : admins) {
+                if (!teacher.getEmail().equals(emailMainAdmin) && (!lastCourse.get().isTeacherInCourse(teacher))) {
+                    teacher.getRoles().remove("ADMIN");
+                    save(teacher);
+                }
+                if(teacher.getEmail().equals(emailMainAdmin) && (!lastCourse.get().isTeacherInCourse(teacher))){
+                    lastCourse.get().addTeacher(teacher, 100);
+                }
             }
         }
     }
@@ -198,55 +200,28 @@ public class TeacherServiceImpl implements TeacherService{
     }
 
     @Override
-    public Teacher getTeacherIfExists(Teacher teacher){
-        return teacherRepository.exists(teacher);
-    }
-
-    @Override
-    public Boolean saveAll(MultipartFile file, Course course){
+    public void saveAll(MultipartFile file, Course course) throws IOException{
         BufferedReader br;
-        try {
+        String line;
+        InputStream is = file.getInputStream();
+        br = new BufferedReader(new InputStreamReader(is));
+        while ((line = br.readLine()) != null) {
+            line = line.replaceAll("[\"=\'#!]", "");
+            String[] values = line.split(";", -1);
 
-            if(!file.isEmpty()){
-                String line;
-                InputStream is = file.getInputStream();
-                br = new BufferedReader(new InputStreamReader(is));
-                while ((line = br.readLine()) != null) {
-                    line = line.replaceAll("[\"=\'#!]", "");
-                    String[] values = line.split(";", -1);
+            Teacher teacher;
 
-                    Teacher teacher;
-                    setNullValues(values);
+            setNullValues(values);
+            teacher = new Teacher(values[0], values[1]);
 
-                    try {
-                        teacher = new Teacher(values[0], values[1]);
-                    }catch (Exception e){
-                        return false;
-                    }
-
-                    Teacher teacherResult = getTeacherIfExists(teacher);
-                    if (teacherResult == null) {
-                        try{
-                            course.addTeacher(teacher, Integer.valueOf(values[2]));
-                            save(teacher);
-                        } catch (RuntimeException e){
-                            return false;
-                        }
-                    }else{
-                        try{
-                            course.addTeacher(teacherResult, Integer.valueOf(values[2]));
-                            save(teacherResult);
-                        } catch (RuntimeException e){
-                            return false;
-                        }
-                    }
-                }
-                return true;
+            Teacher teacherResult = findByEmail(teacher.getEmail());
+            if (teacherResult == null) {
+                course.addTeacher(teacher, Integer.valueOf(values[2]));
+                save(teacher);
+            }else if(teacherResult != null && !course.isTeacherInCourse(teacherResult)){
+                course.addTeacher(teacherResult, Integer.valueOf(values[2]));
+                save(teacherResult);
             }
-            return false;
-
-        } catch (IOException e) {
-            return false;
         }
     }
 }

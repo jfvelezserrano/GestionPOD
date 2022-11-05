@@ -12,7 +12,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ICourseMapper {
-    ICourseMapper INSTANCE = Mappers.getMapper(ICourseMapper.class);
 
     CourseDTO toCourseDTO(Course course);
 

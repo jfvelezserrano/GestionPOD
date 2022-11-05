@@ -10,8 +10,6 @@ import { LoginService } from '../../services/login.service';
   providers: [LoginService, LocalStorageService]
 })
 export class VerifyComponent implements OnInit {
-
-  public status: string;
   public code: number;
 
   constructor(
@@ -29,7 +27,6 @@ export class VerifyComponent implements OnInit {
     this.loginService.verify(this.code).subscribe(
       response => {
         this.localStorageService.setInLocalStorage("teacher", response);
-        this.status = "success";
         this.router.navigate(['subjects']);
       }
     );

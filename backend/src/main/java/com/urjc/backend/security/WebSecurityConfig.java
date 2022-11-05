@@ -3,7 +3,6 @@ package com.urjc.backend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -34,14 +32,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /*@Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth.inMemoryAuthentication().withUser("in28Minutes").password("dummy")
+        auth.inMemoryAuthentication().withUser("a.merinom.2017@alumnos.urjc.es")
                 .roles("USER", "ADMIN");
     }*/
 
-    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtFilter jwtFilter;
 
-    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
-        this.jwtTokenFilter = jwtTokenFilter;
+    public WebSecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
     @Override
@@ -54,18 +52,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.antMatcher("/api/**");
-
-        http.authorizeRequests().antMatchers("/api/pods/**").hasRole("ADMIN");
-        http.authorizeRequests().antMatchers("/api/subjects/**").hasAnyRole("TEACHER");
-        http.authorizeRequests().antMatchers("/api/subjects/**").hasAnyRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/teachers/role").hasAnyRole("ADMIN");
-        http.authorizeRequests().regexMatchers(HttpMethod.GET,"/.*role=.*").hasAnyRole("ADMIN");
-        http.authorizeRequests().regexMatchers("/api/teachers").hasAnyRole("TEACHER");
-        http.authorizeRequests().antMatchers("/api/teachers/**").hasAnyRole("TEACHER");
-        http.authorizeRequests().antMatchers("/api/statistics/**").hasRole("TEACHER");
-
-        http.authorizeRequests().anyRequest().permitAll();
+        http.authorizeRequests()
+                .antMatchers("/api/access").permitAll()
+                .antMatchers("/api/verify/**").permitAll()
+                .antMatchers("/api/pods/**").hasRole("ADMIN")
+                .antMatchers("/api/subjects/**").hasRole("TEACHER")
+                .antMatchers(HttpMethod.PUT,"/api/teachers/role").hasRole("ADMIN")
+                .regexMatchers(HttpMethod.GET,"/.*role=.*").hasRole("ADMIN")
+                .regexMatchers("/api/teachers").hasRole("TEACHER")
+                .antMatchers("/api/teachers/**").hasRole("TEACHER")
+                .antMatchers("/api/statistics/**").hasRole("TEACHER")
+                .anyRequest().authenticated();
 
         /*http.csrf().ignoringAntMatchers("/api/access")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());*/
@@ -83,10 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout")).permitAll();
 
-        http.addFilterBefore(
-                jwtTokenFilter,
-                UsernamePasswordAuthenticationFilter.class
-        );
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

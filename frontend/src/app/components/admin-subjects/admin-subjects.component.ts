@@ -17,7 +17,6 @@ import { Subject } from 'src/app/models/subject.model';
   styleUrls: ['./admin-subjects.component.css']
 })
 export class AdminSubjectsComponent implements OnInit {
-
   public subjectsTeachersBase: Array<SubjectTeacherBase> = [];
   public idPod: number;
   public subject: Subject;
@@ -30,8 +29,10 @@ export class AdminSubjectsComponent implements OnInit {
   public page: number;
   public typeSort:string;
   public isMore: boolean;
+  public isCourse: boolean;
+  public error: string;
   public records: Map<String, String[]>;
-  public showLoader: boolean = false;
+  public showLoader: boolean;
   public valuesSorting: any = [
     {value: 'name', name: "Nombre"},
     {value: 'code', name: "Código"},
@@ -47,7 +48,7 @@ export class AdminSubjectsComponent implements OnInit {
     private modalService: NgbModal,
     private offcanvasService: NgbOffcanvas) { 
       this.typeSort = "name";
-
+      this.showLoader = true;
       this.records = new Map<String, String[]>(null);
       this.subject = new Subject(null, '', '', '', null, '', null, '', '', '', '', [], []);
       this.newSubject = new Subject(null, '', '', '', null, '', null, '', '', '', '', [], []);
@@ -70,6 +71,14 @@ export class AdminSubjectsComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.subjectsTeachersBase = data;
+        this.isCourse = true;
+      },
+      error: (error) => {
+        this.showLoader = false;
+        var splitted = error.split(";"); 
+        if(splitted[0] == '404'){
+          this.isCourse = false;
+        }
       }
     });
   }
@@ -82,9 +91,6 @@ export class AdminSubjectsComponent implements OnInit {
       next: (data) => {
         this.subjectsTeachersBase = this.subjectsTeachersBase.concat(data);
         this.isMore = Object.keys(data).length == 12;
-      },
-      error: (error) => {
-        console.error(error);
       }
     });
   }
@@ -104,9 +110,6 @@ export class AdminSubjectsComponent implements OnInit {
     this.courseService.deleteSubjectInPod(this.idPod, idSubjectToDelete).subscribe({
       next: (_) => {
         this.getSubjectsInPod();
-      },
-      error: (error) => {
-        console.error(error);
       }
     });
   }
@@ -149,9 +152,6 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.getTitles().subscribe({
       next: (data) => {
         this.titles = data;
-      },
-      error: (error) => {
-        console.error(error);
       }
     });
   }
@@ -160,9 +160,6 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.getCampus().subscribe({
       next: (data) => {
         this.allCampus = data;
-      },
-      error: (error) => {
-        console.error(error);
       }
     });
   }
@@ -171,9 +168,6 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.getTypes().subscribe({
       next: (data) => {
         this.types = data;
-      },
-      error: (error) => {
-        console.error(error);
       }
     });
   }
@@ -185,11 +179,16 @@ export class AdminSubjectsComponent implements OnInit {
     this.subjectService.createSubject(this.newSubject, this.idPod).subscribe({
       next: (data) => {
         this.getSubjectsInPod();
-        //this.newSubject = {};
-        form.reset;
+        this.error = '';
+        this.scheduleList = [];
+        this.assistanceCareersList = [];
+        form.reset();
       },
       error: (error) => {
-        console.error(error);
+        var splitted = error.split(";"); 
+        if(splitted[0] == '409'){
+          this.error = splitted[1];
+        }
       }
     });
   }

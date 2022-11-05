@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,9 @@ public interface SubjectService {
 
     List<Subject> findByCourse(Long id);
 
-    void deleteSubjectsNotInAnyCourse(Course course);
+    Boolean isCodeInCourse(Long id, String code);
+
+    void deleteSubjectsByCourse(Course course);
 
     List<Subject> findNameAndQuarterByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort);
 
@@ -33,7 +36,7 @@ public interface SubjectService {
 
     List<Object[]> findByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort);
 
-    Boolean saveAll(MultipartFile file, Course course);
+    void saveAll(MultipartFile file, Course course) throws IOException;
 
     Subject findSubjectIfExists(Subject subject);
 

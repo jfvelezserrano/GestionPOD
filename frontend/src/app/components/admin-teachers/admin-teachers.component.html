@@ -1,6 +1,14 @@
 <app-navbar></app-navbar>
   <main class="container-fluid contenido-todo">
-    <div class="row">
+    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
+      <p><i class="fa-solid fa-2xl fa-book"></i></p>
+      <p>No hay ningún curso aún</p>
+    </div>
+    <div class="center-vertically center-horizontally" *ngIf="showLoader">
+      <app-loader></app-loader>
+    </div>
+
+    <div class="row" *ngIf="isCourse && !showLoader">
       
       <div class="col">  
 
@@ -15,7 +23,7 @@
                 <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
                   <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
-                <button type="button" title="Añadir asignatura" class="ms-2 btn boton my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
+                <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn boton my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
               </div>
             </div>
 
@@ -26,35 +34,31 @@
                           <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <form #createTeacher="ngForm" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
+                        <form #createTeacher="ngForm" ngNativeValidate (ngSubmit)="onSubmit(createTeacher)" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
                             <h5 class="modal-title" id="titleModal"><b>Añadir Nuevo Docente</b></h5>
                             
                             <fieldset>
                               <legend>Identificación</legend>
                               <div class="row">
                                 <div class="form-group col-12">
-                                    <label for="inputNombre" class="form-label titulo-seccion">Nombre *</label>
-                                    <div class="custom-wrapper">
-                                      <input type="text" class="form-control" id="inputNombre" required pattern="[a-zA-Z- ,áéíóúÁÉÍÓÚÑñÇç]{5,60}" placeholder="Nombre del docente" #name="ngModel" name="name" ngModel
+                                      <input type="text" class="form-control" required pattern="[-a-zA-Z, Á-üÑñÇç]{0,80}" placeholder="Nombre" #name="ngModel" name="name" ngModel
                                       [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!name.valid && name.touched" alt="Nombre inválido" placement="end" ngbTooltip="Nombre de docente inválido"></i>
-                                    </div>
+                                      <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los números y algunos caracteres especiales no están permitidos</span>
                                 </div>
                                 <div class="form-group col-12">
-                                    <label for="inputEmail" class="form-label titulo-seccion">Correo Electrónico *</label>
-                                    <div class="custom-wrapper">
-                                      <input type="email" class="form-control" id="inputEmail" required email placeholder="Email del docente" #email="ngModel" name="email" ngModel
-                                      [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
-                                      <i class="fa-solid fa-xmark icon-login-error" *ngIf="!email.valid && email.touched" alt="Email inválido" placement="end" ngbTooltip="Email inválido"></i>
-                                    </div>
+                                      <input type="email" class="form-control" required email aria-describedby="email" placeholder="Correo Electrónico" #email="ngModel" name="email" ngModel
+                                      [ngClass]="!email.valid && email.touched ? 'border-error' : ''" maxlength="30">
+                                      
                                 </div>
                                 <div class="form-group col-12">
-                                  <label for="inputHoras" class="form-label titulo-seccion">Horas *</label>
-                                  <input type="number" class="form-control" id="inputHoras" required placeholder="Horas totales" #hours="ngModel" name="hours" ngModel>
+                                  <input type="number" class="form-control" min="0" max="9999" required placeholder="Número de horas" #hours="ngModel" name="hours" ngModel>
+                                  <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">Máximo un valor de 9999</span>
+                                  <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">Mínimo un valor de 0</span>
                                 </div>
                               </div>
                             </fieldset>
-                            <button (click)="modal.dismiss(createTeacherInPod(createTeacher))" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!createTeacher.form.valid">Añadir</button>
+                            <span class="error-message-txt m-0 text-center" role="alert" *ngIf="error != ''">{{error}}</span>
+                            <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="email.errors?.['required'] || name.errors?.['required'] || hours.errors?.['required']">Añadir</button>
                         </form>
                       </div>
                   </div>
@@ -97,9 +101,12 @@
                       </ul>
                       </div>
                       <div class="card-footer text-muted">
-                      <div class="row justify-content-end">
-                          <button type="button" (click)="openToDelete(deleteTeacher, teacher)" title="Eliminar" class="btn boton-asignatura-libre"><i class="fa fa-trash fa-lg"></i></button>
-                      </div>
+                        <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn boton-asignatura-libre">
+                          <i class="fa fa-trash fa-lg"></i>
+                        </button>
+                        <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn boton-asignatura-libre">
+                          <i class="fa fa-trash fa-lg"></i>
+                        </button>
                       </div>
                   </div>
                 </div>
@@ -110,7 +117,7 @@
                   <app-loader></app-loader>
                 </div>
               </div>
-              <div class="text-center no-data" *ngIf="teachers && teachers.length == 0 && !showLoader">
+              <div class="text-center no-data center-vertically" *ngIf="teachers && teachers.length == 0 && !showLoader">
                 <p><i class="fa-solid fa-2xl fa-user"></i></p>
                 <p>No hay docentes aún</p>
               </div>

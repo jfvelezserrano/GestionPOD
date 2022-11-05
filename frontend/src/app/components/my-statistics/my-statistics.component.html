@@ -54,7 +54,7 @@
     </div>
 </div>
 
-<div class="container-fluid mt-4 px-0 px-md-5" *ngIf="isCourse && !showLoaderCourse">
+<div class="container-fluid mt-4 px-0 px-md-5" *ngIf="isCourse">
     <div class="row gx-4 gy-4 justify-content-center px-0 px-md-5">
 
     <!--<div class="col-12 col-xl-9">-->
@@ -63,7 +63,7 @@
         <div class="col-12 col-lg-7">
             <div class="box-mis-estadisticas h-100 w-100">
                 <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Mis compañeros</b></h6>
-                <table class="table table-borderless table-responsive" *ngIf="mates">
+                <table class="table table-borderless table-responsive" *ngIf="mates.length != 0">
                     <tbody>
                     <tr *ngFor="let mate of mates">
                         <td>
@@ -140,20 +140,22 @@
             <h6 class="text-center titulo-mis-estadisticas"><b>Mis Datos</b></h6>
             <form #formEditEditableData="ngForm" (ngSubmit)="onSubmit(formEditEditableData)">
                 <div class="form-group">
-                <label for="inputHorasEstadisticas">Horas Totales</label>
-                <input type="number" #correctedHours="ngModel" name="correctedHours" [(ngModel)]="editableData.correctedHours" id="inputHorasEstadisticas" 
-                class="ml-5 form-control" placeholder="Horas totales" [value]="editableData.correctedHours" required pattern="[0-9]{1,6}">
+                    <label for="inputHorasEstadisticas">Horas Totales</label>
+                    <input type="number" #correctedHours="ngModel" name="correctedHours" min="0" max="9999" [(ngModel)]="editableData.correctedHours" id="inputHorasEstadisticas" 
+                    class="ml-5 form-control" placeholder="Horas totales" [value]="editableData.correctedHours" required [ngClass]="!correctedHours.valid && correctedHours.touched ? 'border-error' : ''">
+                    <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['max']">El número máximo de horas es de 9999</span>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['min']">El número mínimo de horas es de 0</span>
                 </div>
 
                 <div class="form-group mt-2">
-                <label for="textareaObservaciones">Mis observaciones</label>
-                <textarea class="form-control" #observation="ngModel" name="observation" [(ngModel)]="editableData.observation" id="textareaObservaciones" 
-                rows="2" placeholder="Mis observaciones" [value]="editableData.observation" required pattern="[a-zA-Z0-9- áéíóúÁÉÍÓÚÑñÇç]{0,255}"
-                [ngClass]="!observation.valid && observation.touched ? 'border-error' : ''"></textarea>
-                <i class="fa-solid fa-xmark icon-login-error" *ngIf="!observation.valid && observation.touched" alt="Observación introducida inválida" ngbTooltip="Observación inválida"></i>
+                    <label for="textareaObservaciones">Mis observaciones</label>
+                    <textarea class="form-control" #observation="ngModel" name="observation" [(ngModel)]="editableData.observation" id="textareaObservaciones" 
+                    rows="2" placeholder="Mis observaciones" [value]="editableData.observation" pattern="[-0-9a-zA-Z(){}, Á-üÑñÇç]{0,255}"
+                    [ngClass]="!observation.valid && observation.touched ? 'border-error' : ''"></textarea>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="observation.errors?.['pattern']">Algunos caracteres especiales no están permitidos</span>
                 </div>
                 <div class="text-center mt-3">
-                <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formEditEditableData.form.valid">Guardar</button>
+                    <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formEditEditableData.form.valid">Guardar</button>
                 </div>
             </form>
 

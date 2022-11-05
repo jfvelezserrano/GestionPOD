@@ -3,6 +3,7 @@ package com.urjc.backend.service;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.singleton.CodesEmail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ import java.util.Map;
 @Service
 public class MailBoxServiceImpl implements MailBoxService {
 
-    private final int minCode = 1000000000;
-    private final int maxCode = 999999999;
+    @Value("#{T(java.lang.Integer).parseInt('${mail.minimum.number.code}')}")
+    private int minCode;
+
+    @Value("#{T(java.lang.Integer).parseInt('${mail.maximum.number.code}')}")
+    private int maxCode;
 
     private CodesEmail codesEmail = CodesEmail.getCodeEmail();
 

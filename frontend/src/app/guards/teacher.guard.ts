@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router} from '@angular/router';
+import { TeacherRoles } from '../models/teacher-roles.model';
 import { LoginService } from '../services/login.service';
+import { SubjectService } from '../services/subject.service';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

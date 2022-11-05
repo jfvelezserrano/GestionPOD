@@ -35,6 +35,7 @@
 
 .centrar{
     text-align: center;
+    vertical-align: middle;
 }
 
 .nombre-usuario{
@@ -48,6 +49,7 @@
 
 .contenido-todo{
     margin-top: 40px;
+    padding-bottom: 40px;
 }
 
 .blanco{
@@ -138,7 +140,7 @@ hr {
     position:absolute;
     bottom:0;
     right: 0;
-    margin-right: 32px;
+    margin-right: 20px;
     margin-bottom: 10px;
 }
 
@@ -640,6 +642,7 @@ span{
 
 .desplegable-buscador{
     margin-bottom: 3%;
+    min-width: 100px;
     background-color: var(--blanco);
 }
 
@@ -751,7 +754,7 @@ label span{
 }
 
 .div-input input{
-    width: 60px;
+    width: 65px;
     text-align: center;
     margin-left: 20px;
 }
@@ -926,58 +929,19 @@ label span{
     top: calc(50% - 1.1em);
 }
 
-.custom-wrapper {
-    position: relative;
-    width: 100%;
-}
-
 .error-message{
     background-color: #fbe1e3;
     border-radius: 0.25rem;
     padding: 8px;
     color: #e73d4a;
-    font-size: smaller;
-}
-
-.font-smaller{
-    font-size: smaller;
+    font-size: small;
 }
 
 .error-message-txt{
     color: #e73d4a;
-    font-size: smaller;
+    font-size: small;
 }
 
 .border-error{
     border: 0.11em solid var(--error);
 }
-
-/* From uiverse.io by @alexruix */
-
-   
-   .input2 {
-    border: solid 1.5px #9e9e9e;
-    border-radius: 1rem;
-    background: none;
-    font-size: 1rem;
-    transition: border 150ms cubic-bezier(0.4,0,0.2,1);
-   }
-   
-   .user-label {
-    position: absolute;
-    left: 15px;
-    color: var(--gris);
-    transform: translateY(25%);
-    transition: 150ms cubic-bezier(0.4,0,0.2,1);
-   }
-   
-   .input2:focus, input:valid :not([type='radio']){
-    outline: none;
-    border: 1.5px solid #1a73e8;
-   }
-   
-   .input2:focus ~ label, input:valid ~ label :not([type='radio']) {
-    transform: translateY(-50%) scale(0.8);
-    background-color: var(--fondo);
-    color: #2196f3;
-   }

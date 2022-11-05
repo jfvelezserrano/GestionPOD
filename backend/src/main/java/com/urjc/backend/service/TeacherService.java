@@ -5,6 +5,7 @@ import com.urjc.backend.model.Teacher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +22,13 @@ public interface TeacherService {
 
     Object[] getEditableData(String email, Course course);
     List<Object[]> allTeachersStatistics(Course course, Pageable pageable);
-    Teacher getTeacherIfExists(Teacher teacher);
 
     void setNullValues(String[] values);
 
-    void deleteTeachersNotInAnyCourse(Course course);
-    void deleteAdmins();
+    void deleteTeachersByCourse(Course course);
+    void updateAdminsInLastCourse();
     void delete(Teacher teacher);
 
     Teacher save(Teacher teacher);
-    Boolean saveAll(MultipartFile file, Course course);
+    void saveAll(MultipartFile file, Course course) throws IOException;
 }

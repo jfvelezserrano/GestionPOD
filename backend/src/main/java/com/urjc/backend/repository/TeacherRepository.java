@@ -17,9 +17,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @Query("SELECT ct.correctedHours, ct.observation FROM Teacher t JOIN t.courseTeachers ct JOIN ct.course c WHERE t.email = :email AND c.id = :idCourse ")
     Object getEditableData(String email, Long idCourse);
 
-    @Query("SELECT t FROM Teacher t WHERE t.name = :#{#teacher.name} AND t.email = :#{#teacher.email} ")
-    Teacher exists(@Param("teacher") Teacher teacher);
-
     @Query("SELECT teacher FROM Teacher teacher JOIN teacher.courseTeachers ct JOIN ct.course c WHERE c.id = :id ")
     List<Teacher> findByCourse(@Param("id") Long id);
 

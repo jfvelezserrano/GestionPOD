@@ -8,7 +8,7 @@ import { interval, Subscription } from 'rxjs';
 })
 export class AppComponent implements OnInit{
   title = 'frontend';
-  public subscription: Subscription | any;
+  public subscription: Subscription;
   
   ngOnInit(): void {
     const intervalTime = interval(600000);
