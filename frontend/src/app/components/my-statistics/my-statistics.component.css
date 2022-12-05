@@ -1,0 +1,35 @@
+#box-editable-data{
+    background-color: var(--light-blue) !important ;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--blue);
+}
+
+#box-editable-data h6{
+    border-bottom: 1px solid var(--blue);
+    font-size: 20px;
+}
+
+.box-my-statistics{
+    position: relative;
+    padding: 45px;
+    height: 395px !important;
+    background: var(--white);
+    border-radius: 15px;
+    overflow: auto;
+}
+
+
+h6{
+    font-family: Arial, serif;
+    justify-content: center;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+}
+
+#doughnutChart{
+    height: 250px;
+    width: 250px;
+    margin-left: 100px;
+    margin-right: 100px;
+}

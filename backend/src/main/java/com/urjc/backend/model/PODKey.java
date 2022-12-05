@@ -24,12 +24,6 @@ class PODKey implements Serializable {
 
     public PODKey() {}
 
-    public PODKey(Long subjectId, Long courseId, Long teacherId) {
-        this.subjectId = subjectId;
-        this.courseId = courseId;
-        this.teacherId = teacherId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

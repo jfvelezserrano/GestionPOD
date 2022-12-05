@@ -15,14 +15,15 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./subjects.component.css']
 })
 export class SubjectsComponent implements OnInit {
-  public pageTitle: string;
+  public currentSection: string = "Asignaturas";
+  public currentSubsection: string = "Asignaturas";
   public occupation: string;
   public quarter: string;
   public titleChosen: string;
   public subjectsTeachersStatus: SubjectTeacherStatus[];
   public subjectToShow: SubjectTeacherStatus;
   public titles: string[];
-  public idTeacherChosen: number;
+  public emailTeacherChosen: string;
   public teachers: TeacherRoles[];
   public turn: string;
   public records: Map<String, String[]>;
@@ -47,25 +48,26 @@ export class SubjectsComponent implements OnInit {
   ) {
     this.showLoader = false;
     this.showLoaderCourse = true;
-    this.pageTitle = 'Asignaturas';
     this.typeSort = 'name';
     this.records = new Map<String, String[]>(null);
     this.testEmitter = new BehaviorSubject<boolean>(this.isCourse);
   }
 
   ngOnInit(): void {
-    this.getAllTitles();
-    this.testEmitter.subscribe(data => {
-      if(data != undefined && data){
-        this.getAllTeachers();
-        this.searchSubjects();
-      };
-    })
+    if(!this.isCourse){
+      this.getAllTitles();
+      this.testEmitter.subscribe(data => {
+        if(data != undefined && data){
+          this.getAllTeachers();
+          this.searchSubjects();
+        };
+      })
+    }
   }
 
   searchSubjects(){
     this.showLoader = true;
-    this.subjectService.search(this.typeSort, this.occupation, this.quarter, this.turn, this.titleChosen, this.idTeacherChosen)
+    this.subjectService.search(this.typeSort, this.occupation, this.quarter, this.turn, this.titleChosen, this.emailTeacherChosen)
     .subscribe({
       next: (data) => {
         this.showLoader = false;

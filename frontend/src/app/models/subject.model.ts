@@ -11,7 +11,7 @@ export class Subject {
         public year:number | any,
         public quarter:string,
         public type:string,
-        public turn:string,
+        public turn: string,
         public career:string,
         public assistanceCareers: Array<string>,
         public schedules: Array<Schedule>

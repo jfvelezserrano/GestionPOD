@@ -24,8 +24,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/pods")
@@ -36,6 +42,8 @@ public class CourseRestController {
 
     interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
+
+    public static String TYPE_FILE = "text/csv";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;
@@ -60,9 +68,16 @@ public class CourseRestController {
 
 
     @PostMapping(value = "", consumes = { "multipart/form-data"})
-    public ResponseEntity<Void> createPOD(@RequestPart("course") String course,
-                                                     @RequestPart("fileSubjects") MultipartFile fileSubjects,
-                                                     @RequestPart("fileTeachers") MultipartFile fileTeachers) {
+    public ResponseEntity<Void> createPOD(@RequestPart("course") @Valid CourseNameDTO courseNameDTO,
+                                                     @RequestPart("fileSubjects") @NotNull MultipartFile fileSubjects,
+                                                     @RequestPart("fileTeachers") @NotNull MultipartFile fileTeachers) {
+
+
+        if (!TYPE_FILE.equals(fileSubjects.getContentType()) || !TYPE_FILE.equals(fileTeachers.getContentType())) {
+            throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Solo se permiten archivos csv");
+        }
+
+        String course = courseMapper.toNameCourse(courseNameDTO);
 
         if(!courseService.exists(course)) {
             Course newCourse = new Course(course);
@@ -76,7 +91,7 @@ public class CourseRestController {
             }
             catch (Exception e){
                 deleteCourse(newCourse.getId());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Alguno de los ficheros está defectuoso");
             }
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -92,6 +107,17 @@ public class CourseRestController {
 
         List<Course> courses = courseService.findAllOrderByCreationDate();
         return new ResponseEntity<>(courseMapper.map(courses), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/currentCourse")
+    public ResponseEntity<CourseDTO> getCurrentCourse(){
+
+        Optional<Course> course = courseService.findLastCourse();
+        if(course.isPresent()) {
+            return new ResponseEntity<>(courseMapper.toCourseDTO(course.get()), HttpStatus.OK);
+        } else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        }
     }
 
     @JsonView(SubjectTeacherDTOBase.class)
@@ -184,7 +210,7 @@ public class CourseRestController {
     }
 
     @PostMapping("/{id}/teachers")
-    public ResponseEntity<Void> addNewTeacherToCourse(@RequestBody TeacherRequestDTO teacherRequest, @PathVariable Long id) {
+    public ResponseEntity<Void> addNewTeacherToCourse(@RequestBody @Valid TeacherJoinCourseDTO teacherRequest, @PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         Teacher teacherDDBB = teacherService.findByEmail(teacherRequest.getEmail());
         if(course.isPresent()) {
@@ -204,7 +230,7 @@ public class CourseRestController {
     }
 
     @PostMapping("/{id}/subjects")
-    public ResponseEntity<Void> addNewSubjectToCourse(@RequestBody SubjectDTO subjectDTO, @PathVariable Long id) {
+    public ResponseEntity<Void> addNewSubjectToCourse(@RequestBody @Valid SubjectDTO subjectDTO, @PathVariable Long id) {
         Optional<Course> course = courseService.findById(id);
         if(course.isPresent()) {
             Subject subject = subjectMapper.toSubject(subjectDTO);
@@ -233,7 +259,7 @@ public class CourseRestController {
         if(course.isPresent()) {
             Sort sort = Sort.unsorted();
             List<Object[]> subjectsAndTeachersCurrentCourse =
-                    subjectService.searchByCourse(course.get(), "", "", "", "", -1L, sort);
+                    subjectService.searchByCourse(course.get(), "", "", null, "", "", sort);
 
             List<String[]> body = courseService.createContentForCSV(subjectsAndTeachersCurrentCourse);
 

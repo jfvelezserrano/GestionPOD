@@ -8,6 +8,7 @@ import { SubjectTeacherBase } from 'src/app/models/subject-teacher-base.model';
 import { NgForm } from '@angular/forms';
 import { Schedule } from 'src/app/models/schedule.model';
 import { Subject } from 'src/app/models/subject.model';
+import { getLocaleFirstDayOfWeek } from '@angular/common';
 
 
 
@@ -19,6 +20,8 @@ import { Subject } from 'src/app/models/subject.model';
 export class AdminSubjectsComponent implements OnInit {
   public subjectsTeachersBase: Array<SubjectTeacherBase> = [];
   public idPod: number;
+  public currentSection: string = "Administrador";
+  public currentSubsection: string = "Administrador > Cursos > Asignaturas";
   public subject: Subject;
   public titles: string[];
   public allCampus: string[];

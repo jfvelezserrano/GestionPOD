@@ -18,7 +18,10 @@ export class MySubjectsComponent implements OnInit {
   public subjects: Subject[];
   public mySubjects: SubjectTeacherConflicts[];
   public idChosenSubject: number;
+  public codeChosenSubject: string;
   public chosenHours: number;
+  public currentSection: string = "Elección";
+  public currentSubsection: string = "Elección > Mis Asignaturas";
   public subjectTeacher: SubjectTeacherBase | any;
   public subjectToShowAlert: SubjectTeacherConflicts;
   public subjectToDelete: SubjectTeacherConflicts;
@@ -75,7 +78,7 @@ export class MySubjectsComponent implements OnInit {
   }
 
   joinSubject(form:NgForm){
-    this.teacherService.joinSubject(this.idChosenSubject, form.value).subscribe({
+     this.teacherService.joinSubject(this.idChosenSubject, form.value).subscribe({
       next: (data) => {
         this.getMySubjects();
         this.subjectTeacher = undefined;
@@ -92,6 +95,7 @@ export class MySubjectsComponent implements OnInit {
   }
 
   unjoinToSubject(id:number){
+    this.findIdInSubjectList();
     this.teacherService.unjoinSubject(id).subscribe({
       next: (data) => {
         this.getMySubjects();
@@ -109,7 +113,17 @@ export class MySubjectsComponent implements OnInit {
     this.subjectTeacher = undefined;
   }
 
+  findIdInSubjectList(){
+    let array = this.subjects.filter((x: { code: any; }) => x.code == this.codeChosenSubject);
+    if(array.length > 0){
+      this.idChosenSubject = array[0].id;
+    } else{
+      this.idChosenSubject = -1;
+    }
+  }
+
   getSubjectById(){
+    this.findIdInSubjectList();
     this.subjectService.getById(this.idChosenSubject).subscribe({
       next: (data) => {
         this.subjectTeacher = data;

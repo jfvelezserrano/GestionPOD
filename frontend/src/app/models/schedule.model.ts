@@ -1,7 +1,7 @@
 export class Schedule {
     constructor(
         public id: number | any,
-        public dayWeek: CharacterData,
+        public dayWeek: string,
         public startTime: string,
         public endTime: string
     ) {

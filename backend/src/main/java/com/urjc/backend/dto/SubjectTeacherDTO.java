@@ -1,8 +1,6 @@
 package com.urjc.backend.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.urjc.backend.controller.CourseRestController;
 import lombok.Getter;
 import lombok.Setter;
 

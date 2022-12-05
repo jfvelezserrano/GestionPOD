@@ -25,10 +25,10 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
     @Query(" SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c LEFT JOIN subject.pods pods " +
             "LEFT JOIN pods.course pc LEFT JOIN pods.teacher pt WHERE c.id = :idCourse AND " +
             "(:quarter IS NULL OR subject.quarter = :quarter) AND (:turn IS NULL OR subject.turn = :turn) " +
-            "AND (:title IS NULL OR subject.title = :title) AND (:idTeacher IS NULL OR (pt.id = :idTeacher AND pc.id=:idCourse)) " +
+            "AND (:title IS NULL OR subject.title = :title) AND (:emailTeacher IS NULL OR (pt.email = :emailTeacher AND pc.id=:idCourse)) " +
             "group by subject ")
-    List<Subject> search(@Param("idCourse") Long idCourse, @Param("quarter") String quarter, @Param("turn") String turn,
-                                             @Param("title") String title, @Param("idTeacher") Long idTeacher, Sort sort);
+    List<Subject> search(@Param("idCourse") Long idCourse, @Param("quarter") String quarter, @Param("turn") Character turn,
+                                             @Param("title") String title, @Param("emailTeacher") String emailTeacher, Sort sort);
 
     @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id ")
     List<Subject> findByCourse(@Param("id") Long id);

@@ -76,13 +76,13 @@ export class SubjectService {
 		) as Observable<Map<String, String[]>>;
   }
 
-  search(typeSort:string, occupation?:string, quarter?:string, turn?:string, title?:string, idTeacher?:number): Observable<SubjectTeacherStatus[]>{
+  search(typeSort:string, occupation?:string, quarter?:string, turn?:string, title?:string, emailTeacher?:string): Observable<SubjectTeacherStatus[]>{
     var params:any = {};
     if (occupation) params.occupation = occupation;
     if (quarter) params.quarter = quarter;
     if (turn) params.turn = turn;
     if (title) params.title = title;
-    if (idTeacher) params.teacher = idTeacher;
+    if (emailTeacher) params.teacher = emailTeacher;
     params.typeSort = typeSort;
 
     return this.http.get<SubjectTeacherStatus[]>(environment.urlApi + "/subjects/search", { 

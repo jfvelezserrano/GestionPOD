@@ -1,14 +1,18 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Teacher;
-import com.urjc.backend.singleton.CodesEmail;
 
 public interface MailBoxService {
     boolean sendEmail(Long randomCode, Teacher teacher);
 
     Long generateCodeEmail();
 
-    void addCodeEmail(Long code, String email, String ip);
+    Boolean isCorrect(Long code, String ip);
 
-    CodesEmail getCodesEmails();
+    void addCode(Long code, String email, String ip);
+
+    void removeCode(Long code);
+
+    String getEmailByCode(Long code);
+
 }

@@ -61,14 +61,13 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, String turn, String title, Long teacher, Sort sort) {
+    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title, String emailTeacher, Sort sort) {
 
         if(quarter.equals("")){ quarter = null; }
-        if(turn.equals("")){ turn = null; }
         if(title.equals("")){ title = null; }
-        if(teacher == -1){ teacher = null; }
+        if(emailTeacher.equals("")){ emailTeacher = null; }
 
-        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, teacher, sort);
+        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, emailTeacher, sort);
 
         //generate result to return and get teachers joined to each subject of a specific course
         List<Object[]> resultList = new ArrayList<>();
@@ -76,12 +75,8 @@ public class SubjectServiceImpl implements SubjectService{
         for (Subject subject:subjectsSearched) {
             List<String> teachers = subject.recordSubject().get(course.getName());
 
-            Integer totalChosenHours = 0;
-            if(teachers != null){
-                totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
-            }
+            Integer hoursLeft = getLeftHoursInSubject(teachers, subject);
 
-            Integer hoursLeft = subject.getTotalHours() - totalChosenHours;
             if(occupation.equals("") || (occupation.equals("Libre") && (hoursLeft > 0)) || (occupation.equals("Completa") && (hoursLeft == 0)) ||
                     (occupation.equals("Conflicto") && (hoursLeft < 0))){
                 Object[] obj = new Object[] { subject, teachers, hoursLeft };
@@ -148,9 +143,9 @@ public class SubjectServiceImpl implements SubjectService{
                 List<String> conflicts = checkScheduleConflicts(subject, schedulesFromAllMySubjects);
                 List<String> teachers = subject.recordSubject().get(course.getName());
 
-                Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
+                Integer leftHours = getLeftHoursInSubject(teachers, subject);
 
-                Object[] obj = new Object[]{subject, teachers, subject.getTotalHours() - totalChosenHours, conflicts};
+                Object[] obj = new Object[]{subject, teachers, leftHours, conflicts};
                 resultList.add(obj);
             }
 
@@ -158,6 +153,17 @@ public class SubjectServiceImpl implements SubjectService{
         }
 
         return new ArrayList<>();
+    }
+
+    private Integer getLeftHoursInSubject(List<String> teachers, Subject subject){
+        Integer totalChosenHours = 0;
+
+        if(teachers != null) {
+            totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
+        }
+        totalChosenHours = subject.getTotalHours() == 0 ? 0 : totalChosenHours;
+
+        return subject.getTotalHours() - totalChosenHours;
     }
 
     private List<String> checkScheduleConflicts(Subject subject, List<Object[]> allSchedulesFromMySubjects){
@@ -206,16 +212,16 @@ public class SubjectServiceImpl implements SubjectService{
         br = new BufferedReader(new InputStreamReader(is));
 
         while ((line = br.readLine()) != null) {
-            line = line.replaceAll("[\"=\'#!]", "");
+            line = line.replaceAll("[\\[\\]<>'\"!=]", "");
             String[] values = line.split(";", -1);
 
-            if (!(values[0].equals("Codigo")) && !(values[0].equals("Código"))) {
+            if (!(values[0].equals("Codigo")) && !(values[0].equals(""))) {
 
                 Subject subject;
 
                 setNullValues(values);
                 subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
-                        values[2], Integer.parseInt(values[3]), values[4], values[6], values[9], values[8]);
+                        values[2], Integer.parseInt(values[3]), values[4], values[6], values[9].charAt(0), values[8]);
 
                 if (!values[10].equals("")) {
                     subject.setSchedulesByString(values[10]);

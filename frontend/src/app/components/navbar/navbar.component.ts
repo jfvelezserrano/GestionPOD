@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Teacher } from 'src/app/models/teacher.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/login.service';
 
 
@@ -14,6 +13,8 @@ export class NavbarComponent implements OnInit {
   public teacher: any;
   public email: string;
   public isAdmin: boolean;
+  @Input() currentSection = '';
+  @Input() currentSubsection = '';
 
   constructor(
     private loginService: LoginService,

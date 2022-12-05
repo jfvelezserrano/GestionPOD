@@ -1,6 +1,9 @@
 package com.urjc.backend.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonView;

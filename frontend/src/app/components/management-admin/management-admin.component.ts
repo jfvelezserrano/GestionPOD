@@ -17,6 +17,8 @@ export class ManagementAdminComponent implements OnInit {
   public adminTeacher: TeacherRoles;
   public emailNewAdmin: string;
   public error: string;
+  public currentSection: string = "Administrador";
+  public currentSubsection: string = "Administrador > Gestión Altas";
   public mainAdmin: string = environment.main_admin;
   public testEmitter: BehaviorSubject<boolean>;
 

@@ -4,31 +4,28 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Id;
 import javax.validation.constraints.*;
-import java.util.List;
 
 @Getter
 @Setter
-public class TeacherDTO {
+public class TeacherJoinCourseDTO {
 
-    public interface Base {
+    public interface Login {
     }
-
-    @Id
-    @JsonView(Base.class)
-    private Long id;
-
-    @NotNull(message = "Se deben añadir roles")
-    private List<String> roles;
 
     @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
     @NotBlank(message = "Se debe completar el nombre")
-    @JsonView(Base.class)
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     private String name;
 
     @Email
     @NotBlank(message = "Se debe completar el email")
-    @JsonView(Base.class)
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
+    @JsonView(Login.class)
     private String email;
+
+    @NotNull(message = "Se deben completar las horas")
+    @Min(value = 0, message = "El número mínimo es de {value}h")
+    @Max(value = 400, message = "El número máximo es de {value}h")
+    private Integer hours;
 }

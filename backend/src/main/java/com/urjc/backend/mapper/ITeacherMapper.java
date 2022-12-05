@@ -13,6 +13,8 @@ public interface ITeacherMapper {
 
     TeacherDTO toTeacherDTO(Teacher teacher);
 
+    Teacher toTeacher(TeacherDTO teacherDTO);
+
     List<TeacherDTO> map(List<Teacher> teachers);
 
     CourseTeacherDTO toTeacherEditableDataDTO(Integer correctedHours, String observation);

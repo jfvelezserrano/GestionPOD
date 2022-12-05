@@ -107,10 +107,10 @@ public class SubjectRestController {
     @GetMapping("/search")
     public ResponseEntity<List<SubjectTeacherDTO>> search(@RequestParam(value="occupation", required = false, defaultValue = "") String occupation,
                                     @RequestParam(value="quarter", required = false, defaultValue = "") String quarter,
-                                    @RequestParam(value="turn", required = false, defaultValue = "") String turn,
+                                    @RequestParam(value="turn", required = false, defaultValue = "") Character turn,
                                     @RequestParam(value="title", required = false, defaultValue = "") String title,
-                                    @RequestParam(value="teacher", required = false, defaultValue = "-1") Long teacher,
-                                    @RequestParam(defaultValue = "name") String typeSort) {
+                                    @RequestParam(value="teacher", required = false, defaultValue = "") String teacher,
+                                    @RequestParam(defaultValue = "typeSort") String typeSort) {
 
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()) {

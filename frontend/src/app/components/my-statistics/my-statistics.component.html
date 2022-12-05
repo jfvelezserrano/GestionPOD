@@ -1,5 +1,5 @@
-<app-navbar></app-navbar>
-<main class="contenido-todo">
+<app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
+<main class="main-content">
     <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
         <p><i class="fa-solid fa-2xl fa-book"></i></p>
         <p>No hay ningún curso aún</p>
@@ -8,23 +8,23 @@
         <app-loader></app-loader>
     </div>
 <div class="container-fluid" *ngIf="isCourse && !showLoaderCourse">
-    <div class="row justify-content-center contenido-principal">
+    <div class="row justify-content-center mx-0 mx-lg-5 g-4">
 
     <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
         <div class="card-body">
-            <i class="fa fa-calendar-check fa-2x iconos-estadisticas-azul"></i> 
+            <i class="fa fa-calendar-check fa-2x statistics-icon blue"></i> 
             <h1 class="card-title"><b>{{personalStatistics.percentage}}%</b></h1>
             <p class="card-text"><b>Carga Docente</b></p>
-            <p class="card-text texto-fraccion"><b>{{personalStatistics.charge}}/{{personalStatistics.correctedHours}}</b></p>
+            <p class="card-text small"><b>{{personalStatistics.charge}}/{{personalStatistics.correctedHours}}</b></p>
         </div>
         </div>
     </div>
 
     <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
         <div class="card-body">
-            <i class="fa fa-calendar fa-2x gris iconos-estadisticas-gris"></i> 
+            <i class="fa fa-calendar fa-2x grey statistics-icon grey"></i> 
             <h1 class="card-title"><b>{{personalStatistics.correctedHours}}h</b></h1>
             <p class="card-text"><b>Fuerza Docente</b></p>
         </div>
@@ -32,9 +32,9 @@
     </div>
 
     <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
         <div class="card-body">
-            <i class="fa fa-book-open fa-2x iconos-estadisticas-azul"></i> 
+            <i class="fa fa-book-open fa-2x statistics-icon blue"></i> 
             <h1 class="card-title"><b>{{personalStatistics.numSubjects}}</b></h1>
             <p class="card-text"><b>Asignaturas</b></p>
         </div>
@@ -42,11 +42,11 @@
     </div>
 
     <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
         <div class="card-body">
-            <i class="fa fa-times fa-2x iconos-estadisticas-gris"></i> 
+            <i class="fa fa-times fa-2x statistics-icon grey"></i> 
             <h1 class="card-title"><b>{{personalStatistics.numConflicts}}</b></h1>
-            <p class="card-text"><b>Conflictos</b></p>
+            <p class="card-text"><b>Colisiones docentes</b></p>
         </div>
         </div>
     </div>
@@ -54,15 +54,13 @@
     </div>
 </div>
 
-<div class="container-fluid mt-4 px-0 px-md-5" *ngIf="isCourse">
-    <div class="row gx-4 gy-4 justify-content-center px-0 px-md-5">
-
-    <!--<div class="col-12 col-xl-9">-->
+<div class="container-fluid mt-4 px-0 px-xl-5" *ngIf="isCourse">
+    <div class="row gx-4 gy-4 justify-content-center px-0 px-xl-5">
 
         <div class="row gy-4">
-        <div class="col-12 col-lg-7">
-            <div class="box-mis-estadisticas h-100 w-100">
-                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Mis compañeros</b></h6>
+        <div class="col-12 col-xl-7">
+            <div class="box-my-statistics h-100 w-100">
+                <h6 class="text-center border-bottom"><b>Mis compañeros</b></h6>
                 <table class="table table-borderless table-responsive" *ngIf="mates.length != 0">
                     <tbody>
                     <tr *ngFor="let mate of mates">
@@ -87,11 +85,11 @@
             </div>
         </div>
 
-        <div class="col-12 col-lg-5">
-            <div class="box-mis-estadisticas h-100 w-100">
-                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Asignaturas por año</b></h6>
+        <div class="col-12 col-xl-5">
+            <div class="box-my-statistics h-100 w-100">
+                <h6 class="text-center border-bottom"><b>Asignaturas por año</b></h6>
                 <div class="form-group" *ngIf="courseChosen">
-                    <select class="form-select text-muted form-select-sm desplegable-buscador" [(ngModel)]="courseChosen" (change)="getSubjectsByCourse()">
+                    <select class="form-select text-muted form-select-sm select-sort" [(ngModel)]="courseChosen" (change)="getSubjectsByCourse()">
                         <option *ngFor="let course of courses" [ngValue]="course.id">{{course.name}}</option>
                     </select>
                 </div>
@@ -115,9 +113,9 @@
             </div>
         </div>
         
-        <div class="col-12 col-lg-4">
-            <div class="box-mis-estadisticas h-100 w-100">
-                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Horas por asignatura</b></h6>
+        <div class="col-12 col-xl-4">
+            <div class="box-my-statistics h-100 w-100">
+                <h6 class="text-center border-bottom"><b>Horas por asignatura</b></h6>
                 <canvas id="barChart" *ngIf="personalStatistics.numSubjects != 0"></canvas>
                 <div class="text-center py-3 text-muted" *ngIf="personalStatistics.numSubjects == 0">
                     <p>No hay asignaturas aún</p>
@@ -125,9 +123,9 @@
             </div>
         </div>
 
-        <div class="col-12 col-lg-4">
-            <div class="box-mis-estadisticas h-100 w-100">
-                <h6 class="text-center border-bottom titulo-mis-estadisticas"><b>Porcentajes de asignaturas</b></h6>
+        <div class="col-12 col-xl-4">
+            <div class="box-my-statistics h-100 w-100">
+                <h6 class="text-center border-bottom"><b>Porcentajes de asignaturas</b></h6>
                 <canvas id="doughnutChart" *ngIf="personalStatistics.numSubjects != 0"></canvas>
                 <div class="text-center py-3 text-muted" *ngIf="personalStatistics.numSubjects == 0">
                     <p>No hay asignaturas aún</p>
@@ -135,27 +133,27 @@
             </div>
         </div>   
 
-        <div class="col-12 col-lg-4 mb-0">
-            <div class="box-mis-estadisticas color-card-estadisticas-azul-oscuro h-100 w-100 shadow">
-            <h6 class="text-center titulo-mis-estadisticas"><b>Mis Datos</b></h6>
+        <div class="col-12 col-xl-4">
+            <div id="box-editable-data" class="box-my-statistics h-100 w-100 shadow">
+            <h6 class="text-center"><b>Mis Datos</b></h6>
             <form #formEditEditableData="ngForm" (ngSubmit)="onSubmit(formEditEditableData)">
                 <div class="form-group">
                     <label for="inputHorasEstadisticas">Horas Totales</label>
-                    <input type="number" #correctedHours="ngModel" name="correctedHours" min="0" max="9999" [(ngModel)]="editableData.correctedHours" id="inputHorasEstadisticas" 
+                    <input type="number" #correctedHours="ngModel" name="correctedHours" min="0" max="400" [(ngModel)]="editableData.correctedHours" id="inputHorasEstadisticas" 
                     class="ml-5 form-control" placeholder="Horas totales" [value]="editableData.correctedHours" required [ngClass]="!correctedHours.valid && correctedHours.touched ? 'border-error' : ''">
-                    <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['max']">El número máximo de horas es de 9999</span>
-                    <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['min']">El número mínimo de horas es de 0</span>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['min']">El número mínimo es de 0h</span>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['max']">El número máximo es de 400h</span>
                 </div>
 
                 <div class="form-group mt-2">
                     <label for="textareaObservaciones">Mis observaciones</label>
-                    <textarea class="form-control" #observation="ngModel" name="observation" [(ngModel)]="editableData.observation" id="textareaObservaciones" 
-                    rows="2" placeholder="Mis observaciones" [value]="editableData.observation" pattern="[-0-9a-zA-Z(){}, Á-üÑñÇç]{0,255}"
+                    <textarea class="form-control" #observation="ngModel" maxlength="1000" name="observation" [(ngModel)]="editableData.observation" id="textareaObservaciones" 
+                    rows="2" placeholder="Mis observaciones" [value]="editableData.observation" pattern="[^\]\[&lt;&gt;&quot;';!=]{0,1000}"
                     [ngClass]="!observation.valid && observation.touched ? 'border-error' : ''"></textarea>
-                    <span class="error-message-txt m-0" role="alert" *ngIf="observation.errors?.['pattern']">Algunos caracteres especiales no están permitidos</span>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="observation.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
                 </div>
                 <div class="text-center mt-3">
-                    <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!formEditEditableData.form.valid">Guardar</button>
+                    <button type="submit" class="btn mx-auto btn-global tema-urjc-azul" [disabled]="!formEditEditableData.form.valid">Guardar</button>
                 </div>
             </form>
 
@@ -167,6 +165,5 @@
 </div>
 
 </main>
-<app-scroll-up></app-scroll-up>
 
 

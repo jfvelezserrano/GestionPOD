@@ -21,11 +21,6 @@ class CourseTeacherKey implements Serializable {
 
     public CourseTeacherKey() {}
 
-    public CourseTeacherKey(Long courseId, Long teacherId) {
-        this.courseId = courseId;
-        this.teacherId = teacherId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

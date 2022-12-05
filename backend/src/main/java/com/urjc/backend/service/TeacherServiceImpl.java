@@ -164,7 +164,7 @@ public class TeacherServiceImpl implements TeacherService{
         for (Subject subject:subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), Sort.unsorted())) {
             List<String> teachers = subject.recordSubject().get(course.getName());
             Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
-            if(totalChosenHours > subject.getTotalHours()){
+            if(totalChosenHours > subject.getTotalHours() && subject.getTotalHours() != 0){
                 numConflicts++;
             }
         }
@@ -208,19 +208,20 @@ public class TeacherServiceImpl implements TeacherService{
         while ((line = br.readLine()) != null) {
             line = line.replaceAll("[\"=\'#!]", "");
             String[] values = line.split(";", -1);
+            if(!values[0].equals("")){
+                Teacher teacher;
 
-            Teacher teacher;
+                setNullValues(values);
+                teacher = new Teacher(values[0], values[1]);
 
-            setNullValues(values);
-            teacher = new Teacher(values[0], values[1]);
-
-            Teacher teacherResult = findByEmail(teacher.getEmail());
-            if (teacherResult == null) {
-                course.addTeacher(teacher, Integer.valueOf(values[2]));
-                save(teacher);
-            }else if(teacherResult != null && !course.isTeacherInCourse(teacherResult)){
-                course.addTeacher(teacherResult, Integer.valueOf(values[2]));
-                save(teacherResult);
+                Teacher teacherResult = findByEmail(teacher.getEmail());
+                if (teacherResult == null) {
+                    course.addTeacher(teacher, Integer.valueOf(values[2]));
+                    save(teacher);
+                }else if(teacherResult != null && !course.isTeacherInCourse(teacherResult)){
+                    course.addTeacher(teacherResult, Integer.valueOf(values[2]));
+                    save(teacherResult);
+                }
             }
         }
     }

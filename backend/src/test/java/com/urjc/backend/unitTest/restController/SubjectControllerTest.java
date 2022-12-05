@@ -10,7 +10,9 @@ import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,6 +20,7 @@ import org.junit.Assert;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
@@ -33,6 +36,9 @@ public class SubjectControllerTest {
     @Autowired
     JWT jwt;
 
+    @Value("${email.main.admin}")
+    private String emailMainAdmin;
+
     @InjectMocks
     SubjectRestController subjectRestController;
 
@@ -44,7 +50,7 @@ public class SubjectControllerTest {
 
     @BeforeEach
     public void addCookie(){
-        String token = jwt.createJWT("a.merinom.2017@alumnos.urjc.es");
+        String token = jwt.createJWT(emailMainAdmin);
         this.cookie = new Cookie("token", token);
     }
 
@@ -226,7 +232,7 @@ public class SubjectControllerTest {
 
     @Test
     public void givenFilter_WhenSearchASubject_ThenReturnResults(){
-        Subject subject = new Subject("Example title by course","Segundo Cuatrimestre","T");
+        Subject subject = new Subject("Example title by course","",'T');
 
         Course course = new Course("2001-2002");
 
@@ -236,7 +242,7 @@ public class SubjectControllerTest {
 
         Mockito.when(courseService.findLastCourse()).thenReturn(Optional.of(course));
         Mockito.when(subjectService.searchByCourse(course, "", subject.getQuarter(),
-                subject.getTurn(), subject.getTitle(), -1L, Sort.by("name").ascending())
+                subject.getTurn(), subject.getTitle(), "", Sort.by("name").ascending())
         ).thenReturn(searchedResults);
 
         /*ResponseEntity<List<Object[]>> responseEntity = subjectRestController.search("", subject.getQuarter(),

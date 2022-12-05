@@ -23,11 +23,6 @@ class CourseSubjectKey implements Serializable {
 
     public CourseSubjectKey() {}
 
-    public CourseSubjectKey(Long subjectId, Long courseId) {
-        this.subjectId = subjectId;
-        this.courseId = courseId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

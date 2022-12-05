@@ -44,7 +44,7 @@ export class TeacherService {
 		) as Observable<TeacherRoles[]>;
   }
 
-  joinSubject(idSubject:number, form:any){
+  joinSubject(idSubject:number, form: any){
     return this.http.post(environment.urlApi + "/teachers/join/" + idSubject, form, this.httpOptionsCookiesCSRF)
     .pipe(catchError(error => this.handleError(error))
 		);

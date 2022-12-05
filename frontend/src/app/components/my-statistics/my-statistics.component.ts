@@ -26,6 +26,9 @@ export class MyStatisticsComponent implements OnInit {
   public subjects: SubjectNameAndQuarter[] = [];
   public editableData: CourseTeacher;
 
+  public currentSection: string = "Elección";
+  public currentSubsection: string = "Elección > Mis Estadísticas";
+
   public dataGraphsHours: StatisticsGraphHours[] = [];
   public subjectsGraphHours:  string[] = [];
   public myHoursSubjectsGraphHours: number[] = [];

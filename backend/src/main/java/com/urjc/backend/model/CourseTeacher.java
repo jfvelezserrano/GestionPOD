@@ -1,6 +1,5 @@
 package com.urjc.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,15 +30,8 @@ public class CourseTeacher {
     @Column(nullable = false)
     private Integer originalHours;
 
+    @Column(length = 1000)
     private String observation;
 
     public CourseTeacher() {}
-
-    public CourseTeacher(Course course, Teacher teacher, Integer correctedHours, Integer originalHours, String observation) {
-        this.course = course;
-        this.teacher = teacher;
-        this.correctedHours = correctedHours;
-        this.originalHours = originalHours;
-        this.observation = observation;
-    }
 }

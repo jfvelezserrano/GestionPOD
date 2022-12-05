@@ -11,6 +11,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class StatisticsComponent implements OnInit { 
   public globalStatistics: StatisticsGlobal;
+  public currentSection: string = "Estadísticas";
+  public currentSubsection: string = "Estadísticas";
   public teachersStatistics: StatisticsTeacher[];
   public page: number;
   public isMore: boolean;

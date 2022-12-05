@@ -25,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 
@@ -50,7 +51,7 @@ public class LoginRestController {
 
 
     @PostMapping(value = "/access")
-    public ResponseEntity<Void> sendEmailLogin(@RequestBody EmailRequestDTO loginRequest, HttpServletRequest request) {
+    public ResponseEntity<Void> sendEmailLogin(@RequestBody @Valid EmailRequestDTO loginRequest, HttpServletRequest request) {
 
         Teacher teacher = teacherService.findIfIsInCurrentCourse(loginRequest.getEmail());
 
@@ -62,7 +63,7 @@ public class LoginRestController {
 
         Long randomCode = mailBoxService.generateCodeEmail();
 
-        mailBoxService.addCodeEmail(randomCode, loginRequest.getEmail(), ip);
+        mailBoxService.addCode(randomCode, loginRequest.getEmail(), ip);
 
         try{
             mailBoxService.sendEmail(randomCode, teacher);
@@ -76,10 +77,10 @@ public class LoginRestController {
     @GetMapping(value = "/verify/{code}")
     public ResponseEntity<TeacherDTO> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
 
-       if(mailBoxService.getCodesEmails().isCorrect(code, request.getRemoteAddr())){
-            String email = mailBoxService.getCodesEmails().getEmailByCode(code);
+       if(mailBoxService.isCorrect(code, request.getRemoteAddr())){
+            String email = mailBoxService.getEmailByCode(code);
 
-            mailBoxService.getCodesEmails().removeCode(code);
+            mailBoxService.removeCode(code);
             Teacher teacher = teacherService.findByEmail(email);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null,

@@ -19,6 +19,8 @@ export class AdminTeachersComponent implements OnInit {
   
   public teachers: Teacher[];
   public id: number;
+  public currentSection: string = "Administrador";
+  public currentSubsection: string = "Administrador > Cursos > Profesores";
   public idTeacher: number;
   public teacher:Teacher;
   public page: number;

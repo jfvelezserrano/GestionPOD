@@ -83,8 +83,8 @@ public class CourseServiceImpl implements CourseService{
 
         totalChosenHours = totalChosenHours != null ? totalChosenHours : 0;
 
-        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", "", "", -1L, Sort.unsorted()).size();
-        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", "", "", -1L, Sort.unsorted()).size();
+        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", null, "", "", Sort.unsorted()).size();
+        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", null, "", "", Sort.unsorted()).size();
 
         return new Integer[]{ (totalChosenHours * 100/totalCharge), totalChosenHours,
                 totalCharge, (totalChosenHours * 100/totalCorrectHours), totalCorrectHours,
@@ -116,7 +116,7 @@ public class CourseServiceImpl implements CourseService{
             Subject subject = ((Subject) subjectAndTeacher[0]);
             List<String> line = new ArrayList<>() {{ add(subject.getCode()); add(subject.getTitle());
                 add(subject.getCampus()); add(subject.getYear().toString()); add(subject.getQuarter()); add(subject.getName());
-                add(subject.getType()); add(subject.getTotalHours().toString()); add(subject.getCareer()); add(subject.getTurn()); }};
+                add(subject.getType()); add(subject.getTotalHours().toString()); add(subject.getCareer()); add(subject.getTurn().toString()); }};
 
             int i = 0;
             String itemSchedule = "";

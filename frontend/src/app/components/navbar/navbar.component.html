@@ -1,7 +1,7 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-expand-lg navbar-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="asignaturas.html">
+        <a class="navbar-brand"  href=# [routerLink]="['/subjects']">
           <img src="assets/images/URJC-Logo.jpg" width="175" height="87" class="d-inline-block align-top" alt="Logo URJC">
         </a>
         <span class="navbar-brand h1 my-auto">Gestión POD</span>
@@ -12,15 +12,15 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarToggler">
           <ul class="navbar-nav me-auto text-center mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href=# [routerLink]="['/subjects']">Asignaturas</a>
+            <li class="nav-item" [routerLinkActive]="['active']">
+              <a class="nav-link" data-toggle="tab" href=# [routerLink]="['/subjects']">Asignaturas</a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href=# [routerLink]="['/statistics']">Estadísticas</a>
+            <li class="nav-item" [routerLinkActive]="['active']">
+              <a class="nav-link" href=# data-toggle="tab" [routerLink]="['/statistics']">Estadísticas</a>
             </li>
 
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" [routerLinkActive]="['active']">
               <a class="nav-link dropdown-toggle" href="#" id="nav-eleccion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Elección
               </a>
@@ -31,7 +31,7 @@
               </ul>
             </li>
 
-            <li class="nav-item dropdown" *ngIf="isAdmin">
+            <li class="nav-item dropdown" *ngIf="isAdmin" [routerLinkActive]="['active']">
               <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Administrador
               </a>
@@ -43,16 +43,16 @@
             </li>
 
           </ul>
-          <div class="nav navbar-nav truncar" *ngIf="teacher">
-            <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm blanco d-lg-none"></i>{{email}}</span> 
-            <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg rojo"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
+          <div class="nav navbar-nav truncate" *ngIf="teacher">
+            <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm white d-lg-none"></i>{{email}}</span> 
+            <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg red"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
           </div>
         </div>
       </div>
     </nav>
   </header>
 
-  <div class="seccion-actual text-center">
-    <h3 class="font-weight-bold">Asignaturas</h3>
-    <h5 class="font-weight-light">Gestión POD > Asignaturas</h5>
-  </div>
+  <section class="current-section text-center">
+    <h3 class="font-weight-bold">{{currentSection}}</h3>
+    <h5 class="font-weight-light">Inicio > {{currentSubsection}}</h5>
+  </section>

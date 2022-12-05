@@ -1,5 +1,5 @@
-<app-navbar></app-navbar>
-<main class="container-fluid contenido-todo">
+<app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
+<main class="container-fluid main-content">
     <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
         <p><i class="fa-solid fa-2xl fa-book"></i></p>
         <p>No hay ningún curso aún</p>
@@ -7,45 +7,45 @@
     <div class="center-vertically center-horizontally" *ngIf="showLoaderCourse">
         <app-loader></app-loader>
     </div>
-    <div class="row justify-content-center contenido-principal" *ngIf="isCourse && !showLoaderCourse">
+    <div class="row justify-content-center mx-0 mx-lg-5 g-4 mb-5" *ngIf="isCourse && !showLoaderCourse">
 
         <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
             <div class="card-body">
-            <i class="fa fa-calendar-check fa-2x iconos-estadisticas-azul"></i> 
+            <i class="fa fa-calendar-check fa-2x statistics-icon blue"></i> 
             <h1 class="card-title"><b>{{globalStatistics.percentageCharge}}%</b></h1>
             <p class="card-text"><b>Carga Docente</b></p>
-            <p class="card-text texto-fraccion"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCharge}}</b></p>
+            <p class="card-text small"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCharge}}</b></p>
             </div>
         </div>
         </div>
 
         <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
             <div class="card-body">
-            <i class="fa fa-calendar fa-2x gris iconos-estadisticas-gris"></i> 
+            <i class="fa fa-calendar fa-2x grey statistics-icon grey"></i> 
             <h1 class="card-title"><b>{{globalStatistics.percentageForce}}%</b></h1>
             <p class="card-text"><b>Fuerza Docente</b></p>
-            <p class="card-text texto-fraccion"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCorrectHours}}</b></p>
+            <p class="card-text small"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCorrectHours}}</b></p>
             </div>
         </div>
         </div>
 
         <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-azul p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
             <div class="card-body">
-            <i class="fa fa-book-open fa-2x iconos-estadisticas-azul"></i> 
+            <i class="fa fa-book-open fa-2x statistics-icon blue"></i> 
             <h1 class="card-title"><b>{{globalStatistics.percentageCompletations}}%</b></h1>
             <p class="card-text"><b>Asignaturas</b></p>
-            <p class="card-text texto-fraccion"><b>{{globalStatistics.numCompletations}}/{{globalStatistics.numSubjects}}</b></p>
+            <p class="card-text small"><b>{{globalStatistics.numCompletations}}/{{globalStatistics.numSubjects}}</b></p>
             </div>
         </div>
         </div>
 
         <div class="col-md-6 col-xl-3">
-        <div class="card card-estadisticas color-card-estadisticas-gris p-2 h-100 w-100 shadow">
+        <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
             <div class="card-body">
-            <i class="fa fa-times fa-2x iconos-estadisticas-gris"></i> 
+            <i class="fa fa-times fa-2x statistics-icon grey"></i> 
             <h1 class="card-title"><b>{{globalStatistics.numConflicts}}</b></h1>
             <p class="card-text"><b>Colisiones Docentes</b></p>
             </div>
@@ -54,59 +54,59 @@
 
     </div>
 
-<div class="bloque-despues-estadisticas row justify-content-center g-4" *ngIf="isCourse">
+    <div class="row justify-content-center" *ngIf="isCourse">
 
-    <div class="col-12 col-xl-8 d-flex justify-content-between">
-        <span *ngIf="!teachersStatistics" class="my-auto">Mostrando 0 resultados</span>
-        <span *ngIf="teachersStatistics" class="my-auto">Mostrando {{teachersStatistics.length}} resultados</span>
-        <div>
-            <span class="my-auto me-2"><small>Ordenar por</small></span>
-            <select class="form-select-sm text-muted desplegable-buscador my-auto" [(ngModel)]="typeSort" (change)="getFirstTeachers()">
-                <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
-            </select>
+        <div class="col-12 col-xl-8 d-flex justify-content-between">
+            <span *ngIf="!teachersStatistics" class="my-auto">Mostrando 0 resultados</span>
+            <span *ngIf="teachersStatistics" class="my-auto">Mostrando {{teachersStatistics.length}} resultados</span>
+            <div>
+                <span class="my-auto me-2"><small>Ordenar por</small></span>
+                <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getFirstTeachers()">
+                    <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
+                </select>
+            </div>
         </div>
-    </div>
 
-    <div class="col-12 col-md-6 col-xl-8 contenido-asignaturas-docentes" *ngFor="let teacherStatistics of teachersStatistics">
-    <div class="card cards-estadisticas shadow h-100 w-100">
-        <div class="card-body">
-        <div class="row justify-content-around">
-            <h4 ><b>{{teacherStatistics.name}}</b></h4>
-            
-            <h6><span class="gris-muy-claro truncar ms-0" placement="bottom" ngbTooltip="Fuerza original"><i class="fa-solid fa-calendar fa-sm azul me-1"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
-                <span class="gris-muy-claro truncar" placement="bottom" ngbTooltip="Fuerza corregida"><i class="fa-solid fa-calendar-check fa-sm azul me-1"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
-                <span class="gris-muy-claro truncar" placement="bottom" ngbTooltip="Asignaturas asignadas"><i class="fa fa-book-open fa-sm azul me-1"></i><small>{{teacherStatistics.numSubjects}} asignatura(s)</small></span></h6>
-            
+        <div class="col-12 col-md-6 col-xl-8 content-all-cards" *ngFor="let teacherStatistics of teachersStatistics">
+        <div class="card shadow h-100 w-100 statistics-card">
+            <div class="card-body">
+            <div class="row justify-content-around">
+                <h4 ><b>{{teacherStatistics.name}}</b></h4>
+                
+                <h6><span class="truncate ms-0" placement="bottom" ngbTooltip="Fuerza original"><i class="fa-solid fa-calendar fa-sm blue me-1"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
+                    <span class="truncate" placement="bottom" ngbTooltip="Fuerza corregida"><i class="fa-solid fa-calendar-check fa-sm blue me-1"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
+                    <span class="truncate" placement="bottom" ngbTooltip="Asignaturas asignadas"><i class="fa fa-book-open fa-sm blue me-1"></i><small>{{teacherStatistics.numSubjects}} asignatura(s)</small></span></h6>
+                
 
-            <div class="row justify-content-start">
-                <div class="col-12 col-xl-12">
-                <div class="d-flex justify-content-between">
-                    <span><small>Horas asignadas</small></span>
-                    <h5><b>{{teacherStatistics.percentage}}%</b></h5>
-                </div>
-                <div class="col-12">
-                    <div class="progress" style="height: 8px;">
-                    <div class="progress-bar" role="progressbar" [style.width]="teacherStatistics.percentage +'%'" style="height: 100%;" aria-valuenow="teacherStatistics.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="row justify-content-start">
+                    <div class="col-12 col-xl-12">
+                    <div class="d-flex justify-content-between">
+                        <span><small>Horas asignadas</small></span>
+                        <h5><b>{{teacherStatistics.percentage}}%</b></h5>
+                    </div>
+                    <div class="col-12">
+                        <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" role="progressbar" [style.width]="teacherStatistics.percentage +'%'" style="height: 100%;" aria-valuenow="teacherStatistics.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-1">
+                        <small class="blue"><b>{{teacherStatistics.charge}} horas</b></small>
+                    </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end mt-1">
-                    <small class="color-libre"><b>{{teacherStatistics.charge}} horas</b></small>
-                </div>
-                </div>
+
+                <hr class="mt-2">
+                <h5 class="section-title">OBSERVACIONES</h5>
+                <p class="content-observations">
+                    <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
+                    <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
+                </p>
+
             </div>
-
-            <hr class="mt-2">
-            <h5 class="titulo-seccion">OBSERVACIONES</h5>
-            <p class="observaciones">
-                <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
-                <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
-            </p>
-
+            </div>
         </div>
         </div>
-    </div>
-    </div>
 
-</div>
+    </div>
 </main>
 <app-scroll-up></app-scroll-up>

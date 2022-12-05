@@ -37,7 +37,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                     status = error.status;
                 }
 
-                if(!error.error || error.error.message == " "){
+                if(!error.error || error.error.message == " " || (error.error.message != " " && status != 400 && status != 404 && status != 409 && status != 502)){
                   const navigationExtras: NavigationExtras = {
                     state: {status: status, message: errorMessage}
                   };

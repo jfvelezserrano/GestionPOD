@@ -1,10 +1,10 @@
 package com.urjc.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.*;
 
 @Getter
@@ -14,8 +14,6 @@ import java.util.*;
 public class Subject {
 
     @Id
-    @Basic(optional = false)
-    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -44,7 +42,7 @@ public class Subject {
     private String type;
 
     @Column(nullable = false)
-    private String turn;
+    private Character turn;
 
     @Column(nullable = false)
     private String career;
@@ -68,7 +66,7 @@ public class Subject {
         this.courseSubjects = new HashSet<>();
     }
 
-    public Subject(String title, String quarter, String turn){
+    public Subject(String title, String quarter, Character turn){
         this.id = 1L;
         this.title = title;
         this.quarter = quarter;
@@ -78,7 +76,7 @@ public class Subject {
     }
 
     public Subject(String code, String name, String title, Integer totalHours, String campus, Integer year,
-                   String quarter, String type, String turn, String career) {
+                   String quarter, String type, Character turn, String career) {
         this.code = code;
         this.name = name;
         this.title = title;
@@ -93,17 +91,21 @@ public class Subject {
         this.courseSubjects = new HashSet<>();
     }
 
-    public void setSchedulesByString(String schedules) {
+    public void setSchedulesByString(String schedules) throws IOException {
         if(!schedules.equals("")) {
             String[] values = schedules.split(", ");
             List<Schedule> schedulesSet = new ArrayList<>();
 
             for (String value : values) {
-                value = value.replaceAll("[()-]", "");
-                value = value.replace(" ", "");
+                String result  = value.replaceAll("[()-]", "");
+                result = result.replace(" ", "");
 
-                Schedule schedule = new Schedule(value.charAt(0), value.substring(1, 6), value.substring(6));
-                schedulesSet.add(schedule);
+                Schedule schedule = new Schedule(result.charAt(0), result.substring(1, 6), result.substring(6));
+                if(schedule.isValid()){
+                    schedulesSet.add(schedule);
+                } else{
+                    throw new IOException("Día de la semana incorrecto, solo se admiten los siguientes caracteres: 'L', 'M', 'X', 'J' y 'V'");
+                }
             }
             setSchedules(schedulesSet);
         }

@@ -1,11 +1,10 @@
 package com.urjc.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import java.util.regex.Pattern;
 
 @Getter
 @Setter
@@ -32,5 +31,11 @@ public class Schedule {
         this.dayWeek = dayWeek;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public Boolean isValid(){
+        String pattern = "[0-9]{2}:[0-9]{2}";
+        return (this.dayWeek.equals('L') || this.dayWeek.equals('M') || this.dayWeek.equals('X') || this.dayWeek.equals('J') || this.dayWeek.equals('V'))
+                && Pattern.matches(pattern, this.startTime) && Pattern.matches(pattern, this.endTime);
     }
 }

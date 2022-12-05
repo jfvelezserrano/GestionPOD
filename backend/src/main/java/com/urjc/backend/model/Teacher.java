@@ -1,12 +1,10 @@
 package com.urjc.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.urjc.backend.dto.TeacherDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
+import javax.validation.constraints.*;
 import java.util.*;
 
 @Getter
@@ -33,7 +31,6 @@ public class Teacher{
     @Column(nullable = false)
     private String name;
 
-    @Email
     @Column(nullable = false, unique = true)
     private String email;
 

@@ -17,16 +17,6 @@ export class CourseService {
     withCredentials: true
   };
 
-  public httpOptionsCookiesCSRFCSV = {
-    headers: new HttpHeaders({ 'X-XSRF-TOKEN': this.csrfToken, observe:'response', responseType:'blob'}),
-    withCredentials: true
-  };
-
-
-  public httpOptionsCookies = {
-    withCredentials: true
-  };
-
   constructor(
     private http: HttpClient
   ) { }
@@ -43,7 +33,13 @@ export class CourseService {
 		) as Observable<Course[]>;
   }
 
-  deleteTeacherInPod(idPod:any, idTeacher:any){
+  getCurrentCourse(): Observable<Course>{
+    return this.http.get<Course>(environment.urlApi + "/pods/currentCourse", this.httpOptionsCookiesCSRF)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<Course>;
+  }
+
+  deleteTeacherInPod(idPod:number, idTeacher:number){
     return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCookiesCSRF)
     .pipe(catchError(error => this.handleError(error))
 		);

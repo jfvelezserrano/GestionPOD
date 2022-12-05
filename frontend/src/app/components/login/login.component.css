@@ -13,13 +13,32 @@
   height:100%;
 }
 
+.page-login{
+  margin-top: 180px;
+}
+
+#login-title{
+  font-size: 1.8em;
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+#input-email{
+  border-bottom-left-radius:0%;
+  border-top-left-radius: 0%;
+}
+
+.access-content{
+  margin-top: 1em;
+}
+
 .background-black-opacity{
   height:100%;
   background-color: rgba(22, 22, 22, 0.39);
 }
 
 .progress-loader {
-    background: var(--blanco);
+    background: var(--white);
     height: 5px;
   }
   
@@ -27,7 +46,7 @@
     content: '';
     width: 0px;
     height: 5px;
-    background: var(--rojo);
+    background: var(--light-red);
     transition: 1s;
     animation: loading 300s normal;
   }

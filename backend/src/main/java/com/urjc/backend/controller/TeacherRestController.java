@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,8 +54,9 @@ public class TeacherRestController {
     ICourseMapper courseMapper;
 
     @PutMapping("/role")
-    public ResponseEntity<TeacherDTO> updateRole(@RequestBody Teacher teacher) {
+    public ResponseEntity<TeacherDTO> updateRole(@RequestBody @Valid TeacherDTO teacherDTO) {
 
+        Teacher teacher = teacherMapper.toTeacher(teacherDTO);
         Teacher teacherIfExists = teacherService.findByEmail(teacher.getEmail());
         if(teacherIfExists != null && !teacherIfExists.getEmail().equals(emailMainAdmin)) {
             Teacher teacherDDBB = teacherService.findIfIsInCurrentCourse(teacherIfExists.getEmail());
@@ -62,8 +64,7 @@ public class TeacherRestController {
                 teacherIfExists.setRoles(teacher.getRoles());
                 teacherService.save(teacherIfExists);
 
-                TeacherDTO teacherDTO = teacherMapper.toTeacherDTO(teacherIfExists);
-                return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
+                return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherIfExists), HttpStatus.OK);
             }
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El docente que se quiere actualizar es incorrecto o no puede actualizarse");
@@ -83,7 +84,7 @@ public class TeacherRestController {
     }
 
     @PostMapping("/join/{idSubject}")
-    public ResponseEntity<Void> joinSubject(@RequestBody TeacherRequestDTO teacherRequest, @PathVariable Long idSubject) {
+    public ResponseEntity<Void> joinSubject(@RequestBody TeacherJoinSubjectDTO teacherJoinSubjectDTO, @PathVariable Long idSubject) {
 
         Optional<Subject> subject = subjectService.findById(idSubject);
 
@@ -96,9 +97,9 @@ public class TeacherRestController {
 
                 POD pod = teacher.hasSubjectInCourse(subject.get(), course.get());
                 if(pod != null){
-                    pod.setChosenHours(teacherRequest.getHours());
+                    pod.setChosenHours(teacherJoinSubjectDTO.getHours());
                 }else{
-                    teacher.addChosenSubject(subject.get(), course.get(), teacherRequest.getHours());
+                    teacher.addChosenSubject(subject.get(), course.get(), teacherJoinSubjectDTO.getHours());
                 }
                 teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -179,7 +180,7 @@ public class TeacherRestController {
     }
 
     @PutMapping(value = "/myEditableData")
-    public ResponseEntity<Void> editData(@RequestBody CourseTeacherDTO courseTeacherDTO){
+    public ResponseEntity<Void> editData(@RequestBody @Valid CourseTeacherDTO courseTeacherDTO){
 
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {

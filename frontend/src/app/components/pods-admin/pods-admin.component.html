@@ -1,9 +1,9 @@
-<app-navbar></app-navbar>
-<main class="container-fluid contenido-principal contenido-todo">
-    <div class="row">
+<app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
+<main class="container-fluid main-content">
+    <div class="row justify-content-center">
 
-    <section class="col-12 col-xl-4">
-        <div class="sticky-top">
+    <section class="col-12 col-xl-3 mb-5 mb-xl-0">
+        <div class="sticky-top mx-4 mx-xl-0 mb-0">
             <div class="pt-1">
                 <h3><b>Añadir POD</b></h3>
             </div>
@@ -11,26 +11,26 @@
             <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
 
                 <div class="mb-3">
-                <label for="curso" class="form-label titulo-seccion">Curso</label>
-                    <input required #course="ngModel" ngModel name="course" maxlength="9" pattern="[0-9]{4}-[0-9]{4}" type="text" class="form-control" autocomplete="course" 
+                <label for="curso" class="form-label section-title">Curso</label>
+                    <input required #course="ngModel" ngModel name="course" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
                     [ngClass]="!course.valid && course.touched ? 'border-error' : ''">
-                    <span class="error-message-txt m-0" role="alert" *ngIf="course.errors?.['pattern']">El campo curso se debe escribir con el siguiente formato numérico: 0000-0000</span>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="course.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
                 </div>
 
                 <div class="mb-3">
-                <label for="asignaturas-file" class="form-label titulo-seccion">Asignaturas CSV</label>
-                <input required #fileSubjects ngModel name="fileSubjects" class="form-control" ngf-max-size="1MB" type="file" accept=".csv">
+                <label for="asignaturas-file" class="form-label section-title">Asignaturas CSV</label>
+                <input required #fileSubjects ngModel name="fileSubjects" class="form-control" ngf-max-size="2MB" type="file" accept=".csv">
                 </div>
 
                 <div class="mb-3">
-                <label for="profesores-file" class="form-label titulo-seccion">Profesores CSV</label>
-                <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="1MB" type="file" accept=".csv">
+                <label for="profesores-file" class="form-label section-title">Profesores CSV</label>
+                <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" accept=".csv">
                 </div>
 
                 <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
 
                 <div class="d-flex justify-content-center pt-3">
-                    <button type="submit" class="btn mx-auto boton-general tema-urjc-azul" [disabled]="!createPODform.form.valid">Añadir</button>
+                    <button type="submit" class="btn mx-auto btn-global tema-urjc-azul" [disabled]="!createPODform.form.valid">Añadir</button>
                 </div>
             </form>
 
@@ -45,9 +45,7 @@
         <div class="vr min-vh-75 h-100"></div>
     </div>
 
-    <hr class="d-block d-xl-none my-5">
-
-    <section class="col-12 col-xl-7">
+    <section class="col-12 col-xl-6">
         <div class="row">
 
             <div class="col-12 d-flex justify-content-between">
@@ -55,29 +53,29 @@
                 <span *ngIf="pods" class="my-auto">Mostrando {{pods.length}} resultados</span>
                 <div>
                 <span class="my-auto"><small>Ordenar por </small></span>
-                <select class="form-select-sm text-muted desplegable-buscador my-auto">
+                <select class="form-select-sm text-muted select-sort my-auto">
                     <option selected value="1">Actualidad</option>
                 </select>
                 </div>
             </div>
 
-            <div class="col-12 contenido-asignaturas-docentes">
+            <div class="col-12 content-all-cards">
                 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-4" *ngIf="pods && pods.length != 0">
 
                     <div class="col" *ngFor="let pod of pods">
-                        <div class="card card-asignatura-libre h-100 w-100 shadow">
+                        <div class="card card-subject-blue h-100 w-100 shadow">
                             <div class="row g-0">
                                 <div class="col">
-                                    <div class="card-body contenido-cards">
-                                    <ul class="list-group list-group-flush carta-asignatura border-0">
+                                    <div class="card-body cards-content">
+                                    <ul class="list-group list-group-flush font-card border-0">
                                         <li class="list-group-item border-0">
                                             <h4 class="card-title"><b>{{pod.name}}</b></h4>
                                         </li>
                                     </ul>
                                     <div class="card-footer text-muted">
-                                        <a (click)="open(deletePOD, pod)" type="button" placement="bottom" ngbTooltip="Eliminar POD" class="col-4 my-auto btn color-libre"><i class="fa fa-trash fa-lg"></i></a>
-                                        <a [routerLink]="['/pods', pod.id, 'subjects']" type="button" placement="bottom" ngbTooltip="CSV Asignaturas" class="col-4 my-auto btn boton-asignatura-libre"><i class="fa fa-book-open fa-lg"></i></a>
-                                        <a [routerLink]="['/pods', pod.id, 'teachers']" type="button" placement="bottom" ngbTooltip="CSV Profesores" class="col-4 my-auto btn boton-asignatura-libre"><i class="fa fa-user-alt fa-lg"></i></a>
+                                        <a (click)="open(deletePOD, pod)" type="button" placement="bottom" ngbTooltip="Eliminar POD" class="col-4 my-auto btn blue"><i class="fa fa-trash fa-lg"></i></a>
+                                        <a [routerLink]="['/pods', pod.id, 'subjects']" type="button" placement="bottom" ngbTooltip="CSV Asignaturas" class="col-4 my-auto btn button-blue"><i class="fa fa-book-open fa-lg"></i></a>
+                                        <a [routerLink]="['/pods', pod.id, 'teachers']" type="button" placement="bottom" ngbTooltip="CSV Profesores" class="col-4 my-auto btn button-blue"><i class="fa fa-user-alt fa-lg"></i></a>
                                     </div>
                                     </div>
                                 </div>
@@ -109,13 +107,13 @@
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="mb-3 px-4 centrar">
+              <div class="mb-3 px-4 center">
                 <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
                 <h5 class="modal-title" id="titleModal3"><b>Eliminar {{pod.name}}</b></h5>
                 <a>¿Desea realmente eliminar el curso {{pod.name}} del Plan Docente Actual?</a>
               </div>
               <div class="modal-footer">
-                <button (click)="modal.close(deletePodById(pod.id))" class="btn mx-auto boton-general tema-urjc-rojo">Eliminar</button>
+                <button (click)="modal.close(deletePodById(pod.id))" class="btn mx-auto btn-global tema-urjc-rojo">Eliminar</button>
               </div>
             </div>
         </div>
