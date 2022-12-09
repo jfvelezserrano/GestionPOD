@@ -54,11 +54,6 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.admins = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-          
-        }
       }
     });
   }
@@ -73,9 +68,6 @@ export class ManagementAdminComponent implements OnInit {
         next: (data) => {
           this.getAdmins();
           form.reset();
-        },
-        error: (error) => {
-          
         }
       });
     } else{
@@ -91,9 +83,6 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.getAdmins();
-      },
-      error: (error) => {
-        
       }
     });
   }

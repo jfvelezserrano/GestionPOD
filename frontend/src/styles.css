@@ -2,6 +2,7 @@
     --red:red;
     --light-red:rgb(248, 60, 46);
     --lighter-red:rgb(248, 210, 205);
+    --bg-error-mssg:#fbe1e3;
     --black:black; 
     --red-black: rgba(10, 0, 0, 0.767);
     --grey: grey;
@@ -22,7 +23,7 @@
     --font: rgb(73, 73, 75);
 }
 
-.current-section{
+#current-section{
     background-image: url("assets/images/urjc-secciones.jpg");
     background-position: center;
     background-size: cover;
@@ -78,6 +79,18 @@ hr {
     color:var(--grey);
 }
 
+.offcanvas-title{
+    font-size: 1em;
+}
+
+.offcanvas-body h4{
+    font-size: 1.17em;
+}
+
+.modal-title{
+    font-size: .83em;
+}
+
 .card-footer{
     border-top: none;
     background-color: var(--white) !important;
@@ -101,6 +114,16 @@ hr {
     padding-left: 5% !important;
     padding-right: 5% !important;
     padding-bottom: 5% !important;
+}
+
+.card-statistics-blue p, 
+.card-statistics-grey p{
+    font-size: 1.7em;
+}
+
+.card-statistics-blue h3, 
+.card-statistics-grey h3{
+    font-size: 1.17em;
 }
 
 .card-statistics-blue{
@@ -130,22 +153,22 @@ hr {
     transition: all .4s ease-in-out;
 }
 
-.btn-global.tema-urjc-rojo {
+.btn-global.theme-red {
     background-image: linear-gradient(to right, var(--dark-grey) , var(--dark-grey), var(--light-red) , var(--light-red));
     box-shadow: 0 4px 15px 0 var(--lighter-grey-1);
 }
 
-.btn-global.tema-urjc-rojo:focus {
+.btn-global.theme-red:focus {
     background-image: linear-gradient(to right, var(--light-red) , var(--light-red), var(--light-red) , var(--light-red));
     box-shadow: 0 4px 15px 0 var(--lighter-grey-1);
 }
 
-.btn-global.tema-urjc-azul {
+.btn-global.theme-blue {
     background-image: linear-gradient(to right, var(--dark-grey) , var(--dark-grey) , var(--blue) , var(--blue));
     box-shadow: 0 4px 15px 0 var(--lighter-grey-1);
 }
 
-.btn-global.tema-urjc-azul:focus {
+.btn-global.theme-blue:focus {
     background-image: linear-gradient(to right, var(--blue) , var(--blue) , var(--blue) , var(--blue));
     box-shadow: 0 4px 15px 0 var(--lighter-grey-1);
 }
@@ -222,6 +245,10 @@ span{
     width: auto;
     background-color: var(--dark-grey);
     color: var(--white);
+}
+
+.button-actions-blue{
+    border-radius: 50% !important;
 }
 
 .button-actions-red:hover{
@@ -332,6 +359,10 @@ span{
 
 .font-card{
     font-size: 15px;
+}
+
+.font-card h5{
+    font-size: 1.5em;
 }
 
 .select-sort{
@@ -446,14 +477,14 @@ label span{
 }
 
 .error-message{
-    background-color: #fbe1e3;
+    background-color: var(--bg-error-mssg);
     border-radius: 0.25rem;
     padding: 8px;
 }
 
 .error-message,
 .error-message-txt{
-    color: #e73d4a;
+    color: var(--light-red);
 }
 
 .error-message,

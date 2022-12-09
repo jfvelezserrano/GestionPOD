@@ -1,6 +1,5 @@
 package com.urjc.backend.dto;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +9,6 @@ import javax.validation.constraints.*;
 @Setter
 public class TeacherJoinCourseDTO {
 
-    public interface Login {
-    }
-
     @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
     @NotBlank(message = "Se debe completar el nombre")
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
@@ -21,7 +17,6 @@ public class TeacherJoinCourseDTO {
     @Email
     @NotBlank(message = "Se debe completar el email")
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
-    @JsonView(Login.class)
     private String email;
 
     @NotNull(message = "Se deben completar las horas")

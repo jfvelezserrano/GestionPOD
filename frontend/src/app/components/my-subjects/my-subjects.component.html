@@ -8,65 +8,125 @@
         <app-loader></app-loader>
     </div>
     <div class="row" *ngIf="isCourse && !showLoader">
-        
         <div class="col">  
-
-        <section class="col-12 col-md-10 offset-md-1">
-            <div class="row">
-
-            <div class="col-12 d-flex justify-content-between my-auto">
-                <span *ngIf="!mySubjects" class="my-auto">Mostrando 0 resultados</span>
-                <span *ngIf="mySubjects" class="my-auto">Mostrando {{mySubjects.length}} resultados</span>
-                <div>
-                    <span class="my-auto me-2"><small>Ordenar por</small></span>
-                    <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getMySubjects()">
-                        <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
-                    </select>
-                    <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="openJoinSubject(joinSubject)"><i class="fa fa-plus fa-sm"></i></button>
-                </div>
-            </div>
-
-            <ng-template #joinSubject let-modal>
-                <div class="modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+            <div class="col-12 col-md-10 offset-md-1">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-between my-auto">
+                        <span *ngIf="!mySubjects" class="my-auto">Mostrando 0 resultados</span>
+                        <span *ngIf="mySubjects" class="my-auto">Mostrando {{mySubjects.length}} resultados</span>
+                        <div>
+                            <span class="my-auto me-2"><small>Ordenar por</small></span>
+                            <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getMySubjects()">
+                                <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
+                            </select>
+                            <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="openJoinSubject(joinSubject)"><i class="fa fa-plus fa-sm"></i></button>
                         </div>
-                        <div class="modal-body">
-                            <form #formChooseSubject="ngForm" (ngSubmit)="onSubmit(formChooseSubject)" >
-                            <div class="mb-3 px-4">
-                                <h5 class="modal-title" id="titleModal"><b>Añadir Asignatura</b></h5>
-                                <div class="container mb-3">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <input type="text" class="form-control h-100" list="grados" (change)="setUndefinedValue()" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" id="inputGrado" placeholder="Titulación"
-                                            #name="ngModel" name="name" [(ngModel)]="codeChosenSubject" [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                                            <datalist id="grados">
-                                            <option *ngFor="let item of subjects" [value]="item.code">{{item.name}}</option>
-                                            </datalist>
-                                        </div>
-                                        <div class="col-2">
-                                            <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || name.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
-                                        </div>
+                    </div>
+                    <div class="col-12 content-all-cards">
+                        <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
+                            <div class="col" *ngFor="let mySubject of mySubjects">
+                                <div [ngClass]="{'card-subject-green' : 0 == mySubject.leftHours, 'card-subject-light-red': 0 > mySubject.leftHours, 'card-subject-blue' : mySubject.leftHours > 0}" class="card h-100 w-100 shadow">
+                                    <div class="card-body cards-content">
+                                        <ul class="list-group list-group-flush font-card">
+                                            <li class="list-group-item">
+                                                <h4 class="card-title"><b>{{mySubject.subject.name}} ({{mySubject.subject.code}})</b>
+                                                    <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Alerta conflicto" class="col-1 btn light-red boton-alerta" (click)="openAlert(alertConflicts, mySubject)">
+                                                        <i class="fa fa-exclamation-circle fa-lg"></i>
+                                                    </button>
+                                                </h4>
+                                                <span class="card-subtitle text-muted m-0">{{mySubject.subject.title}}
+                                                    <small *ngIf="0 == mySubject.leftHours" class="truncate label-subject-occupation-green">Completa</small>
+                                                    <small *ngIf="0 > mySubject.leftHours" class="truncate label-subject-occupation-light-red">Colisión docente</small>
+                                                    <small *ngIf="mySubject.leftHours > 0" class="truncate label-subject-occupation-blue">Libre</small> 
+                                                </span><br>
+                                                <small><i class="fa fa-clock fa-sm"></i>{{mySubject.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{mySubject.subject.campus}}</small>
+                                                <p class="card-text" *ngIf="mySubject.subject.turn == 'T'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Tarde</small></p>
+                                                <p class="card-text" *ngIf="mySubject.subject.turn == 'M'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Mañana</small></p>
+                                                <p class="label-subject-groups"><small><b>GRUPO</b></small><span class="badge">{{mySubject.subject.career}}</span></p>
+                                                <p class="label-subject-groups"><small><b>GRUPOS ASISTENCIA</b></small>
+                                                    <span  class="badge" *ngIf="mySubject.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
+                                                    <span class="badge" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
+                                                </p>
+                                            </li>
+                                            <li class="list-group-item" *ngIf="mySubject.joinedTeachers">
+                                                <p class="card-text">
+                                                <span *ngFor="let teacher of mySubject.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                                </p>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                                                    <span class="text-muted" *ngIf="mySubject.subject.schedules.length == 0"><small class="truncate">No hay horarios</small></span>
+                                                    <span class="text-muted" *ngFor="let schedule of mySubject.subject.schedules"><small class="truncate"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
+                                                </p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-footer text-muted">
+                                        <button type="button" (click)="openRecord(record, mySubject)" placement="bottom" ngbTooltip="Ver" [ngClass]="{'button-green' : 0 == mySubject.leftHours, 'button-light-red': 0 > mySubject.leftHours, 'button-blue' : mySubject.leftHours > 0}"
+                                        class="col-4 btn"><i class="fa fa-eye fa-lg"></i></button>
+                                        <button type="button" (click)="openEdit(editPOD, mySubject)" placement="bottom" ngbTooltip="Editar" [ngClass]="{'button-green' : 0 == mySubject.leftHours, 'button-light-red': 0 > mySubject.leftHours, 'button-blue' : mySubject.leftHours > 0}"
+                                        class="col-4 btn"><i class="fa fa-pencil fa-lg"></i></button>
+                                        <button type="button" (click)="openDelete(deletePOD, mySubject)" placement="bottom" ngbTooltip="Eliminar" [ngClass]="{'button-green' : 0 == mySubject.leftHours, 'button-light-red': 0 > mySubject.leftHours, 'button-blue' : mySubject.leftHours > 0}"
+                                        class="col-4 btn"><i class="fa fa-trash fa-lg"></i></button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="text-center mt-2" *ngIf="name.errors?.['pattern']">
-                                    <span class="error-message-txt text-center" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        <div class="row justify-content-center mt-5" *ngIf="showLoader">
+                            <div class="col-2 mt-5">
+                            <app-loader></app-loader>
+                            </div>
+                        </div>
+                        <div class="text-center no-data center-vertically" *ngIf="(!mySubjects && !showLoader) || (mySubjects && mySubjects.length == 0 && !showLoader)">
+                            <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
+                            <p>No hay asignaturas aún</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<app-scroll-up></app-scroll-up>
+
+<ng-template #joinSubject let-modal>
+    <div class="modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form #formChooseSubject="ngForm" (ngSubmit)="onSubmit(formChooseSubject)">
+                    <div class="px-4">
+                        <h3 class="modal-title"><b>Añadir Asignatura</b></h3>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col-10">
+                                    <input type="text" class="form-control h-100" list="titlesList" (change)="setUndefinedValue()" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" id="inputGrado" placeholder="Titulación"
+                                    #name="ngModel" name="name" [(ngModel)]="codeChosenSubject" [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                                    <datalist id="titlesList">
+                                        <option *ngFor="let item of subjects" [value]="item.code">{{item.name}}</option>
+                                    </datalist>
                                 </div>
-
-                                <div class="text-center mt-2" *ngIf="error != ''">
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                                <div class="col-2">
+                                    <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || name.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
                                 </div>
-
-                                <div class="card" *ngIf="subjectTeacher && error == ''">
-                                    <div class="row g-0">
-                                    <div class="col">
-                                        <div class="card-body">
+                            </div>
+                        </div>
+                        <div class="text-center mt-2" *ngIf="name.errors?.['pattern']">
+                            <span class="error-message-txt text-center" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        </div>
+                        <div class="text-center mt-2" *ngIf="error != ''">
+                            <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                        </div>
+                        <div class="card" *ngIf="subjectTeacher && error == ''">
+                            <div class="row g-0">
+                                <div class="col">
+                                    <div class="card-body">
                                         <ul class="list-group list-group-flush font-card">
-                                            <li class="list-group-item detalles1">
-                                            <div>
-                                                <h6 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h6>
+                                            <li class="list-group-item">
+                                                <h4 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h4>
                                                 <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacher.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacher.subject.campus}}</small>
                                                 <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
                                                 <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
@@ -75,157 +135,75 @@
                                                     <span  class="badge" *ngIf="subjectTeacher.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
                                                     <span class="badge" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
                                                 </p>
-                                            </div>
                                             </li>
-                                            <li class="list-group-item detalles2" *ngIf="subjectTeacher.joinedTeachers">
+                                            <li class="list-group-item" *ngIf="subjectTeacher.joinedTeachers">
                                                 <p class="card-text">
-                                                <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                                    <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
                                                 </p>
                                             </li>
-                                            <li class="list-group-item detalles2" *ngIf="!subjectTeacher.joinedTeachers || subjectTeacher.joinedTeachers.length == 0">
+                                            <li class="list-group-item" *ngIf="!subjectTeacher.joinedTeachers || subjectTeacher.joinedTeachers.length == 0">
                                                 <p class="card-text">
-                                                <span><small class="text-muted">No hay docentes asignados</small><br></span>
+                                                    <span><small class="text-muted">No hay docentes asignados</small><br></span>
                                                 </p>
                                             </li>
-                                            <li class="list-group-item detalles3">
+                                            <li class="list-group-item">
                                                 <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
                                                     <span class="text-muted" *ngIf="subjectTeacher.subject.schedules.length == 0"><small class="truncate">No hay horarios</small></span>
                                                     <span class="text-muted" *ngFor="let schedule of subjectTeacher.subject.schedules"><small class="truncate"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
                                                 </p>
                                             </li>
                                         </ul>
-                                        </div>
-                                    </div>
                                     </div>
                                 </div>
-
-                                <div class="mt-4" *ngIf="subjectTeacher && error == ''">
-                                    <div class="div-input d-flex justify-content-center">
-                                        <label for="addedHours"><b>Horas deseadas</b></label>
-                                        <input type="number" class="form-control" #hours="ngModel" min="0" max="400" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
-                                        [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
-                                        <span> h</span>
-                                    </div>
-                                    <div class="text-center mt-2">
-                                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
-                                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
-                                    </div>
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn mx-auto btn-global tema-urjc-azul" [disabled]="!subjectTeacher || !formChooseSubject.form.valid || error != ''">Añadir</button>
-                                </div>
-
                             </div>
-                            </form>
                         </div>
-                    </div>
-                </div>
-            </ng-template>
-
-            <ng-template #alertConflicts let-modal>
-                <div class="modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                        <div class="mb-3 px-4">
-                            <h5 class="modal-title center" id="titleModal4"><b>Conflictos de horario</b></h5>
-                            <a>La asignatura de <b>{{subjectToShowAlert.subject.name}}</b> presenta los siguientes conflictos de horario:</a>
-                            <ul class="list-group list-group-flush" *ngIf="subjectToShowAlert.joinedTeachers">
-                                
-                                <li class="list-group-item" *ngFor="let conflict of subjectToShowAlert.conflicts">
-                                    <p class="card-text">
-                                    <span><small class="text-muted"><b>{{conflict}}</b></small><br></span>
-                                    </p>
-                                </li>
-                                
-                            </ul>
-                        </div>
-                        <div class="modal-footer">
-                            <button (click)="modal.dismiss()" class="btn mx-auto btn-global tema-urjc-rojo">Aceptar</button>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-
-            <div class="col-12 content-all-cards">
-                <div class="row row-cols-1 row-cols-xl-2 g-4" *ngIf="!showLoader">
-                
-                    <div class="col" *ngFor="let mySubject of mySubjects">
-                        <div [ngClass]="{'card-subject-green' : 0 == mySubject.leftHours, 'card-subject-light-red': 0 > mySubject.leftHours, 'card-subject-blue' : mySubject.leftHours > 0}" class="card h-100 w-100 shadow">
-                            <div class="card-body cards-content">
-                            <ul class="list-group list-group-flush font-card">
-                                <li class="list-group-item detalles1">
-                                <div>
-                                    <h4 class="card-title"><b>{{mySubject.subject.name}} ({{mySubject.subject.code}})</b>
-                                        <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Alerta conflicto" class="col-1 btn light-red boton-alerta" (click)="openAlert(alertConflicts, mySubject)">
-                                        <i class="fa fa-exclamation-circle fa-lg"></i>
-                                    </button></h4>
-                                    <h6 class="card-subtitle mb-2 text-muted">{{mySubject.subject.title}}
-                                        <small *ngIf="0 == mySubject.leftHours" class="truncate label-subject-occupation-green">Completa</small>
-                                        <small *ngIf="0 > mySubject.leftHours" class="truncate label-subject-occupation-light-red">Colisión docente</small>
-                                        <small *ngIf="mySubject.leftHours > 0" class="truncate label-subject-occupation-blue">Libre</small> 
-                                    </h6>
-                                    <small><i class="fa fa-clock fa-sm"></i>{{mySubject.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{mySubject.subject.campus}}</small>
-                                    <p class="card-text" *ngIf="mySubject.subject.turn == 'T'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Tarde</small></p>
-                                    <p class="card-text" *ngIf="mySubject.subject.turn == 'M'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Mañana</small></p>
-                                    <p class="label-subject-groups"><small><b>GRUPO</b></small><span class="badge">{{mySubject.subject.career}}</span></p>
-                                    <p class="label-subject-groups"><small><b>GRUPOS ASISTENCIA</b></small>
-                                        <span  class="badge" *ngIf="mySubject.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                        <span class="badge" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
-                                    </p>
-                                </div>
-                                </li>
-                                <li class="list-group-item detalles2" *ngIf="mySubject.joinedTeachers">
-                                    <p class="card-text">
-                                    <span *ngFor="let teacher of mySubject.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
-                                    </p>
-                                </li>
-                                <li class="list-group-item detalles3">
-                                    <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                                        <span class="text-muted" *ngIf="mySubject.subject.schedules.length == 0"><small class="truncate">No hay horarios</small></span>
-                                        <span class="text-muted" *ngFor="let schedule of mySubject.subject.schedules"><small class="truncate"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
-                                    </p>
-                                </li>
-                            </ul>
+                        <div class="mt-4" *ngIf="subjectTeacher && error == ''">
+                            <div class="div-input d-flex justify-content-center">
+                                <label for="addedHours"><b>Horas deseadas</b></label>
+                                <input type="number" class="form-control" #hours="ngModel" min="0" max="400" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
+                                [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
+                                <span> h</span>
                             </div>
-                            <div class="card-footer text-muted">
-                                <button type="button" (click)="openRecord(record, mySubject)" placement="bottom" ngbTooltip="Ver" [ngClass]="{'button-green' : 0 == mySubject.leftHours, 'button-light-red': 0 > mySubject.leftHours, 'button-blue' : mySubject.leftHours > 0}"
-                                class="col-4 btn"><i class="fa fa-eye fa-lg"></i></button>
-                                <button type="button" (click)="openEdit(editPOD, mySubject)" placement="bottom" ngbTooltip="Editar" [ngClass]="{'button-green' : 0 == mySubject.leftHours, 'button-light-red': 0 > mySubject.leftHours, 'button-blue' : mySubject.leftHours > 0}"
-                                class="col-4 btn"><i class="fa fa-pencil fa-lg"></i></button>
-                                <button type="button" (click)="openDelete(deletePOD, mySubject)" placement="bottom" ngbTooltip="Eliminar" [ngClass]="{'button-green' : 0 == mySubject.leftHours, 'button-light-red': 0 > mySubject.leftHours, 'button-blue' : mySubject.leftHours > 0}"
-                                class="col-4 btn"><i class="fa fa-trash fa-lg"></i></button>
+                            <div class="text-center mt-2">
+                                <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
+                                <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
                             </div>
                         </div>
                     </div>
-
-                </div>
-
-                <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                    <div class="col-2 mt-5">
-                    <app-loader></app-loader>
-                    </div>
-                </div>
-                <div class="text-center no-data center-vertically" *ngIf="(!mySubjects && !showLoader) || (mySubjects && mySubjects.length == 0 && !showLoader)">
-                    <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
-                    <p>No hay asignaturas aún</p>
-                </div>
-
+                </form>
             </div>
-
+            <div class="modal-footer mb-3">
+                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!subjectTeacher || !formChooseSubject.form.valid || error != ''">Añadir</button>
             </div>
-        </section>
-
         </div>
-
     </div>
+</ng-template>
 
-</main>
-<app-scroll-up></app-scroll-up>
+<ng-template #alertConflicts let-modal>
+    <div class="modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="px-4">
+                    <h4 class="modal-title center"><b>Conflictos de horario</b></h4>
+                    <span>La asignatura de <b>{{subjectToShowAlert.subject.name}}</b> presenta los siguientes conflictos de horario:</span>
+                    <ul class="list-group list-group-flush" *ngIf="subjectToShowAlert.joinedTeachers">
+                        <li class="list-group-item" *ngFor="let conflict of subjectToShowAlert.conflicts">
+                            <p class="card-text">
+                                <small class="text-muted"><b>{{conflict}}</b></small><br>
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer mb-3">
+                <button (click)="modal.dismiss()" class="btn mx-auto btn-global theme-red">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #deletePOD let-modal>
     <div class="modal-dialog-centered" role="document">
@@ -234,20 +212,20 @@
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="mb-3 px-4 center">
+              <div class="px-4 center">
                 <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
-                <h5 class="modal-title" id="titleModal3"><b>Eliminar {{subjectToDelete.subject.name}}</b></h5>
-                <a>¿Desea realmente quitar {{subjectToDelete.subject.name}} de sus asignaturas?</a>
+                <h4 class="modal-title"><b>Eliminar {{subjectToDelete.subject.name}}</b></h4>
+                <span>¿Desea realmente quitar {{subjectToDelete.subject.name}} de sus asignaturas?</span>
               </div>
-              <div class="modal-footer">
-                <button (click)="modal.close(unjoinToSubject(subjectToDelete.subject.id))" class="btn mx-auto btn-global tema-urjc-rojo">Eliminar</button>
-              </div>
+            </div>
+            <div class="modal-footer mb-3">
+                <button (click)="modal.close(unjoinToSubject(subjectToDelete.subject.id))" class="btn mx-auto btn-global theme-red">Eliminar</button>
             </div>
         </div>
     </div>
-  </ng-template>
+</ng-template>
 
-  <ng-template #editPOD let-modal>
+<ng-template #editPOD let-modal>
     <div class="modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -255,79 +233,75 @@
             </div>
             <div class="modal-body">
                 <form #formEditSubject="ngForm" (ngSubmit)="modal.close(onSubmitEdit(formEditSubject))">
-                    <div class="mb-3 px-4">
-                        <h5 class="modal-title" id="titleModal2"><b>Editar {{subjectToEdit.subject.name}}</b></h5>
-
+                    <div class="px-4">
+                        <h4 class="modal-title"><b>Editar {{subjectToEdit.subject.name}}</b></h4>
                         <ul class="list-group list-group-flush font-card">
-                        <li class="list-group-item">
-                            <small class="text-muted"><b>DOCENTES</b></small>
-                            <p class="card-text">
-                                <span *ngFor="let subject of subjectToEdit.joinedTeachers" class="truncate">
-                                    <small class="text-muted"><b>{{subject}}</b></small><br>
-                                </span>
-                            </p>
-                        </li>
+                            <li class="list-group-item">
+                                <small class="text-muted"><b>DOCENTES</b></small>
+                                <p class="card-text">
+                                    <span *ngFor="let subject of subjectToEdit.joinedTeachers" class="truncate">
+                                        <small class="text-muted"><b>{{subject}}</b></small><br>
+                                    </span>
+                                </p>
+                            </li>
                         </ul>
                         <hr>
-                        
                         <div class="mt-2 div-input d-flex justify-content-center ">
-                            <label for="horas_asignatura"><b>Horas asignatura</b></label>
-                            <input type="number" id="horas_asignatura" disabled placeholder="{{subjectToEdit.subject.totalHours}}" class="text-muted p-2"/>
+                            <label for="hoursSubject"><b>Horas asignatura</b></label>
+                            <input type="number" id="hoursSubject" disabled placeholder="{{subjectToEdit.subject.totalHours}}" class="text-muted p-2"/>
                             <span> h</span>
                         </div>
-
                         <div class="mt-2 div-input d-flex justify-content-center">
-                            <label for="inputHoras"><b>Horas escogidas</b></label>
+                            <label for="inputHours"><b>Horas escogidas</b></label>
                             <input class="form-control p-2" type="number" required min="0" max="400" #hours="ngModel" name="hours" ngModel
-                            id="inputHoras" [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''"/>
+                            id="inputHours" [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''"/>
                             <span> h</span>
                         </div>
-
                         <div class="mt-2 div-input d-flex justify-content-center" *ngIf="hours.errors?.['max'] || hours.errors?.['min']">
                             <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
                             <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El valor máximo es de 400h</span>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn mx-auto btn-global tema-urjc-azul" [disabled]="!formEditSubject.form.valid">Editar</button>
-                    </div>
                 </form>
+            </div>
+            <div class="modal-footer mb-3">
+                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!formEditSubject.form.valid">Editar</button>
             </div>
         </div>
     </div>
-  </ng-template>
+</ng-template>
 
-  <ng-template #record let-offcanvas>
+<ng-template #record let-offcanvas>
     <div class="offcanvas-header">
-      <h4 class="offcanvas-title">Historial</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
+        <h4 class="offcanvas-title">Historial</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
     </div>
     <div class="offcanvas-body">
-      <p><b>{{subjectTeacher.subject.name}}</b></p>
-      <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
-        <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
-            <div class="col-12 d-flex justify-content-start">
-                <div class="row">
-                    <div class="col-4">
-                        <span class="fa-stack fa-2x">
-                        <i class="fa fa-circle fa-stack-2x light-blue"></i>
-                        <i class="fa fa-2xs fa-graduation-cap fa-stack-1x blue"></i>
-                        </span>
-                    </div>
-                    <div class="col-8">
-                        <span class="course-history blue">{{item.key}}</span><br>
-                        <div *ngFor="let teacherName of getValues(item.value)">
-                            <span class="teacher-history truncate">{{teacherName}}</span><br>
+        <h5><b>{{subjectTeacher.subject.name}}</b></h5>
+        <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
+            <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
+                <div class="col-12 d-flex justify-content-start">
+                    <div class="row">
+                        <div class="col-4">
+                            <span class="fa-stack fa-2x">
+                            <i class="fa fa-circle fa-stack-2x light-blue"></i>
+                            <i class="fa fa-2xs fa-graduation-cap fa-stack-1x blue"></i>
+                            </span>
+                        </div>
+                        <div class="col-8">
+                            <span class="course-history blue">{{item.key}}</span><br>
+                            <div *ngFor="let teacherName of getValues(item.value)">
+                                <span class="teacher-history truncate">{{teacherName}}</span><br>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </li>
-      </ul>
-      <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
-      <div class="d-flex justify-content-center pt-3">
-        <button class="btn mx-auto btn-global tema-urjc-azul" (click)="offcanvas.dismiss()">Cerrar</button>
+            </li>
+        </ul>
+        <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
+        <div class="d-flex justify-content-center pt-3">
+            <button class="btn mx-auto btn-global theme-blue" (click)="offcanvas.dismiss()">Cerrar</button>
         </div>
     </div>
-  </ng-template>
+</ng-template>
   

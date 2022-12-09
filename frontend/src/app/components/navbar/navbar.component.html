@@ -1,58 +1,51 @@
 <header>
-    <nav class="navbar navbar-expand-lg navbar-expand-lg navbar-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand"  href=# [routerLink]="['/subjects']">
-          <img src="assets/images/URJC-Logo.jpg" width="175" height="87" class="d-inline-block align-top" alt="Logo URJC">
-        </a>
-        <span class="navbar-brand h1 my-auto">Gestión POD</span>
-
-      
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarToggler">
-          <ul class="navbar-nav me-auto text-center mb-2 mb-lg-0">
-            <li class="nav-item" [routerLinkActive]="['active']">
-              <a class="nav-link" data-toggle="tab" href=# [routerLink]="['/subjects']">Asignaturas</a>
-            </li>
-
-            <li class="nav-item" [routerLinkActive]="['active']">
-              <a class="nav-link" href=# data-toggle="tab" [routerLink]="['/statistics']">Estadísticas</a>
-            </li>
-
-            <li class="nav-item dropdown" [routerLinkActive]="['active']">
-              <a class="nav-link dropdown-toggle" href="#" id="nav-eleccion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Elección
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="nav-eleccion">
-                <li><a class="dropdown-item" href=# [routerLink]="['/mySubjects']">Mis Asignaturas</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href=# [routerLink]="['/myStatistics']">Mis Estadísticas</a></li>
-              </ul>
-            </li>
-
-            <li class="nav-item dropdown" *ngIf="isAdmin" [routerLinkActive]="['active']">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Administrador
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                <li><a class="dropdown-item" href=# [routerLink]="['/pods']">PODs</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href=# [routerLink]="['/admin']">Gestión Altas</a></li>
-              </ul>
-            </li>
-
-          </ul>
-          <div class="nav navbar-nav truncate" *ngIf="teacher">
-            <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm white d-lg-none"></i>{{email}}</span> 
-            <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg red"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
-          </div>
+  <nav class="navbar navbar-expand-lg navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href=# [routerLink]="['/subjects']">
+        <img src="assets/images/URJC-Logo.jpg" width="175" height="87" class="d-inline-block align-top" alt="Logo URJC">
+      </a>
+      <span class="navbar-brand h1 my-auto">Gestión POD</span>
+    
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarToggler">
+        <ul class="navbar-nav me-auto text-center mb-2 mb-lg-0">
+          <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link" data-toggle="tab" href=# [routerLink]="['/subjects']">Asignaturas</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link" href=# data-toggle="tab" [routerLink]="['/statistics']">Estadísticas</a>
+          </li>
+          <li class="nav-item dropdown" [routerLinkActive]="['active']">
+            <a class="nav-link dropdown-toggle" href="#" id="nav-choice" role="button" data-bs-toggle="dropdown" aria-expanded="false">Elección</a>
+            <ul class="dropdown-menu" aria-labelledby="nav-choice">
+              <li><a class="dropdown-item" href=# [routerLink]="['/mySubjects']">Mis Asignaturas</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href=# [routerLink]="['/myStatistics']">Mis Estadísticas</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" *ngIf="isAdmin" [routerLinkActive]="['active']">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Administrador
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+              <li><a class="dropdown-item" href=# [routerLink]="['/pods']">PODs</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href=# [routerLink]="['/admin']">Gestión Altas</a></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="nav navbar-nav truncate" *ngIf="teacher">
+          <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm white d-lg-none"></i>{{email}}</span> 
+          <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg red"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
         </div>
       </div>
-    </nav>
-  </header>
+    </div>
+  </nav>
+</header>
 
-  <section class="current-section text-center">
-    <h3 class="font-weight-bold">{{currentSection}}</h3>
-    <h5 class="font-weight-light">Inicio > {{currentSubsection}}</h5>
-  </section>
+<section id="current-section" class="text-center">
+  <h1 class="font-weight-bold">{{currentSection}}</h1>
+  <h2 class="font-weight-light">Inicio > {{currentSubsection}}</h2>
+</section>

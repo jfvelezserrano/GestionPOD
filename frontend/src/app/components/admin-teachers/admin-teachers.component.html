@@ -1,21 +1,18 @@
 <app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
-
-  <main class="container-fluid main-content">
-    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
+<main class="container-fluid main-content">
+  <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
       <p><i class="fa-solid fa-2xl fa-book"></i></p>
       <p>No hay ningún curso aún</p>
-    </div>
-    <div class="center-vertically center-horizontally" *ngIf="showLoader">
-      <app-loader></app-loader>
-    </div>
+  </div>
 
-    <div class="row" *ngIf="isCourse && !showLoader">
-      
+  <div class="center-vertically center-horizontally" *ngIf="showLoader">
+    <app-loader></app-loader>
+  </div>
+
+  <div class="row" *ngIf="isCourse && !showLoader">
       <div class="col">  
-
-        <section class="col-12 col-md-10 offset-md-1 margen-top-contenido">
+        <div class="col-12 col-md-10 offset-md-1">
           <div class="row">
-
             <div class="col-12 d-flex justify-content-between">
               <span *ngIf="!teachers" class="my-auto">Mostrando 0 resultados</span>
               <span *ngIf="teachers" class="my-auto">Mostrando {{teachers.length}} resultados</span>
@@ -27,90 +24,28 @@
                 <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
               </div>
             </div>
-
-            <ng-template #modalCreateTeacher let-modal>
-              <div class="modal-dialog-centered modal-md" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form #createTeacher="ngForm" ngNativeValidate (ngSubmit)="onSubmit(createTeacher)" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
-                            <h5 class="modal-title" id="titleModal"><b>Añadir Nuevo Docente</b></h5>
-                            
-                            <fieldset>
-                              <legend>Identificación</legend>
-                              <div class="row">
-                                <div class="form-group col-12">
-                                      <input type="text" class="form-control" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" maxlength="255" placeholder="Nombre" #name="ngModel" name="name" ngModel
-                                      [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                                      <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                                </div>
-                                <div class="form-group col-12">
-                                      <input type="email" class="form-control" required email aria-describedby="email" maxlength="255" placeholder="Correo Electrónico" #email="ngModel" name="email" ngModel
-                                      [ngClass]="!email.valid && email.touched ? 'border-error' : ''">                                   
-                                </div>
-                                <div class="form-group col-12">
-                                  <input type="number" class="form-control" required placeholder="Número de horas" min="0" max="400" #hours="ngModel" name="hours" ngModel>
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
-                                </div>
-                              </div>
-                            </fieldset>
-                            <span class="error-message-txt m-0 text-center" role="alert" *ngIf="error != ''">{{error}}</span>
-                            <button type="submit" class="btn mx-auto btn-global tema-urjc-azul" [disabled]="email.errors?.['required'] || !hours.valid || name.errors?.['required'] || hours.errors?.['required']">Añadir</button>
-                        </form>
-                      </div>
-                  </div>
-              </div>
-            </ng-template>
-
-            <ng-template #deleteTeacher let-modal>
-              <div class="modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="mb-3 px-4 center">
-                          <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
-                          <h5 class="modal-title" id="titleModal3"><b>Eliminar a {{teacher.name}}</b><b id="teacherToDelete"></b></h5>
-                          <a>¿Desea realmente eliminar al docente {{teacher.name}} del Plan Docente Actual?</a>
-                        </div>
-                        <div class="modal-footer">
-                          <button (click)="modal.close(deleteTeacherInPod(teacher.id))" class="btn mx-auto btn-global tema-urjc-rojo">Eliminar</button>
-                        </div>
-                      </div>
-                  </div>
-              </div>
-            </ng-template>
-
             <div class="col-12 content-all-cards">
               <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4" *ngIf="teachers && teachers.length != 0">
-                
                 <div class="col" *ngFor="let teacher of teachers">
                   <div class="card card-subject-blue h-100 w-100 shadow">
-                      <div class="card-body cards-content">
+                    <div class="card-body cards-content">
                       <ul class="list-group list-group-flush font-card">
-                          <li class="list-group-item detalles1">
-                            <div>
-                                <h4 class="card-title"><b>{{teacher.name}}</b></h4>
-                                <h6 class="card-subtitle mb-2 text-muted">{{teacher.email}}</h6>
-                            </div>
-                          </li>
+                        <li class="list-group-item">
+                          <h4 class="card-title"><b>{{teacher.name}}</b></h4>
+                          <h5 class="card-subtitle mb-2 text-muted">{{teacher.email}}</h5>
+                        </li>
                       </ul>
-                      </div>
-                      <div class="card-footer text-muted">
-                        <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
-                          <i class="fa fa-trash fa-lg"></i>
-                        </button>
-                        <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
-                          <i class="fa fa-trash fa-lg"></i>
-                        </button>
-                      </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                      <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
+                        <i class="fa fa-trash fa-lg"></i>
+                      </button>
+                      <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
+                        <i class="fa fa-trash fa-lg"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
-
               </div>
               <div class="row justify-content-center mt-5" *ngIf="showLoader">
                 <div class="col-2 mt-5">
@@ -122,13 +57,68 @@
                 <p>No hay docentes aún</p>
               </div>
             </div>
-
           </div>
-        </section>
-
+        </div>
       </div>
-
   </div>
+</main>
+<app-scroll-up></app-scroll-up>
 
-  </main>
-  <app-scroll-up></app-scroll-up>
+<ng-template #modalCreateTeacher let-modal>
+  <div class="modal-dialog-centered modal-md" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form #createTeacher="ngForm" ngNativeValidate (ngSubmit)="onSubmit(createTeacher)" class="row g-3 mb-3 px-4">
+                <h3 class="modal-title"><b>Añadir Nuevo Docente</b></h3>
+                  <div class="row">
+                    <fieldset>
+                      <legend>Identificación</legend>
+                      <div class="form-group col-12">
+                        <input type="text" class="form-control" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" maxlength="255" placeholder="Nombre" #name="ngModel" name="name" ngModel
+                        [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                        <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      </div>
+                      <div class="form-group col-12">
+                        <input type="email" class="form-control" required email aria-describedby="email" maxlength="255" placeholder="Correo Electrónico" #email="ngModel" name="email" ngModel
+                        [ngClass]="!email.valid && email.touched ? 'border-error' : ''">                                   
+                      </div>
+                    </fieldset>
+                    <fieldset>
+                      <legend class="border-top py-2 my-2 ml-3">Horas</legend>
+                      <div class="form-group col-12">
+                        <input type="number" class="form-control" required placeholder="Número de horas" min="0" max="400" #hours="ngModel" name="hours" ngModel>
+                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
+                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
+                      </div>
+                    </fieldset>
+                  </div>
+                <span class="error-message-txt m-0 text-center" role="alert" *ngIf="error != ''">{{error}}</span>
+                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="email.errors?.['required'] || !hours.valid || name.errors?.['required'] || hours.errors?.['required']">Añadir</button>
+            </form>
+          </div>
+      </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteTeacher let-modal>
+  <div class="modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="px-4 center">
+              <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+              <h4 class="modal-title"><b>Eliminar a {{teacher.name}}</b><b id="teacherToDelete"></b></h4>
+              <span>¿Desea realmente eliminar al docente {{teacher.name}} del Plan Docente Actual?</span>
+            </div>
+          </div>
+          <div class="modal-footer mb-3">
+            <button (click)="modal.close(deleteTeacherInPod(teacher.id))" class="btn mx-auto btn-global theme-red">Eliminar</button>
+          </div>
+      </div>
+  </div>
+</ng-template>

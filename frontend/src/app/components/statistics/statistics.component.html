@@ -8,48 +8,47 @@
         <app-loader></app-loader>
     </div>
     <div class="row justify-content-center mx-0 mx-lg-5 g-4 mb-5" *ngIf="isCourse && !showLoaderCourse">
-
         <div class="col-md-6 col-xl-3">
-        <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
-            <div class="card-body">
-            <i class="fa fa-calendar-check fa-2x statistics-icon blue"></i> 
-            <h1 class="card-title"><b>{{globalStatistics.percentageCharge}}%</b></h1>
-            <p class="card-text"><b>Carga Docente</b></p>
-            <p class="card-text small"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCharge}}</b></p>
+            <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-calendar-check fa-2x statistics-icon blue"></i> 
+                    <p class="card-text"><b>{{globalStatistics.percentageCharge}}%</b></p>
+                    <h3 class="card-title"><b>Carga Docente</b></h3>
+                    <span class="card-text small m-0"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCharge}}</b></span>
+                </div>
             </div>
-        </div>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-        <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
-            <div class="card-body">
-            <i class="fa fa-calendar fa-2x grey statistics-icon grey"></i> 
-            <h1 class="card-title"><b>{{globalStatistics.percentageForce}}%</b></h1>
-            <p class="card-text"><b>Fuerza Docente</b></p>
-            <p class="card-text small"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCorrectHours}}</b></p>
-            </div>
-        </div>
         </div>
 
         <div class="col-md-6 col-xl-3">
-        <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
-            <div class="card-body">
-            <i class="fa fa-book-open fa-2x statistics-icon blue"></i> 
-            <h1 class="card-title"><b>{{globalStatistics.percentageCompletations}}%</b></h1>
-            <p class="card-text"><b>Asignaturas</b></p>
-            <p class="card-text small"><b>{{globalStatistics.numCompletations}}/{{globalStatistics.numSubjects}}</b></p>
+            <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-calendar fa-2x grey statistics-icon grey"></i> 
+                    <p class="card-text"><b>{{globalStatistics.percentageForce}}%</b></p>
+                    <h3 class="card-title"><b>Fuerza Docente</b></h3>
+                    <span class="card-text small m-0"><b>{{globalStatistics.totalChosenHours}}/{{globalStatistics.totalCorrectHours}}</b></span>
+                </div>
             </div>
-        </div>
         </div>
 
         <div class="col-md-6 col-xl-3">
-        <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
-            <div class="card-body">
-            <i class="fa fa-times fa-2x statistics-icon grey"></i> 
-            <h1 class="card-title"><b>{{globalStatistics.numConflicts}}</b></h1>
-            <p class="card-text"><b>Colisiones Docentes</b></p>
+            <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-book-open fa-2x statistics-icon blue"></i> 
+                    <p class="card-text"><b>{{globalStatistics.percentageCompletations}}%</b></p>
+                    <h3 class="card-title"><b>Asignaturas</b></h3>
+                    <span class="card-text small m-0"><b>{{globalStatistics.numCompletations}}/{{globalStatistics.numSubjects}}</b></span>
+                </div>
             </div>
         </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-times fa-2x statistics-icon grey"></i> 
+                    <p class="card-text"><b>{{globalStatistics.numConflicts}}</b></p>
+                    <h3 class="card-title"><b>Colisiones Docentes</b></h3>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -68,45 +67,43 @@
         </div>
 
         <div class="col-12 col-md-6 col-xl-8 content-all-cards" *ngFor="let teacherStatistics of teachersStatistics">
-        <div class="card shadow h-100 w-100 statistics-card">
-            <div class="card-body">
-            <div class="row justify-content-around">
-                <h4 ><b>{{teacherStatistics.name}}</b></h4>
-                
-                <h6><span class="truncate ms-0" placement="bottom" ngbTooltip="Fuerza original"><i class="fa-solid fa-calendar fa-sm blue me-1"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
-                    <span class="truncate" placement="bottom" ngbTooltip="Fuerza corregida"><i class="fa-solid fa-calendar-check fa-sm blue me-1"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
-                    <span class="truncate" placement="bottom" ngbTooltip="Asignaturas asignadas"><i class="fa fa-book-open fa-sm blue me-1"></i><small>{{teacherStatistics.numSubjects}} asignatura(s)</small></span></h6>
-                
+            <div class="card shadow h-100 w-100 statistics-card">
+                <div class="card-body">
+                    <div class="row justify-content-around">
+                        <h4><b>{{teacherStatistics.name}}</b></h4>       
+                        <span>
+                            <span class="truncate ms-0" placement="bottom" ngbTooltip="Fuerza original"><i class="fa-solid fa-calendar fa-sm blue me-1"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
+                            <span class="truncate" placement="bottom" ngbTooltip="Fuerza corregida"><i class="fa-solid fa-calendar-check fa-sm blue me-1"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
+                            <span class="truncate" placement="bottom" ngbTooltip="Asignaturas asignadas"><i class="fa fa-book-open fa-sm blue me-1"></i><small>{{teacherStatistics.numSubjects}} asignatura(s)</small></span>
+                        </span>
 
-                <div class="row justify-content-start">
-                    <div class="col-12 col-xl-12">
-                    <div class="d-flex justify-content-between">
-                        <span><small>Horas asignadas</small></span>
-                        <h5><b>{{teacherStatistics.percentage}}%</b></h5>
-                    </div>
-                    <div class="col-12">
-                        <div class="progress" style="height: 8px;">
-                        <div class="progress-bar" role="progressbar" [style.width]="teacherStatistics.percentage +'%'" style="height: 100%;" aria-valuenow="teacherStatistics.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="row justify-content-start">
+                            <div class="col-12 col-xl-12">
+                                <div class="d-flex justify-content-between">
+                                    <span><small>Horas asignadas</small></span>
+                                    <span><b>{{teacherStatistics.percentage}}%</b></span>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar" role="progressbar" [style.width]="teacherStatistics.percentage +'%'" style="height: 100%;" aria-valuenow="teacherStatistics.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-1">
+                                    <small class="blue"><b>{{teacherStatistics.charge}} horas</b></small>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-end mt-1">
-                        <small class="blue"><b>{{teacherStatistics.charge}} horas</b></small>
-                    </div>
+
+                        <hr class="mt-2">
+                        <span class="section-title">OBSERVACIONES</span>
+                        <p class="content-observations">
+                            <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
+                            <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
+                        </p>
                     </div>
                 </div>
-
-                <hr class="mt-2">
-                <h5 class="section-title">OBSERVACIONES</h5>
-                <p class="content-observations">
-                    <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
-                    <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
-                </p>
-
-            </div>
             </div>
         </div>
-        </div>
-
     </div>
 </main>
 <app-scroll-up></app-scroll-up>

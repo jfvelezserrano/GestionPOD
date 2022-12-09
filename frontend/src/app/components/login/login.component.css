@@ -13,6 +13,10 @@
   height:100%;
 }
 
+h3{
+  font-size: .83em;
+}
+
 .page-login{
   margin-top: 180px;
 }
@@ -30,6 +34,13 @@
 
 .access-content{
   margin-top: 1em;
+}
+
+.access-content [type="button"]{
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  color: var(--white);
 }
 
 .background-black-opacity{

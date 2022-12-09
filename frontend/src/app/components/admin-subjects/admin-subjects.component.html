@@ -1,294 +1,90 @@
 <app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
-  <main class="container-fluid main-content">
+<main class="container-fluid main-content">
 
-    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
-      <p><i class="fa-solid fa-2xl fa-book"></i></p>
-      <p>No hay ningún curso aún</p>
-    </div>
-    <div class="center-vertically center-horizontally" *ngIf="showLoader">
-      <app-loader></app-loader>
-    </div>
-
-    <div class="row" *ngIf="isCourse && !showLoader">
-      
-      <div class="col">  
-
-        <section class="col-12 col-md-10 offset-md-1 margen-top-contenido">
-          <div class="row">
-
-            <div class="col-12 d-flex justify-content-between">
-              <span *ngIf="!subjectsTeachersBase" class="my-auto">Mostrando 0 resultados</span>
-              <span *ngIf="subjectsTeachersBase" class="my-auto">Mostrando {{subjectsTeachersBase.length}} resultados</span>
-              
-              <div>
-                <span class="my-auto me-2"><small>Ordenar por</small></span>
-                <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getSubjectsInPod()">
-                  <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
-                </select>
-                <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="createModal(createSubject)"><i class="fa fa-plus fa-sm"></i></button>
-              </div>
-            </div>
-
-            <ng-template #createSubject let-modal>
-              <div class="modal-dialog-centered modal-lg" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form #formCreateTeacher="ngForm" ngNativeValidate (ngSubmit)="onSubmit(formCreateTeacher)" class="row g-3 mb-3 px-4 formNuevaEditarAsignatura">
-                            <h5 class="modal-title" id="titleModal"><b>Añadir Nueva Asignatura</b></h5>
-                            <fieldset>
-                              <legend>Identificación</legend>
-                              <div class="row">
-                                <div class="form-group col-lg-8">
-                                    <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" maxlength="255" class="form-control" id="inputNombre" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Nombre"
-                                    [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                                </div>
-                                <div class="form-group col-lg-4">
-                                    <input type="text" class="form-control" id="inputCode" #code="ngModel" name="code" maxlength="255" [(ngModel)]="newSubject.code" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Código"
-                                    [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control" list="grados" required maxlength="255" pattern="[^\]\[&lt;&gt;&quot;';!=]*" id="inputGrado" placeholder="Grado"
-                                    #title="ngModel" name="title" [(ngModel)]="newSubject.title" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                                  <datalist id="grados">
-                                    <option *ngFor="let title of titles" [value]="title">{{title}}</option>
-                                  </datalist>
-                                </div>
-                              </div>
-                              
-                            </fieldset>
-
-                            <fieldset>
-                              <legend class="border-top py-2 my-2 ml-3">Datos</legend>
-                              <div class="row">
-                                <div class="form-group col-lg-3">
-                                  <input type="number" class="form-control" #hours="ngModel" name="hours" min="0" max="400" [(ngModel)]="newSubject.totalHours" required placeholder="Horas"
-                                  [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">Mínimo 0h</span>
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">Máximo 400h</span>
-                                </div>
-                                
-                                <div class="form-group col-lg-6">
-                                    <input type="text" class="form-control" list="campusList" maxlength="255" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #campus="ngModel" name="campus" [(ngModel)]="newSubject.campus" 
-                                    required id="inputCampus" placeholder="Campus" [ngClass]="!campus.valid && campus.touched ? 'border-error' : ''">
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="campus.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                                  <datalist id="campusList">
-                                    <option *ngFor="let item of allCampus" [value]="item">{{item}}</option>
-                                  </datalist>
-                                </div>
-
-                                <div class="form-group col-lg-3">
-                                  <input type="number" class="form-control" #year="ngModel" name="year" min="0" max="10" [(ngModel)]="newSubject.year" required placeholder="Curso"
-                                  [ngClass]="!year.valid && year.touched ? 'border-error' : ''">
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="year.errors?.['min']">Mínimo curso 0</span>
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="year.errors?.['max']">Máximo curso 10</span>
-                                </div>
-
-                                <div class="form-group col-lg-5">
-                                  <select class="form-select" #quarter="ngModel" name="quarter" [(ngModel)]="newSubject.quarter" required [ngClass]="!quarter.valid && quarter.touched ? 'border-error' : ''">
-                                    <option value="" selected hidden>Selecciona un cuatrimestre</option>
-                                    <option value=null selected hidden>Selecciona un cuatrimestre</option>
-                                    <option value="Primer Cuatrimestre">Primer Cuatrimestre</option>
-                                    <option value="Segundo Cuatrimestre">Segundo Cuatrimestre</option>
-                                  </select>
-                                </div>
-                                
-
-                                <div class="form-group col-lg-7">
-                                    <input type="text" class="form-control" list="typesList" id="inputTipo" maxlength="255" placeholder="Tipo" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #type="ngModel"
-                                    name="type" [(ngModel)]="newSubject.type" required [ngClass]="!type.valid && type.touched ? 'border-error' : ''">
-                                    <span class="error-message-txt m-0" role="alert" *ngIf="type.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                                  <datalist id="typesList">
-                                    <option *ngFor="let item of types" [value]="item">{{item}}</option>
-                                  </datalist>
-                                </div>
-                              </div>
-                            </fieldset>
-
-                            <fieldset>
-                              <legend class="border-top py-2 my-2 ml-3">Turno</legend>
-                              <div class="form-group center">
-                                <div id="turns-group">
-                                  <input type="radio" name="turn" value="M" [(ngModel)]="newSubject.turn" id="option-morning" required>
-                                  <input type="radio" name="turn" value="T" [(ngModel)]="newSubject.turn" id="option-afternoon" required>
-                                    <label for="option-morning" class="option option-morning">
-                                      <span>Turno Mañana</span>
-                                      </label>
-                                    <label for="option-afternoon" class="option option-afternoon">
-                                      <span>Turno Tarde</span>
-                                    </label>
-                                </div>
-                              </div>
-                          </fieldset>
-
-                          <fieldset>
-                            <legend class="border-top py-2 my-2 ml-3">Grupo</legend>
-                            <div class="row">
-                              <div class="form-group" style="padding-top: 1px;">
-                                  <input type="text" class="form-control" id="inputCareer" placeholder="Grupo" maxlength="255" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" #career="ngModel" [(ngModel)]="newSubject.career" name="career"
-                                  [ngClass]="!career.valid && career.touched ? 'border-error' : ''">
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="career.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                              </div>
-                            </div>
-                          </fieldset>
-
-                          <fieldset>
-                            <legend class="border-top py-2 my-2 ml-3">Grupos Asistencia (Opcional)</legend>
-                            <div class="row">
-
-                              <div class="form-group col-11" style="padding-top: 1px;">
-                                  <input type="text" class="form-control" id="inputAssistanceCareers" maxlength="255" placeholder="Grupos Asistencia" pattern="[^\]\[&lt;&gt;&quot;';!=]*"
-                                  #assistanceCareers="ngModel" ngModel name="assistanceCareers" [ngClass]="!assistanceCareers.valid && assistanceCareers.touched ? 'border-error' : ''">
-                                  <span class="error-message-txt m-0" role="alert" *ngIf="assistanceCareers.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                              </div>
-
-                              <div class="form-group col-1">
-                                <button style="border-radius: 50% !important;" (click)="assistanceCareersList.push(assistanceCareers.value)" type="button" placement="bottom" ngbTooltip="Añadir grupo" class="btn button-actions-blue" [disabled]="!assistanceCareers.valid || !assistanceCareers.value || assistanceCareers.value.length == 0">
-                                  <i class="fa fa-plus"></i>
-                                </button>
-                              </div>
-
-                              <div class="form-group" *ngIf="assistanceCareersList.length != 0">
-                                <small class="truncate labels" *ngFor="let item of assistanceCareersList; let i = index"><i class="fas fa-times" (click)="assistanceCareersList.splice(i, 1)"></i>{{item}}</small>
-                              </div>
-                            </div>
-                          </fieldset>
-
-                          <fieldset>
-                              <legend class="border-top py-2 my-2 ml-3">Horario (Opcional)</legend>
-                              <div class="row">
-                                <div class="form-group col-lg-5" style="padding-top: 1px;">
-                                    <select class="form-select" #dayWeek="ngModel" name="dayWeek" ngModel [ngClass]="!dayWeek.valid && dayWeek.touched ? 'border-error' : ''">
-                                      <option value="" selected hidden>Selecciona un día de la semana</option>
-                                      <option value=null selected hidden>Selecciona un día de la semana</option>
-                                      <option value="L">Lunes</option>
-                                      <option value="M">Martes</option>
-                                      <option value="X">Miércoles</option>
-                                      <option value="J">Jueves</option>
-                                      <option value="V">Viernes</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-5 col-lg-3 " style="padding-top: 1px;">
-                                    <input type="time" class="form-control" id="inputStartTime" placeholder="Hora Inicio" #startTime="ngModel" ngModel name="startTime"
-                                    [ngClass]="!startTime.valid && startTime.touched ? 'border-error' : ''">
-                                </div>
-                                <div class="form-group col-5 col-lg-3" style="padding-top: 1px;">
-                                    <input type="time" class="form-control" id="inputEndTime" placeholder="Hora Fin" #endTime="ngModel" ngModel name="endTime"
-                                    [ngClass]="!endTime.valid && endTime.touched ? 'border-error' : ''">
-                                </div>
-                                <div class="form-group col-1 col-lg-1 offset-1 offset-lg-0">
-                                  <button (click)="addSchedule(dayWeek.value, startTime.value, endTime.value)" style="border-radius: 50% !important;" type="button" title="Añadir horario" placement="bottom" ngbTooltip="Añadir horario"
-                                  class="btn button-actions-blue" [disabled]="!dayWeek.value || dayWeek.value.length == 0 || !dayWeek.valid || !startTime.value || startTime.value.length == 0 || !startTime.valid || !endTime.value || endTime.value.length == 0 || !endTime.valid">
-                                    <i class="fa fa-plus"></i>
-                                  </button>
-                                </div>
-
-                                <div class="form-group col-12" *ngIf="scheduleList.length != 0">
-                                  <small class="truncate labels" *ngFor="let item of scheduleList; let i = index"><i class="fas fa-times" (click)="scheduleList.splice(i, 1)"></i>{{item.dayWeek}} - ({{item.startTime}} a {{item.endTime}})</small>
-                                </div>
-                              </div>
-
-                          </fieldset>
-
-                            <button type="submit" class="btn mx-auto btn-global tema-urjc-azul" [disabled]="!formCreateTeacher.form.valid">Añadir</button>
-                        </form>
-                      </div>
-                  </div>
-              </div>
-            </ng-template>
-
-            <ng-template  #deleteSubject let-modal>
-              <div class="modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <div class="mb-3 px-4 center">
-                          <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
-                          <h5 class="modal-title" id="titleModal3"><b>Eliminar {{subject.name}}</b></h5>
-                          <a>¿Desea realmente eliminar la asignatura {{subject.name}} del Plan Docente Actual?</a>
-                        </div>
-                        <div class="modal-footer">
-                          <button (click)="modal.close(deleteSubjectInPod(subject.id))" class="btn mx-auto btn-global tema-urjc-rojo">Eliminar</button>
-                        </div>
-                      </div>
-                  </div>
-              </div>
-            </ng-template>
-
-            <div class="col-12 content-all-cards">
-              <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
-                
-                <div class="col" *ngFor="let subjectTeacherBase of subjectsTeachersBase">
-                  <div class="card h-100 w-100 shadow">
-                      <div class="card-body cards-content">
-                      <ul class="list-group list-group-flush font-card">
-                          <li class="list-group-item detalles1">
-                          <div>
-                              <h4 class="card-title"><b>{{subjectTeacherBase.subject.name}} ({{subjectTeacherBase.subject.code}})</b></h4>
-                              <h6 class="card-subtitle mb-2 text-muted">{{subjectTeacherBase.subject.title}}</h6>
-                              <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacherBase.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacherBase.subject.campus}}</small>
-                              <p class="card-text" *ngIf="subjectTeacherBase.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacherBase.subject.year}} | {{subjectTeacherBase.subject.quarter}} | {{subjectTeacherBase.subject.type}} | Turno Tarde</small></p>
-                              <p class="card-text" *ngIf="subjectTeacherBase.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacherBase.subject.year}} | {{subjectTeacherBase.subject.quarter}} | {{subjectTeacherBase.subject.type}} | Turno Mañana</small></p>
-                              <p class="label-subject-groups" *ngIf="subjectTeacherBase.subject.career"><small><b>GRUPO</b></small><span class="badge">{{subjectTeacherBase.subject.career}}</span></p>
-                              <p class="label-subject-groups"><small><b>GRUPOS ASISTENCIA</b></small>
-                                <span  class="badge" *ngIf="subjectTeacherBase.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                <span class="badge" *ngFor="let career of subjectTeacherBase.subject.assistanceCareers">{{career}}</span>
-                              </p>
-                          </div>
-                          </li>
-                          <li class="list-group-item detalles2" *ngIf="subjectTeacherBase.joinedTeachers">
-                            <p class="card-text">
-                              <span *ngFor="let teacher of subjectTeacherBase.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
-                            </p>
-                          </li>
-                          <li class="list-group-item detalles2" *ngIf="!subjectTeacherBase.joinedTeachers || subjectTeacherBase.joinedTeachers.length == 0">
-                            <p class="card-text">
-                              <span><small class="text-muted">No hay docentes asignados</small><br></span>
-                            </p>
-                          </li>
-                          <li class="list-group-item detalles3">
-                            <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                              <span class="text-muted" *ngIf="subjectTeacherBase.subject.schedules.length == 0"><small class="truncate">No hay horarios</small></span>
-                              <span class="text-muted" *ngFor="let schedule of subjectTeacherBase.subject.schedules"><small class="truncate"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
-                            </p>
-                          </li>
-                      </ul>
-                      </div>
-                      <div class="card-footer text-muted">
-                        <button type="button" (click)="recordModal(record, subjectTeacherBase.subject)" placement="bottom" ngbTooltip="Ver" class="col-6 btn button-blue"><i class="fa fa-eye fa-lg"></i></button>
-                        <button type="button" (click)="deleteModal(deleteSubject, subjectTeacherBase.subject)" placement="bottom" ngbTooltip="Eliminar" class="col-6 btn button-blue"><i class="fa fa-trash fa-lg"></i></button>
-                      </div>
-                  </div>
-                  </div>
-
-              </div>
-              <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                <div class="col-2 mt-5">
-                  <app-loader></app-loader>
-                </div>
-              </div>
-              <div class="text-center no-data center-vertically" *ngIf="subjectsTeachersBase && subjectsTeachersBase.length == 0 && !showLoader">
-                <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
-                <p>No hay asignaturas aún</p>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-      </div>
-
+  <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
+    <p><i class="fa-solid fa-2xl fa-book"></i></p>
+    <p>No hay ningún curso aún</p>
   </div>
 
-  </main>
+  <div class="center-vertically center-horizontally" *ngIf="showLoader">
+    <app-loader></app-loader>
+  </div>
+
+  <div class="row" *ngIf="isCourse && !showLoader">
+    <div class="col">  
+      <div class="col-12 col-md-10 offset-md-1">
+        <div class="row">
+          <div class="col-12 d-flex justify-content-between">
+            <span *ngIf="!subjectsTeachersBase" class="my-auto">Mostrando 0 resultados</span>
+            <span *ngIf="subjectsTeachersBase" class="my-auto">Mostrando {{subjectsTeachersBase.length}} resultados</span>
+            <div>
+              <span class="my-auto me-2"><small>Ordenar por</small></span>
+              <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getSubjectsInPod()">
+                <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
+              </select>
+              <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="createModal(createSubject)"><i class="fa fa-plus fa-sm"></i></button>
+            </div>
+          </div>
+
+          <div class="col-12 content-all-cards">
+            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+              <div class="col" *ngFor="let subjectTeacherBase of subjectsTeachersBase">
+                <div class="card h-100 w-100 shadow">
+                  <div class="card-body cards-content">
+                    <ul class="list-group list-group-flush font-card">
+                      <li class="list-group-item">
+                        <h4 class="card-title"><b>{{subjectTeacherBase.subject.name}} ({{subjectTeacherBase.subject.code}})</b></h4>
+                        <span class="card-subtitle mb-2 text-muted">{{subjectTeacherBase.subject.title}}</span><br>
+                        <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacherBase.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacherBase.subject.campus}}</small>
+                        <p class="card-text" *ngIf="subjectTeacherBase.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacherBase.subject.year}} | {{subjectTeacherBase.subject.quarter}} | {{subjectTeacherBase.subject.type}} | Turno Tarde</small></p>
+                        <p class="card-text" *ngIf="subjectTeacherBase.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacherBase.subject.year}} | {{subjectTeacherBase.subject.quarter}} | {{subjectTeacherBase.subject.type}} | Turno Mañana</small></p>
+                        <p class="label-subject-groups" *ngIf="subjectTeacherBase.subject.career"><small><b>GRUPO</b></small><span class="badge">{{subjectTeacherBase.subject.career}}</span></p>
+                        <p class="label-subject-groups"><small><b>GRUPOS ASISTENCIA</b></small>
+                          <span  class="badge" *ngIf="subjectTeacherBase.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
+                          <span class="badge" *ngFor="let career of subjectTeacherBase.subject.assistanceCareers">{{career}}</span>
+                        </p>
+                      </li>
+                      <li class="list-group-item" *ngIf="subjectTeacherBase.joinedTeachers">
+                        <p class="card-text">
+                          <span *ngFor="let teacher of subjectTeacherBase.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                        </p>
+                      </li>
+                      <li class="list-group-item" *ngIf="!subjectTeacherBase.joinedTeachers || subjectTeacherBase.joinedTeachers.length == 0">
+                        <p class="card-text">
+                          <span><small class="text-muted">No hay docentes asignados</small><br></span>
+                        </p>
+                      </li>
+                      <li class="list-group-item">
+                        <p class="card-text">
+                          <i class="fa fa-calendar fa-sm"></i>
+                          <small class="text-muted truncate" *ngIf="subjectTeacherBase.subject.schedules.length == 0">No hay horarios</small>
+                          <small class="text-muted truncate" *ngFor="let schedule of subjectTeacherBase.subject.schedules"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small>
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-footer">
+                    <button type="button" (click)="recordModal(record, subjectTeacherBase.subject)" placement="bottom" ngbTooltip="Ver" class="col-6 btn button-blue"><i class="fa fa-eye fa-lg"></i></button>
+                    <button type="button" (click)="deleteModal(deleteSubject, subjectTeacherBase.subject)" placement="bottom" ngbTooltip="Eliminar" class="col-6 btn button-blue"><i class="fa fa-trash fa-lg"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center mt-5" *ngIf="showLoader">
+              <div class="col-2 mt-5">
+                <app-loader></app-loader>
+              </div>
+            </div>
+            <div class="text-center no-data center-vertically" *ngIf="subjectsTeachersBase && subjectsTeachersBase.length == 0 && !showLoader">
+              <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
+              <p>No hay asignaturas aún</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</main>
 <app-scroll-up></app-scroll-up>
 
 <ng-template #record let-offcanvas>
@@ -297,30 +93,216 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
   </div>
   <div class="offcanvas-body">
-    <p><b>{{subject.name}}</b></p>
+    <h5><b>{{subject.name}}</b></h5>
     <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
       <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
         <div class="col-12 d-flex justify-content-start">
           <div class="row">
-              <div class="col-4">
-                  <span class="fa-stack fa-2x">
-                  <i class="fa fa-circle fa-stack-2x light-blue"></i>
-                  <i class="fa fa-2xs fa-graduation-cap fa-stack-1x blue"></i>
-                  </span>
+            <div class="col-4">
+              <span class="fa-stack fa-2x">
+                <i class="fa fa-circle fa-stack-2x light-blue"></i>
+                <i class="fa fa-2xs fa-graduation-cap fa-stack-1x blue"></i>
+              </span>
+            </div>
+            <div class="col-8">
+              <span class="course-history blue">{{item.key}}</span><br>
+              <div *ngFor="let teacherName of getValues(item.value)">
+                  <span class="teacher-history truncate">{{teacherName}}</span><br>
               </div>
-              <div class="col-8">
-                <span class="course-history blue">{{item.key}}</span><br>
-                <div *ngFor="let teacherName of getValues(item.value)">
-                    <span class="teacher-history truncate">{{teacherName}}</span><br>
-                </div>
-              </div>
+            </div>
           </div>
         </div>
       </li>
     </ul>
-    <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
+    <p *ngIf="(records | json) == '{}'" class="text-muted text-center mt-4">No hay historial que mostrar</p>
     <div class="d-flex justify-content-center pt-3">
-      <button class="btn mx-auto btn-global tema-urjc-azul" (click)="offcanvas.dismiss()">Cerrar</button>
+      <button class="btn mx-auto btn-global theme-blue" (click)="offcanvas.dismiss()">Cerrar</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #createSubject let-modal>
+  <div class="modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form #formCreateTeacher="ngForm" ngNativeValidate (ngSubmit)="onSubmit(formCreateTeacher)" class="row g-3 mb-3 px-4">
+                <h3 class="modal-title"><b>Añadir Nueva Asignatura</b></h3>
+                <fieldset>
+                  <legend>Identificación</legend>
+                  <div class="row">
+                    <div class="form-group col-lg-8">
+                      <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" maxlength="255" class="form-control" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Nombre"
+                      [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                    </div>
+                    <div class="form-group col-lg-4">
+                      <input type="text" class="form-control" #code="ngModel" name="code" maxlength="255" [(ngModel)]="newSubject.code" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Código"
+                      [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                    </div>
+                    <div class="form-group">
+                      <input type="text" class="form-control" list="titleList" required maxlength="255" pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Grado"
+                      #title="ngModel" name="title" [(ngModel)]="newSubject.title" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <datalist id="titleList">
+                        <option *ngFor="let title of titles" [value]="title">{{title}}</option>
+                      </datalist>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend class="border-top py-2 my-2 ml-3">Datos</legend>
+                  <div class="row">
+                    <div class="form-group col-lg-3">
+                      <input type="number" class="form-control" #hours="ngModel" name="hours" min="0" max="400" [(ngModel)]="newSubject.totalHours" required placeholder="Horas"
+                      [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">Mínimo 0h</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">Máximo 400h</span>
+                    </div>
+                    
+                    <div class="form-group col-lg-6">
+                      <input type="text" class="form-control" list="campusList" maxlength="255" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #campus="ngModel" name="campus" [(ngModel)]="newSubject.campus" 
+                      required placeholder="Campus" [ngClass]="!campus.valid && campus.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="campus.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <datalist id="campusList">
+                        <option *ngFor="let item of allCampus" [value]="item">{{item}}</option>
+                      </datalist>
+                    </div>
+
+                    <div class="form-group col-lg-3">
+                      <input type="number" class="form-control" #year="ngModel" name="year" min="0" max="10" [(ngModel)]="newSubject.year" required placeholder="Curso"
+                      [ngClass]="!year.valid && year.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="year.errors?.['min']">Mínimo curso 0</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="year.errors?.['max']">Máximo curso 10</span>
+                    </div>
+
+                    <div class="form-group col-lg-5">
+                      <select class="form-select" #quarter="ngModel" name="quarter" [(ngModel)]="newSubject.quarter" required [ngClass]="!quarter.valid && quarter.touched ? 'border-error' : ''">
+                        <option value="" selected hidden>Selecciona un cuatrimestre</option>
+                        <option value=null selected hidden>Selecciona un cuatrimestre</option>
+                        <option value="Primer Cuatrimestre">Primer Cuatrimestre</option>
+                        <option value="Segundo Cuatrimestre">Segundo Cuatrimestre</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group col-lg-7">
+                      <input type="text" class="form-control" list="typesList" maxlength="255" placeholder="Tipo" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #type="ngModel"
+                      name="type" [(ngModel)]="newSubject.type" required [ngClass]="!type.valid && type.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="type.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <datalist id="typesList">
+                        <option *ngFor="let item of types" [value]="item">{{item}}</option>
+                      </datalist>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend class="border-top py-2 my-2 ml-3">Turno</legend>
+                  <div class="form-group center">
+                    <div id="turns-group">
+                      <input type="radio" name="turn" value="M" [(ngModel)]="newSubject.turn" id="option-morning" required>
+                      <input type="radio" name="turn" value="T" [(ngModel)]="newSubject.turn" id="option-afternoon" required>
+                        <label for="option-morning" class="option option-morning">
+                          <span>Turno Mañana</span>
+                          </label>
+                        <label for="option-afternoon" class="option option-afternoon">
+                          <span>Turno Tarde</span>
+                        </label>
+                    </div>
+                  </div>
+                </fieldset>
+
+              <fieldset>
+                <legend class="border-top py-2 my-2 ml-3">Grupo</legend>
+                <div class="row">
+                  <div class="form-group">
+                      <input type="text" class="form-control" placeholder="Grupo" maxlength="255" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" #career="ngModel" [(ngModel)]="newSubject.career" name="career"
+                      [ngClass]="!career.valid && career.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="career.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend class="border-top py-2 my-2 ml-3">Grupos Asistencia (Opcional)</legend>
+                <div class="row">
+                  <div class="form-group col-11" style="padding-top: 1px;">
+                      <input type="text" class="form-control" maxlength="255" placeholder="Grupos Asistencia" pattern="[^\]\[&lt;&gt;&quot;';!=]*"
+                      #assistanceCareers="ngModel" ngModel name="assistanceCareers" [ngClass]="!assistanceCareers.valid && assistanceCareers.touched ? 'border-error' : ''">
+                      <span class="error-message-txt m-0" role="alert" *ngIf="assistanceCareers.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                  </div>
+                  <div class="form-group col-1">
+                    <button (click)="assistanceCareersList.push(assistanceCareers.value)" type="button" placement="bottom" ngbTooltip="Añadir grupo" class="btn button-actions-blue" [disabled]="!assistanceCareers.valid || !assistanceCareers.value || assistanceCareers.value.length == 0">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                  <div class="form-group" *ngIf="assistanceCareersList.length != 0">
+                    <small class="truncate labels" *ngFor="let item of assistanceCareersList; let i = index"><i class="fas fa-times" (click)="assistanceCareersList.splice(i, 1)"></i>{{item}}</small>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                  <legend class="border-top py-2 my-2 ml-3">Horario (Opcional)</legend>
+                  <div class="row">
+                    <div class="form-group col-lg-5" style="padding-top: 1px;">
+                        <select class="form-select" #dayWeek="ngModel" name="dayWeek" ngModel [ngClass]="!dayWeek.valid && dayWeek.touched ? 'border-error' : ''">
+                          <option value="" selected hidden>Selecciona un día de la semana</option>
+                          <option value=null selected hidden>Selecciona un día de la semana</option>
+                          <option value="L">Lunes</option>
+                          <option value="M">Martes</option>
+                          <option value="X">Miércoles</option>
+                          <option value="J">Jueves</option>
+                          <option value="V">Viernes</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-5 col-lg-3 " style="padding-top: 1px;">
+                        <input type="time" class="form-control" placeholder="Hora Inicio" #startTime="ngModel" ngModel name="startTime"
+                        [ngClass]="!startTime.valid && startTime.touched ? 'border-error' : ''">
+                    </div>
+                    <div class="form-group col-5 col-lg-3" style="padding-top: 1px;">
+                        <input type="time" class="form-control" placeholder="Hora Fin" #endTime="ngModel" ngModel name="endTime"
+                        [ngClass]="!endTime.valid && endTime.touched ? 'border-error' : ''">
+                    </div>
+                    <div class="form-group col-1 col-lg-1 offset-1 offset-lg-0">
+                      <button (click)="addSchedule(dayWeek.value, startTime.value, endTime.value)" type="button" placement="bottom" ngbTooltip="Añadir horario"
+                      class="btn button-actions-blue" [disabled]="!dayWeek.value || dayWeek.value.length == 0 || !dayWeek.valid || !startTime.value || startTime.value.length == 0 || !startTime.valid || !endTime.value || endTime.value.length == 0 || !endTime.valid">
+                        <i class="fa fa-plus"></i>
+                      </button>
+                    </div>
+                    <div class="form-group col-12" *ngIf="scheduleList.length != 0">
+                      <small class="truncate labels" *ngFor="let item of scheduleList; let i = index"><i class="fas fa-times" (click)="scheduleList.splice(i, 1)"></i>{{item.dayWeek}} - ({{item.startTime}} a {{item.endTime}})</small>
+                    </div>
+                  </div>
+              </fieldset>
+              <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!formCreateTeacher.form.valid">Añadir</button>
+            </form>
+          </div>
+      </div>
+  </div>
+</ng-template>
+
+<ng-template  #deleteSubject let-modal>
+  <div class="modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="px-4 center">
+              <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="Imagen de advertencia borrado">
+              <h4 class="modal-title"><b>Eliminar {{subject.name}}</b></h4>
+              <span>¿Desea realmente eliminar la asignatura {{subject.name}} del Plan Docente Actual?</span>
+            </div>
+          </div>
+          <div class="modal-footer mb-3">
+            <button (click)="modal.close(deleteSubjectInPod(subject.id))" class="btn mx-auto btn-global theme-red">Eliminar</button>
+          </div>
       </div>
   </div>
 </ng-template>

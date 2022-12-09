@@ -25,7 +25,8 @@ const routes: Routes = [
   { path: "statistics", canActivate: [TeacherGuard], component: StatisticsComponent},
   { path: "myStatistics", canActivate: [TeacherGuard], component: MyStatisticsComponent},
   { path: "mySubjects", canActivate: [TeacherGuard], component: MySubjectsComponent},
-  { path: "admin", canActivate: [AdminGuard], component: ManagementAdminComponent}
+  { path: "admin", canActivate: [AdminGuard], component: ManagementAdminComponent},
+  { path: "**", redirectTo: '/subjects'}
 ];
 
 @NgModule({
