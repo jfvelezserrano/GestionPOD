@@ -1,7 +1,7 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { TeacherService } from 'src/app/services/teacher.service';
-import Chart from 'chart.js/auto';
+import Chart, { ChartType } from 'chart.js/auto';
 import { NgForm } from '@angular/forms';
 import { StatisticsPersonal } from 'src/app/models/statistics-personal.model';
 import { StatisticsMates } from 'src/app/models/statistics-mates.model';
@@ -125,6 +125,7 @@ export class MyStatisticsComponent implements OnInit {
     this.teacherService.editEditableData(form.value).subscribe({
       next: (data) => {
         this.getEditableData();
+        this.getPersonalStatistics();
       },
       error: (error) => {
         if(error === '404'){
@@ -263,7 +264,7 @@ export class MyStatisticsComponent implements OnInit {
 
   graphPercentageHours(){
     this.chartPercentage = new Chart("doughnutChart", {
-      type: 'doughnut',
+      type: 'doughnut' as ChartType,
       data: {
         labels:this.subjectsGraphPercentage,
         datasets: [{

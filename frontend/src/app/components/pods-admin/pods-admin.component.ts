@@ -44,7 +44,7 @@ export class PodsAdminComponent implements OnInit {
     });
   }
 
-  onSubmit(form:any) {
+  onSubmit() {
     this.showLoaderCreate = true;
 
     var formData = new FormData();
@@ -55,9 +55,9 @@ export class PodsAdminComponent implements OnInit {
     let fileUploadTeachers = this.fileTeachers.nativeElement;
     formData.append("fileTeachers", fileUploadTeachers.files[0]);
 
-    var objectNameCourse = {name: this.course.value};
+    var course = new Course(null, this.course.value);
 
-    formData.append("course", new Blob([JSON.stringify(objectNameCourse)], { type: 'application/json' }));
+    formData.append("course", new Blob([JSON.stringify(course)], { type: 'application/json' }));
 
     this.courseService.createPOD(formData).subscribe({
       next: (data) => {

@@ -1,11 +1,9 @@
 package com.urjc.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
@@ -32,7 +30,4 @@ public class POD {
 
     @Column(nullable = false)
     private Integer chosenHours;
-
-
-    public POD() {}
 }

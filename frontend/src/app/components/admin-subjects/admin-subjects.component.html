@@ -34,7 +34,7 @@
                     <ul class="list-group list-group-flush font-card">
                       <li class="list-group-item">
                         <h4 class="card-title"><b>{{subjectTeacherBase.subject.name}} ({{subjectTeacherBase.subject.code}})</b></h4>
-                        <span class="card-subtitle mb-2 text-muted">{{subjectTeacherBase.subject.title}}</span><br>
+                        <span class="card-subtitle m-0 text-muted">{{subjectTeacherBase.subject.title}}</span><br>
                         <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacherBase.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacherBase.subject.campus}}</small>
                         <p class="card-text" *ngIf="subjectTeacherBase.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacherBase.subject.year}} | {{subjectTeacherBase.subject.quarter}} | {{subjectTeacherBase.subject.type}} | Turno Tarde</small></p>
                         <p class="card-text" *ngIf="subjectTeacherBase.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacherBase.subject.year}} | {{subjectTeacherBase.subject.quarter}} | {{subjectTeacherBase.subject.type}} | Turno Mañana</small></p>

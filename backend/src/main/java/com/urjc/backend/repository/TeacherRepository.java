@@ -1,6 +1,5 @@
 package com.urjc.backend.repository;
 
-import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

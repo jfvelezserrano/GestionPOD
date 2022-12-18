@@ -1,23 +1,26 @@
 package com.urjc.backend.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.dto.SubjectDTO;
 import com.urjc.backend.dto.SubjectTeacherDTO;
+import com.urjc.backend.error.exception.GlobalException;
+import com.urjc.backend.error.exception.RedirectException;
 import com.urjc.backend.mapper.ISubjectMapper;
-import com.urjc.backend.model.*;
+import com.urjc.backend.model.Course;
+import com.urjc.backend.model.Subject;
 import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
 
 @RestController
 @RequestMapping("/api/subjects")
@@ -51,7 +54,7 @@ public class SubjectRestController {
         if(course.isPresent()){
              return new ResponseEntity<>(subjectService.getTitlesByCourse(course.get().getId()), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/campus")
@@ -77,9 +80,9 @@ public class SubjectRestController {
 
                 return new ResponseEntity<>(subjectTeacherDTO, HttpStatus.OK);
             }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
+        throw new GlobalException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
     }
 
     @GetMapping(value = "")
@@ -90,17 +93,17 @@ public class SubjectRestController {
             List<SubjectDTO> subjectDTOS = subjectMapper.listSubjectDTO(subjects);
             return new ResponseEntity<>(subjectDTOS, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "{id}/record")
     public ResponseEntity<Map<String, List<String>>> recordSubject(@PathVariable Long id){
         Optional<Subject> subjectOptional = subjectService.findById(id);
         if(subjectOptional.isPresent()){
-            Map<String, List<String>> record = subjectOptional.get().recordSubject();
-            return new ResponseEntity<>(record, HttpStatus.OK);
+            Map<String, List<String>> mapRecord = subjectOptional.get().recordSubject();
+            return new ResponseEntity<>(mapRecord, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ");
+        throw new RedirectException(HttpStatus.NOT_FOUND, "No se ha encontrado la asignatura con id " + id);
     }
 
     @JsonView(SubjectTeacherDTOStatus.class)
@@ -120,6 +123,6 @@ public class SubjectRestController {
             List<SubjectTeacherDTO> subjectTeacherDTOS = subjectMapper.listSubjectTeacherDTOs(list);
             return new ResponseEntity<>(subjectTeacherDTOS, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 }

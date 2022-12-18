@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TeacherRoles } from 'src/app/models/teacher-roles.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeacherService } from 'src/app/services/teacher.service';

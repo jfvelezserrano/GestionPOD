@@ -96,26 +96,27 @@
             <div class="modal-header">
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form #formChooseSubject="ngForm" (ngSubmit)="onSubmit(formChooseSubject)">
+            
+            <form id="formChooseSubject" #formChooseSubject="ngForm" (ngSubmit)="onSubmit(formChooseSubject)">
+                <div class="modal-body">
                     <div class="px-4">
                         <h3 class="modal-title"><b>Añadir Asignatura</b></h3>
                         <div class="container mb-3">
                             <div class="row">
                                 <div class="col-10">
                                     <input type="text" class="form-control h-100" list="titlesList" (change)="setUndefinedValue()" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" id="inputGrado" placeholder="Titulación"
-                                    #name="ngModel" name="name" [(ngModel)]="codeChosenSubject" [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
+                                    #code="ngModel" name="code" [(ngModel)]="codeChosenSubject" [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
                                     <datalist id="titlesList">
                                         <option *ngFor="let item of subjects" [value]="item.code">{{item.name}}</option>
                                     </datalist>
                                 </div>
                                 <div class="col-2">
-                                    <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || name.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
+                                    <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || code.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center mt-2" *ngIf="name.errors?.['pattern']">
-                            <span class="error-message-txt text-center" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        <div class="text-center mt-2" *ngIf="code.errors?.['pattern']">
+                            <span class="error-message-txt text-center" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
                         </div>
                         <div class="text-center mt-2" *ngIf="error != ''">
                             <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
@@ -127,6 +128,7 @@
                                         <ul class="list-group list-group-flush font-card">
                                             <li class="list-group-item">
                                                 <h4 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h4>
+                                                <span class="card-subtitle text-muted m-0">{{subjectTeacher.subject.title}}</span><br>
                                                 <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacher.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacher.subject.campus}}</small>
                                                 <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
                                                 <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
@@ -170,11 +172,11 @@
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer mb-3">
-                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!subjectTeacher || !formChooseSubject.form.valid || error != ''">Añadir</button>
-            </div>
+                </div>  
+                <div class="modal-footer mb-3">
+                    <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!subjectTeacher || !formChooseSubject.form.valid || error != ''">Añadir</button>
+                </div>
+            </form>
         </div>
     </div>
 </ng-template>
@@ -231,8 +233,8 @@
             <div class="modal-header">
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form #formEditSubject="ngForm" (ngSubmit)="modal.close(onSubmitEdit(formEditSubject))">
+            <form #formEditSubject="ngForm" (ngSubmit)="modal.close(onSubmitEdit(formEditSubject))">
+                <div class="modal-body">
                     <div class="px-4">
                         <h4 class="modal-title"><b>Editar {{subjectToEdit.subject.name}}</b></h4>
                         <ul class="list-group list-group-flush font-card">
@@ -262,11 +264,11 @@
                             <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El valor máximo es de 400h</span>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer mb-3">
-                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!formEditSubject.form.valid">Editar</button>
-            </div>
+                </div>
+                <div class="modal-footer mb-3">
+                    <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!formEditSubject.form.valid">Editar</button>
+                </div>
+            </form>
         </div>
     </div>
 </ng-template>

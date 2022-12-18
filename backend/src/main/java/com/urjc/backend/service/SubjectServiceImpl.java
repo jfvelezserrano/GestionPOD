@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,7 +126,7 @@ public class SubjectServiceImpl implements SubjectService{
     public List<Object[]> findByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort){
         List<Subject> mySubjects = subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), typeSort);
 
-        if(mySubjects.size() != 0) {
+        if(!mySubjects.isEmpty()) {
             //get all schedules from my subjects
             List<Object[]> schedulesFromAllMySubjects = new ArrayList<>();
 
@@ -152,7 +153,7 @@ public class SubjectServiceImpl implements SubjectService{
             return resultList;
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     private Integer getLeftHoursInSubject(List<String> teachers, Subject subject){
@@ -171,37 +172,40 @@ public class SubjectServiceImpl implements SubjectService{
 
         for (Schedule schedule: subject.getSchedules()) {
             for (Object[] item: allSchedulesFromMySubjects) {
-                if(subject.getName() != item[0]) {
-                    Schedule scheduleToCompare = ((Schedule) item[1]);
-
-                    if ((schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
-
-                        LocalTime scheduleStartTime = LocalTime.parse(schedule.getStartTime());
-                        LocalTime scheduleEndTime = LocalTime.parse(schedule.getEndTime());
-                        LocalTime scheduleToCompareStartTime = LocalTime.parse(scheduleToCompare.getStartTime());
-                        LocalTime scheduleToCompareEndTime = LocalTime.parse(scheduleToCompare.getEndTime());
-
-                        //time overlap
-                        if ((( (scheduleStartTime.isBefore(scheduleToCompareStartTime)) || (scheduleStartTime.compareTo(scheduleToCompareStartTime) == 0) )
-                                && scheduleToCompareStartTime.isBefore(scheduleEndTime)) ||
-                                (scheduleStartTime.isAfter(scheduleToCompareStartTime) && scheduleStartTime.isBefore(scheduleToCompareEndTime))) {
-                            String result = item[0] + " - Solapamiento de horarios";
-                            resultConflicts.add(result);
-                        }
-
-                        //nearby schedules
-                        else if ((scheduleStartTime.compareTo(scheduleToCompareEndTime) == 0) ||
-                                (Math.abs(scheduleStartTime.until(scheduleToCompareEndTime, ChronoUnit.MINUTES)) < 30) ||
-                                (Math.abs(scheduleEndTime.until(scheduleToCompareStartTime, ChronoUnit.MINUTES)) < 30)) {
-                            String result = item[0] + " - Horarios cercanos";
-                            resultConflicts.add(result);
-                        }
-                    }
+                Schedule scheduleToCompare = ((Schedule) item[1]);
+                if(subject.getName() != item[0] && (schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
+                    String result = compareBothSchedules(schedule, scheduleToCompare);
+                    if(!result.isEmpty()) { resultConflicts.add(item[0] + " - " + result); }
                 }
             }
         }
 
         return resultConflicts;
+    }
+
+    private String compareBothSchedules(Schedule schedule, Schedule scheduleToCompare){
+        String result = "";
+
+        LocalTime scheduleStartTime = LocalTime.parse(schedule.getStartTime());
+        LocalTime scheduleEndTime = LocalTime.parse(schedule.getEndTime());
+        LocalTime scheduleToCompareStartTime = LocalTime.parse(scheduleToCompare.getStartTime());
+        LocalTime scheduleToCompareEndTime = LocalTime.parse(scheduleToCompare.getEndTime());
+
+        //time overlap
+        if ((((scheduleStartTime.isBefore(scheduleToCompareStartTime)) || (scheduleStartTime.compareTo(scheduleToCompareStartTime) == 0))
+                && scheduleToCompareStartTime.isBefore(scheduleEndTime)) ||
+                (scheduleStartTime.isAfter(scheduleToCompareStartTime) && scheduleStartTime.isBefore(scheduleToCompareEndTime))) {
+            result = "Solapamiento de horarios";
+        }
+
+        //nearby schedules
+        else if ((scheduleStartTime.compareTo(scheduleToCompareEndTime) == 0) ||
+                (Math.abs(scheduleStartTime.until(scheduleToCompareEndTime, ChronoUnit.MINUTES)) < 30) ||
+                (Math.abs(scheduleEndTime.until(scheduleToCompareStartTime, ChronoUnit.MINUTES)) < 30)) {
+            result = "Horarios cercanos";
+        }
+
+         return result;
     }
 
     @Override
@@ -217,18 +221,9 @@ public class SubjectServiceImpl implements SubjectService{
 
             if (!(values[0].equals("Codigo")) && !(values[0].equals(""))) {
 
-                Subject subject;
+                Subject subject = setEntryValuesToSubject(values);
 
-                setNullValues(values);
-                subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
-                        values[2], Integer.parseInt(values[3]), values[4], values[6], values[9].charAt(0), values[8]);
-
-                if (!values[10].equals("")) {
-                    subject.setSchedulesByString(values[10]);
-                }
-                if (!values[11].equals("")) {
-                    subject.setAssistanceCareersByString(values[11]);
-                }
+                subject.validate();
 
                 if(!isCodeInCourse(course.getId(), subject.getCode())) {
                     Subject subjectDDBB = findSubjectIfExists(subject);
@@ -246,16 +241,28 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public Boolean isCodeInCourse(Long idCourse, String code) {
+    public boolean isCodeInCourse(Long idCourse, String code) {
         return subjectRepository.findByCourseAndCode(idCourse, code) != null;
     }
 
-    private void setNullValues(String[] values){
+    private Subject setEntryValuesToSubject(String[] values) {
         for (int i = 0; i < 10; i++) {
-            if(values[i] == ""){
+            if(values[i].equals("")){
                 values[i] = null;
             }
         }
+
+        Subject subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
+                values[2], Integer.parseInt(values[3]), values[4], values[6], values[9].charAt(0), values[8]);
+
+        if (!values[10].equals("")) {
+            subject.setSchedulesByString(values[10]);
+        }
+        if (!values[11].equals("")) {
+            subject.setAssistanceCareersByString(values[11]);
+        }
+
+        return subject;
     }
 
     @Override
@@ -264,7 +271,7 @@ public class SubjectServiceImpl implements SubjectService{
         List<Subject> subjects = subjectRepository.sameValues(subject);
 
         for (Subject storedSubject: subjects) {
-            Boolean exists = isExact(subject, storedSubject);
+            boolean exists = isExact(subject, storedSubject);
             if(exists){
                 return storedSubject;
             }
@@ -273,42 +280,34 @@ public class SubjectServiceImpl implements SubjectService{
         return null;
     }
 
-    private Boolean isExact(Subject subject, Subject storedSubject){
+    private boolean isExact(Subject subject, Subject storedSubject){
 
-        Boolean isEqual = storedSubject != null;
+        boolean isEqual = storedSubject != null;
 
         if(isEqual) {
             isEqual = ((storedSubject.getAssistanceCareers().size() == 0) && (subject.getAssistanceCareers() == null)) ||
                     storedSubject.getAssistanceCareers().size() == subject.getAssistanceCareers().size();
 
-            if(isEqual && storedSubject.getAssistanceCareers().size() != 0) {
-                for (int i = 0; i < storedSubject.getAssistanceCareers().size(); i++) {
-                    isEqual = subject.getAssistanceCareers().get(i).equals(storedSubject.getAssistanceCareers().get(i));
-                    if (!isEqual) {
-                        break;
-                    }
-                }
+            int i = 0;
+            while(isEqual && i < storedSubject.getAssistanceCareers().size()){
+                isEqual = subject.getAssistanceCareers().get(i).equals(storedSubject.getAssistanceCareers().get(i));
+                i++;
             }
 
-            Boolean isEqualSchedules = ((storedSubject.getSchedules().size() == 0) && (subject.getSchedules() == null)) ||
+            boolean isEqualSchedules = ((storedSubject.getSchedules().size() == 0) && (subject.getSchedules() == null)) ||
                     storedSubject.getSchedules().size() == subject.getSchedules().size();
 
-            if(isEqual && isEqualSchedules && storedSubject.getSchedules().size() != 0) {
-                for (int i = 0; i < storedSubject.getSchedules().size(); i++) {
-                    isEqual = subject.getSchedules().get(i).getDayWeek().equals(storedSubject.getSchedules().get(i).getDayWeek()) &&
-                            subject.getSchedules().get(i).getStartTime().equals(storedSubject.getSchedules().get(i).getStartTime()) &&
-                            subject.getSchedules().get(i).getEndTime().equals(storedSubject.getSchedules().get(i).getEndTime());
-                    if (!isEqual) {
-                        break;
-                    }
-                }
+            i = 0;
+            while(isEqual && isEqualSchedules && i < storedSubject.getSchedules().size()){
+                isEqual = subject.getSchedules().get(i).getDayWeek().equals(storedSubject.getSchedules().get(i).getDayWeek()) &&
+                        subject.getSchedules().get(i).getStartTime().equals(storedSubject.getSchedules().get(i).getStartTime()) &&
+                        subject.getSchedules().get(i).getEndTime().equals(storedSubject.getSchedules().get(i).getEndTime());
+                i++;
             }
+
         }
 
-        if(isEqual){
-            return true;
-        }
-        return false;
+        return isEqual;
     }
 
     @Override

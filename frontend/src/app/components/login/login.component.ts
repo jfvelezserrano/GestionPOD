@@ -59,7 +59,6 @@ export class LoginComponent implements OnInit {
 
   onSubmit(form:NgForm) {
     this.error = '';
-    console.log(form.value);
     this.loginService.access(form.value).subscribe({
       next: (data) => {
         form.reset();

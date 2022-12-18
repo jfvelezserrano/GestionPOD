@@ -105,7 +105,7 @@ public class Course {
         pods.remove(podToDelete);
     }
 
-    public Boolean isTeacherInCourse(Teacher teacher){
+    public boolean isTeacherInCourse(Teacher teacher){
         for (CourseTeacher courseTeacher : courseTeachers) {
             if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher)) {
                 return true;
@@ -114,7 +114,7 @@ public class Course {
         return false;
     }
 
-    public Boolean isSubjectInCourse(Subject subject){
+    public boolean isSubjectInCourse(Subject subject){
         for (CourseSubject courseSubject : courseSubjects) {
             if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject)) {
                 return true;

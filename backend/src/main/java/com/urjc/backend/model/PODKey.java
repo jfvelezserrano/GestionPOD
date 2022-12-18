@@ -22,8 +22,6 @@ class PODKey implements Serializable {
     @Column(name = "teacher_id")
     Long teacherId;
 
-    public PODKey() {}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

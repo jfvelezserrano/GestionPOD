@@ -24,7 +24,7 @@ public interface SubjectService {
 
     List<Subject> findByCourse(Long id);
 
-    Boolean isCodeInCourse(Long id, String code);
+    boolean isCodeInCourse(Long id, String code);
 
     void deleteSubjectsByCourse(Course course);
 

@@ -23,7 +23,7 @@ public interface TeacherService {
     Object[] getEditableData(String email, Course course);
     List<Object[]> allTeachersStatistics(Course course, Pageable pageable);
 
-    void setNullValues(String[] values);
+    Teacher setEntryValuesToTeacher(String[] values);
 
     void deleteTeachersByCourse(Course course);
     void updateAdminsInLastCourse();

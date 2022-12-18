@@ -1,10 +1,14 @@
 package com.urjc.backend.model;
 
+import com.urjc.backend.error.exception.CSVValidationException;
+import com.urjc.backend.validation.AssistanceCareersConstraint;
+import com.urjc.backend.validation.TurnConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.IOException;
+import javax.validation.*;
+import javax.validation.constraints.*;
 import java.util.*;
 
 @Getter
@@ -17,33 +21,62 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Se debe completar el código")
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
     @Column(nullable = false)
     private String code;
 
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @NotBlank(message = "Se debe completar el nombre")
     @Column(nullable = false)
     private String name;
 
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @NotBlank(message = "Se debe completar la titulación")
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     @Column(nullable = false)
     private String title;
 
+    @NotNull(message = "Se deben completar las horas totales")
+    @Min(value = 0, message = "El número mínimo de horas es de {value}")
+    @Max(value = 400, message = "El número máximo es de {value}h")
     @Column(nullable = false)
     private Integer totalHours;
 
+    @NotBlank(message = "Se debe completar el campus")
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     @Column(nullable = false)
     private String campus;
 
+    @NotNull(message = "Se debe completar el año de impartición")
+    @Min(value = 0, message = "El valor mínimo es {value}")
+    @Max(value = 10, message = "El valor máximo es de {value}")
     @Column(nullable = false)
     private Integer year;
 
+    @NotBlank(message = "Se debe completar el cuatrimestre")
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     @Column(nullable = false)
     private String quarter;
 
+    @NotBlank(message = "Se debe completar el tipo de asignatura")
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
     @Column(nullable = false)
     private String type;
 
+    @NotNull(message = "Se debe completar el turno")
+    @TurnConstraint
     @Column(nullable = false)
     private Character turn;
 
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @NotBlank(message = "Se debe completar el grupo de carrera")
+    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     @Column(nullable = false)
     private String career;
 
@@ -54,23 +87,15 @@ public class Subject {
     @Column(unique = true, nullable = false)
     private Set<CourseSubject> courseSubjects;
 
+    @AssistanceCareersConstraint
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> assistanceCareers;
+    private List<String>  assistanceCareers;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "subject_id")
-    private List<Schedule> schedules;
+    private List<@Valid Schedule> schedules;
 
     public Subject(){
-        this.pods = new HashSet<>();
-        this.courseSubjects = new HashSet<>();
-    }
-
-    public Subject(String title, String quarter, Character turn){
-        this.id = 1L;
-        this.title = title;
-        this.quarter = quarter;
-        this.turn = turn;
         this.pods = new HashSet<>();
         this.courseSubjects = new HashSet<>();
     }
@@ -91,7 +116,7 @@ public class Subject {
         this.courseSubjects = new HashSet<>();
     }
 
-    public void setSchedulesByString(String schedules) throws IOException {
+    public void setSchedulesByString(String schedules) {
         if(!schedules.equals("")) {
             String[] values = schedules.split(", ");
             List<Schedule> schedulesSet = new ArrayList<>();
@@ -101,13 +126,19 @@ public class Subject {
                 result = result.replace(" ", "");
 
                 Schedule schedule = new Schedule(result.charAt(0), result.substring(1, 6), result.substring(6));
-                if(schedule.isValid()){
-                    schedulesSet.add(schedule);
-                } else{
-                    throw new IOException("Día de la semana incorrecto, solo se admiten los siguientes caracteres: 'L', 'M', 'X', 'J' y 'V'");
-                }
+                schedulesSet.add(schedule);
             }
             setSchedules(schedulesSet);
+        }
+    }
+
+    public void validate(){
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Subject>> errors = validator.validate(this);
+
+        if(!validator.validate(this).isEmpty()){
+            throw new CSVValidationException("Algún dato de la asignatura " + this.name + " es incorrecto", errors);
         }
     }
 

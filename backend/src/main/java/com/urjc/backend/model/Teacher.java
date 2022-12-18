@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.*;
 import javax.validation.constraints.*;
 import java.util.*;
 
@@ -25,12 +26,17 @@ public class Teacher{
     @Column(unique = true, nullable = false)
     private Set<CourseTeacher> courseTeachers;
 
+    @NotNull(message = "Se deben añadir roles")
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
+    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @NotBlank(message = "Se debe completar el nombre")
     @Column(nullable = false)
     private String name;
 
+    @Email(message = "Introduzca un email válido")
+    @NotBlank(message = "Se debe completar el email")
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -56,13 +62,20 @@ public class Teacher{
         this.pods = new HashSet<>();
     }
 
+    public void validate(){
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        if(!validator.validate(this).isEmpty()){
+            throw new ValidationException("Algún dato del docente " + this.name + " es incorrecto");
+        }
+    }
+
     public void addChosenSubject(Subject subject, Course course, Integer hours) {
         POD pod = new POD();
         pod.setTeacher(this);
         pod.setSubject(subject);
         pod.setCourse(course);
         pod.setChosenHours(hours);
-
         this.pods.add(pod);
     }
 
@@ -87,7 +100,6 @@ public class Teacher{
                 break;
             }
         }
-
         courseTeacherToEdit.setCorrectedHours(correctedHours);
         courseTeacherToEdit.setObservation(observation);
     }

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, Input } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { StatisticsGlobal } from 'src/app/models/statistics-global.model';
 import { StatisticsTeacher } from 'src/app/models/statistics-teacher.model';

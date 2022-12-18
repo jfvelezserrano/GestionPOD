@@ -2,6 +2,7 @@ package com.urjc.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.dto.*;
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.mapper.IStatisticsMapper;
 import com.urjc.backend.mapper.ISubjectMapper;
 import com.urjc.backend.model.Course;
@@ -19,10 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.urjc.backend.error.ErrorMessageConstants.NOT_FOUND_ID_COURSE;
+import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -48,7 +51,7 @@ public class StatisticsRestController {
 
 
     @GetMapping(value = "/myData")
-    public ResponseEntity<StatisticsPersonalDTO> findPersonalStatistics(){
+    public ResponseEntity<StatisticsPersonalDTO> findPersonalStatistics() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
@@ -56,11 +59,11 @@ public class StatisticsRestController {
             Integer[] myStatistics = teacherService.findPersonalStatistics(teacher.getId(), course.get());
             return new ResponseEntity<>(statisticsMapper.toStatisticsPersonalDTO(myStatistics), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/myMates")
-    public ResponseEntity<List<StatisticsMatesDTO>> findMates(){
+    public ResponseEntity<List<StatisticsMatesDTO>> findMates() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
@@ -69,12 +72,12 @@ public class StatisticsRestController {
 
             return new ResponseEntity<>(statisticsMapper.listStatisticsMatesDTO(myStatistics), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @JsonView(SubjectNameAndQuarter.class)
     @GetMapping(value = "/mySubjects/{idCourse}")
-    public ResponseEntity<List<SubjectDTO>> findMySubjectsByCourse(@PathVariable Long idCourse){
+    public ResponseEntity<List<SubjectDTO>> findMySubjectsByCourse(@PathVariable Long idCourse) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findById(idCourse);
@@ -83,11 +86,11 @@ public class StatisticsRestController {
             List<Subject> mySubjects = subjectService.findNameAndQuarterByTeacherAndCourse(teacher.getId(), course.get(), sort);
             return new ResponseEntity<>(subjectMapper.listSubjectDTO(mySubjects), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + idCourse);
     }
 
     @GetMapping(value = "/myHoursPerSubject")
-    public ResponseEntity<List<StatisticsGraphHoursDTO>> graphHoursPerSubject(){
+    public ResponseEntity<List<StatisticsGraphHoursDTO>> graphHoursPerSubject() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
@@ -96,11 +99,11 @@ public class StatisticsRestController {
             List<Object[]> subjects = subjectService.hoursPerSubjectByTeacherAndCourse(teacher, course.get(), sort);
             return new ResponseEntity<>(statisticsMapper.listStatisticsGraphHoursDTO(subjects), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/myPercentageHoursSubjects")
-    public ResponseEntity<List<StatisticsGraphPercentageDTO>> graphPercentageHoursSubjects(){
+    public ResponseEntity<List<StatisticsGraphPercentageDTO>> graphPercentageHoursSubjects() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
@@ -109,7 +112,7 @@ public class StatisticsRestController {
             List<Object[]> subjects = subjectService.percentageHoursByTeacherAndCourse(teacher, course.get(), sort);
             return new ResponseEntity<>(statisticsMapper.listStatisticsGraphPercentageDTO(subjects), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/teachersStatistics")
@@ -124,16 +127,16 @@ public class StatisticsRestController {
             List<StatisticsTeacherDTO> statisticsTeacherDTOS = statisticsMapper.listStatisticsTeachersDTO(teachersStatistics);
             return new ResponseEntity<>(statisticsTeacherDTOS, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<StatisticsGlobalDTO> getGlobalStatistics(){
+    public ResponseEntity<StatisticsGlobalDTO> getGlobalStatistics() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Integer[] myStatistics = courseService.getGlobalStatistics(course.get());
             return new ResponseEntity<>(statisticsMapper.toStatisticsGlobalDTO(myStatistics), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 }

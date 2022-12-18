@@ -28,6 +28,8 @@ import java.util.Optional;
 @Transactional
 public class TeacherServiceImpl implements TeacherService{
 
+    private static final  String ADMIN = "ADMIN";
+
     @Value("${email.main.admin}")
     private String emailMainAdmin;
 
@@ -49,7 +51,7 @@ public class TeacherServiceImpl implements TeacherService{
             return null;
         }
 
-        if(teacher.getRoles().contains("ADMIN")){
+        if(teacher.getRoles().contains(ADMIN)){
             return teacher;
         }
 
@@ -98,11 +100,11 @@ public class TeacherServiceImpl implements TeacherService{
     public void updateAdminsInLastCourse(){
         Optional<Course> lastCourse = courseRepository.findFirst1ByOrderByCreationDateDesc();
         if(lastCourse.isPresent()) {
-            List<Teacher> admins = teacherRepository.findByRole("ADMIN");
+            List<Teacher> admins = teacherRepository.findByRole(ADMIN);
 
             for (Teacher teacher : admins) {
                 if (!teacher.getEmail().equals(emailMainAdmin) && (!lastCourse.get().isTeacherInCourse(teacher))) {
-                    teacher.getRoles().remove("ADMIN");
+                    teacher.getRoles().remove(ADMIN);
                     save(teacher);
                 }
                 if(teacher.getEmail().equals(emailMainAdmin) && (!lastCourse.get().isTeacherInCourse(teacher))){
@@ -171,9 +173,7 @@ public class TeacherServiceImpl implements TeacherService{
 
         Integer correctedHours = teacherRepository.getCorrectedHoursByIdTeacher(idTeacher, course.getId());
 
-        Integer[] result = new Integer[]{ statistics[0], statistics[1], correctedHours, statistics[2], numConflicts };
-
-        return result;
+        return new Integer[]{ statistics[0], statistics[1], correctedHours, statistics[2], numConflicts };
     }
 
     @Override
@@ -191,12 +191,14 @@ public class TeacherServiceImpl implements TeacherService{
     }
 
     @Override
-    public void setNullValues(String[] values){
+    public Teacher setEntryValuesToTeacher(String[] values){
         for (int i = 0; i < values.length - 1; i++) {
-            if(values[i] == ""){
+            if(values[i].equals("")){
                 values[i] = null;
             }
         }
+
+        return new Teacher(values[0], values[1]);
     }
 
     @Override
@@ -206,19 +208,17 @@ public class TeacherServiceImpl implements TeacherService{
         InputStream is = file.getInputStream();
         br = new BufferedReader(new InputStreamReader(is));
         while ((line = br.readLine()) != null) {
-            line = line.replaceAll("[\"=\'#!]", "");
+            line = line.replaceAll("[\\[\\]<>'\"!=]", "");
             String[] values = line.split(";", -1);
             if(!values[0].equals("")){
-                Teacher teacher;
-
-                setNullValues(values);
-                teacher = new Teacher(values[0], values[1]);
+                Teacher teacher = setEntryValuesToTeacher(values);
+                teacher.validate();
 
                 Teacher teacherResult = findByEmail(teacher.getEmail());
                 if (teacherResult == null) {
                     course.addTeacher(teacher, Integer.valueOf(values[2]));
                     save(teacher);
-                }else if(teacherResult != null && !course.isTeacherInCourse(teacherResult)){
+                }else if(!course.isTeacherInCourse(teacherResult)){
                     course.addTeacher(teacherResult, Integer.valueOf(values[2]));
                     save(teacherResult);
                 }

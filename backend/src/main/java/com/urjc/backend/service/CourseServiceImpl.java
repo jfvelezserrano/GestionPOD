@@ -21,10 +21,6 @@ import java.util.Optional;
 @Service
 public class CourseServiceImpl implements CourseService{
 
-    private static final CSVFormat FORMAT = CSVFormat.EXCEL.withDelimiter(';').withHeader("\ufeff" + "Codigo", "Titulación",
-            "Campus", "Curso", "Semestre", "Asignatura", "Tipo", "Horas", "Grupo", "Turno", "Horario",
-            "Grupos asisten", "Profesores");
-
     @Autowired
     private CourseRepository courseRepository;
 
@@ -38,7 +34,7 @@ public class CourseServiceImpl implements CourseService{
     private SubjectService subjectService;
 
     @Override
-    public Boolean exists(String courseName){ return courseRepository.findByName(courseName) != null; }
+    public boolean exists(String courseName){ return courseRepository.findByName(courseName) != null; }
 
     @Override
     public List<Course> findAllOrderByCreationDate(){
@@ -92,19 +88,17 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public ByteArrayInputStream writePODInCSV(List<String[]> body){
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
-             CSVPrinter printer = new CSVPrinter(new PrintWriter(stream), FORMAT)) {
-            for (String[] line:body) {
-                printer.printRecord(line);
-            }
-
-            printer.flush();
-            printer.close();
-            return new ByteArrayInputStream(stream.toByteArray());
-        } catch (final IOException e) {
-            throw new RuntimeException(e.getMessage());
+    public ByteArrayInputStream writePODInCSV(List<String[]> body) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CSVPrinter printer = new CSVPrinter(new PrintWriter(stream), CSVFormat.Builder.create().setDelimiter(";").setHeader("\ufeff" + "Código", "Titulación",
+                "Campus", "Curso", "Semestre", "Asignatura", "Tipo", "Horas", "Grupo", "Turno", "Horario",
+                "Grupos asistencia", "Profesores").build());
+        for (String[] line:body) {
+            printer.printRecord(line);
         }
+
+        printer.flush();
+        return new ByteArrayInputStream(stream.toByteArray());
     }
 
     @Override
@@ -114,39 +108,27 @@ public class CourseServiceImpl implements CourseService{
 
         for (Object[] subjectAndTeacher:subjectsAndTeachersCurrentCourse) {
             Subject subject = ((Subject) subjectAndTeacher[0]);
-            List<String> line = new ArrayList<>() {{ add(subject.getCode()); add(subject.getTitle());
-                add(subject.getCampus()); add(subject.getYear().toString()); add(subject.getQuarter()); add(subject.getName());
-                add(subject.getType()); add(subject.getTotalHours().toString()); add(subject.getCareer()); add(subject.getTurn().toString()); }};
+            List<String> line = new ArrayList<>(List.of(subject.getCode(), subject.getTitle(), subject.getCampus(),
+                    subject.getYear().toString(), subject.getQuarter(), subject.getName(), subject.getType(),
+                    subject.getTotalHours().toString(), subject.getCareer(), subject.getTurn().toString()));
 
             int i = 0;
-            String itemSchedule = "";
+            StringBuilder itemSchedule = new StringBuilder();
 
-            if(subject.getSchedules().size() != 0){
-                for (Schedule schedule:subject.getSchedules()) {
-                    itemSchedule += schedule.getDayWeek() + "(" + schedule.getStartTime() + " - " + schedule.getEndTime() + ")";
-                    i++;
+            for (Schedule schedule:subject.getSchedules()) {
+                itemSchedule.append(schedule.getDayWeek() + "(" + schedule.getStartTime() + " - " + schedule.getEndTime() + ")");
+                i++;
 
-                    if(subject.getSchedules().size() != i){
-                        itemSchedule += ", ";
-                    } else{
-                        line.add(itemSchedule);
-                    }
+                if (subject.getSchedules().size() != i) {
+                    itemSchedule.append(", ");
                 }
-            }else{
-                line.add("");
             }
 
-            if(subject.getAssistanceCareers().size() != 0){
-                line.add(Arrays.toString(subject.getAssistanceCareers().toArray()));
-            }else {
-                line.add("");
-            }
+            line.add(subject.getSchedules().size() != 0 ? itemSchedule.toString() : "");
 
-            if(subjectAndTeacher[1] != null){
-                line.add(Arrays.toString(((List) subjectAndTeacher[1]).toArray()));
-            }else {
-                line.add("");
-            }
+            line.add(subject.getAssistanceCareers().size() != 0 ? Arrays.toString(subject.getAssistanceCareers().toArray()) : "");
+
+            line.add(subjectAndTeacher[1] != null ? Arrays.toString(((List) subjectAndTeacher[1]).toArray()) : "");
 
             content.add(line.toArray(new String[13]));
         }

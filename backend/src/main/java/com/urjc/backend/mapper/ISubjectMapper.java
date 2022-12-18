@@ -4,9 +4,9 @@ import com.urjc.backend.dto.SubjectDTO;
 import com.urjc.backend.dto.SubjectTeacherDTO;
 import com.urjc.backend.model.Subject;
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -23,7 +23,7 @@ public interface ISubjectMapper {
 
     default List<SubjectTeacherDTO> listSubjectTeacherDTOs(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<SubjectTeacherDTO> subjectTeacherDTOList = new ArrayList<>();

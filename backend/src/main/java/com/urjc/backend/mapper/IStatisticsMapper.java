@@ -2,12 +2,11 @@ package com.urjc.backend.mapper;
 
 import com.urjc.backend.dto.*;
 import com.urjc.backend.model.CourseTeacher;
-import com.urjc.backend.model.Subject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -17,7 +16,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsMatesDTO> listStatisticsMatesDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsMatesDTO> statisticsMatesDTOS = new ArrayList<>();
@@ -34,7 +33,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsGraphHoursDTO> listStatisticsGraphHoursDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsGraphHoursDTO> statisticsGraphHoursDTOS = new ArrayList<>();
@@ -51,7 +50,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsGraphPercentageDTO> listStatisticsGraphPercentageDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsGraphPercentageDTO> statisticsGraphPercentageDTOS = new ArrayList<>();
@@ -71,7 +70,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsTeacherDTO> listStatisticsTeachersDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsTeacherDTO> statisticsTeacherDTOS = new ArrayList<>();

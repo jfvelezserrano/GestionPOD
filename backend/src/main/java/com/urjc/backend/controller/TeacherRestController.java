@@ -2,6 +2,8 @@ package com.urjc.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.dto.*;
+import com.urjc.backend.error.exception.GlobalException;
+import com.urjc.backend.error.exception.RedirectException;
 import com.urjc.backend.mapper.ICourseMapper;
 import com.urjc.backend.mapper.ISubjectMapper;
 import com.urjc.backend.mapper.ITeacherMapper;
@@ -18,11 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
 
 @RestController
 @RequestMapping("/api/teachers")
@@ -67,7 +70,7 @@ public class TeacherRestController {
                 return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherIfExists), HttpStatus.OK);
             }
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El docente que se quiere actualizar es incorrecto o no puede actualizarse");
+        throw new GlobalException(HttpStatus.BAD_REQUEST, "El docente que se quiere actualizar es incorrecto o no puede actualizarse");
     }
 
     @GetMapping(value = "")
@@ -80,11 +83,11 @@ public class TeacherRestController {
             List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
             return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @PostMapping("/join/{idSubject}")
-    public ResponseEntity<Void> joinSubject(@RequestBody TeacherJoinSubjectDTO teacherJoinSubjectDTO, @PathVariable Long idSubject) {
+    public ResponseEntity<Void> joinSubject(@RequestBody @Valid TeacherJoinSubjectDTO teacherJoinSubjectDTO, @PathVariable Long idSubject) {
 
         Optional<Subject> subject = subjectService.findById(idSubject);
 
@@ -104,9 +107,9 @@ public class TeacherRestController {
                 teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
+        throw new GlobalException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
     }
 
     @DeleteMapping("/unjoin/{idSubject}")
@@ -128,9 +131,9 @@ public class TeacherRestController {
                 teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ");
+        throw new RedirectException(HttpStatus.NOT_FOUND, "No se ha encontrado la asignatura con id " + idSubject);
     }
 
     @JsonView(SubjectTeacherDTOStatusAndConflicts.class)
@@ -148,7 +151,7 @@ public class TeacherRestController {
             List<SubjectTeacherDTO> subjectTeacherDTOs = subjectMapper.listSubjectTeacherDTOs(mySubjects);
             return new ResponseEntity<>(subjectTeacherDTOs, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/myCourses")
@@ -162,7 +165,7 @@ public class TeacherRestController {
             List<Course> myCourses = courseService.findByTeacherOrderByCreationDate(teacher.getId());
             return new ResponseEntity<>(courseMapper.map(myCourses), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/myEditableData")
@@ -176,7 +179,7 @@ public class TeacherRestController {
             CourseTeacherDTO courseTeacherDTO = teacherMapper.toTeacherEditableDataDTO(((Integer) myEditableData[0]), ((String) myEditableData[1]));
             return new ResponseEntity<>(courseTeacherDTO, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @PutMapping(value = "/myEditableData")
@@ -191,6 +194,6 @@ public class TeacherRestController {
             teacherService.save(teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 }

@@ -32,6 +32,4 @@ public class CourseTeacher {
 
     @Column(length = 1000)
     private String observation;
-
-    public CourseTeacher() {}
 }

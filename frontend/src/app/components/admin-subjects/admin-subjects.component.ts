@@ -8,7 +8,6 @@ import { SubjectTeacherBase } from 'src/app/models/subject-teacher-base.model';
 import { NgForm } from '@angular/forms';
 import { Schedule } from 'src/app/models/schedule.model';
 import { Subject } from 'src/app/models/subject.model';
-import { getLocaleFirstDayOfWeek } from '@angular/common';
 
 
 

@@ -14,7 +14,7 @@ public class TeacherJoinCourseDTO {
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     private String name;
 
-    @Email
+    @Email(message = "Introduzca un email válido")
     @NotBlank(message = "Se debe completar el email")
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     private String email;

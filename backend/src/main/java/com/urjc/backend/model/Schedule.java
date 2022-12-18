@@ -1,10 +1,13 @@
 package com.urjc.backend.model;
 
+import com.urjc.backend.validation.DayWeekConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.regex.Pattern;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
@@ -16,12 +19,18 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @NotNull(message = "Se debe completar el día de la semana")
+    @DayWeekConstraint
     @Column(nullable = false)
     private Character dayWeek;
 
+    @Pattern(regexp = "\\d{2}:\\d{2}", message = "La hora de inicio se debe escribir con el siguiente formato numérico: 00:00")
+    @NotBlank(message = "Se debe completar la hora de inicio")
     @Column(nullable = false)
     private String startTime;
 
+    @Pattern(regexp = "\\d{2}:\\d{2}", message = "La hora de fin se debe escribir con el siguiente formato numérico: 00:00")
+    @NotBlank(message = "Se debe completar la hora de fin")
     @Column(nullable = false)
     private String endTime;
 
@@ -31,11 +40,5 @@ public class Schedule {
         this.dayWeek = dayWeek;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public Boolean isValid(){
-        String pattern = "[0-9]{2}:[0-9]{2}";
-        return (this.dayWeek.equals('L') || this.dayWeek.equals('M') || this.dayWeek.equals('X') || this.dayWeek.equals('J') || this.dayWeek.equals('V'))
-                && Pattern.matches(pattern, this.startTime) && Pattern.matches(pattern, this.endTime);
     }
 }

@@ -33,7 +33,7 @@ export class LoginService {
       .pipe(catchError(error => this.handleError(error)));
   }
 
-  verify(code:number): Observable<TeacherRoles> {
+  verify(code:string): Observable<TeacherRoles> {
       return this.http.get<TeacherRoles>(environment.urlApi + "/verify/" + code, this.httpOptionsCookies)
       .pipe(catchError(error => this.handleError(error))
       ) as Observable<TeacherRoles>;

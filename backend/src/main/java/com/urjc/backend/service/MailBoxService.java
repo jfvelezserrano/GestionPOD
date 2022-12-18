@@ -3,16 +3,16 @@ package com.urjc.backend.service;
 import com.urjc.backend.model.Teacher;
 
 public interface MailBoxService {
-    boolean sendEmail(Long randomCode, Teacher teacher);
+    boolean sendEmail(String code, Teacher teacher);
 
-    Long generateCodeEmail();
+    String generateCodeEmail();
 
-    Boolean isCorrect(Long code, String ip);
+    boolean isCorrect(String code, String ip);
 
-    void addCode(Long code, String email, String ip);
+    void addCode(String code, String email, String ip);
 
-    void removeCode(Long code);
+    void removeCode(String code);
 
-    String getEmailByCode(Long code);
+    String getEmailByCode(String code);
 
 }

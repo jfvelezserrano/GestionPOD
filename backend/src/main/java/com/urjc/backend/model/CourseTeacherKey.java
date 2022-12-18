@@ -19,8 +19,6 @@ class CourseTeacherKey implements Serializable {
     @Column(name = "teacher_id")
     Long teacherId;
 
-    public CourseTeacherKey() {}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
