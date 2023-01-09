@@ -89,7 +89,7 @@ public class Subject {
 
     @AssistanceCareersConstraint
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<String>  assistanceCareers;
+    private List<String> assistanceCareers;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "subject_id")

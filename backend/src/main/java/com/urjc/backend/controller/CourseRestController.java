@@ -90,8 +90,8 @@ public class CourseRestController {
 
             try{
                 courseService.save(newCourse);
-                subjectService.saveAll(fileSubjects, newCourse);
-                teacherService.saveAll(fileTeachers, newCourse);
+                subjectService.saveAll(fileSubjects.getInputStream(), newCourse);
+                teacherService.saveAll(fileTeachers.getInputStream(), newCourse);
                 teacherService.updateAdminsInLastCourse();
                 courseService.save(newCourse);
             }

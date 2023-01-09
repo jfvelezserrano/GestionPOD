@@ -101,7 +101,8 @@ public class Teacher{
             }
         }
         courseTeacherToEdit.setCorrectedHours(correctedHours);
-        courseTeacherToEdit.setObservation(observation);
+        String observationToSave = (observation == null || observation.isEmpty()) ? null : observation;
+        courseTeacherToEdit.setObservation(observationToSave);
     }
 
     public void unjoinCourse(Course course){

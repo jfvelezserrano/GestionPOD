@@ -47,12 +47,12 @@ public class SubjectServiceImpl implements SubjectService{
     @Override
     public List<Object[]> findByCoursePage(Course course, Pageable pageable) {
 
-        Page<Subject> p3 = subjectRepository.findByCoursePage(course.getId(), pageable);
+        Page<Subject> subjects = subjectRepository.findByCoursePage(course.getId(), pageable);
 
         //generate result to return and get teachers joined to each subject of a specific course
         List<Object[]> resultList = new ArrayList<>();
 
-        for (Subject subject:p3.getContent()) {
+        for (Subject subject:subjects.getContent()) {
             List<String> teachers = subject.recordSubject().get(course.getName());
             Object[] obj = new Object[] { subject, teachers };
             resultList.add(obj);
@@ -107,8 +107,8 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<Subject> findNameAndQuarterByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort) {
-        return subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), typeSort);
+    public List<Subject> findByCourseAndTeacher(Long idTeacher, Course course, Sort typeSort) {
+        return subjectRepository.findByCourseAndTeacher(course.getId(), idTeacher, typeSort);
     }
 
     @Override
@@ -119,12 +119,12 @@ public class SubjectServiceImpl implements SubjectService{
     @Override
     public List<Object[]> percentageHoursByTeacherAndCourse(Teacher teacher, Course course, Sort typeSort) {
         Integer totalHours = subjectRepository.totalChosenHoursByTeacherAndCourse(teacher.getId(), course.getId());
-        return subjectRepository.percentageHoursByTeacherAndCourse(teacher.getId(), course.getId(), totalHours,typeSort);
+        return subjectRepository.percentageHoursByTeacherAndCourse(teacher.getId(), course.getId(), totalHours, typeSort);
     }
 
     @Override
-    public List<Object[]> findByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort){
-        List<Subject> mySubjects = subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), typeSort);
+    public List<Object[]> findConflictsByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort){
+        List<Subject> mySubjects = subjectRepository.findByCourseAndTeacher(course.getId(), idTeacher, typeSort);
 
         if(!mySubjects.isEmpty()) {
             //get all schedules from my subjects
@@ -132,7 +132,7 @@ public class SubjectServiceImpl implements SubjectService{
 
             for (Subject subject : mySubjects) {
                 for (Schedule schedule : subject.getSchedules()) {
-                    Object[] item = {subject.getName(), schedule};
+                    Object[] item = {subject.getName(), schedule, subject.getQuarter()};
                     schedulesFromAllMySubjects.add(item);
                 }
             }
@@ -173,7 +173,8 @@ public class SubjectServiceImpl implements SubjectService{
         for (Schedule schedule: subject.getSchedules()) {
             for (Object[] item: allSchedulesFromMySubjects) {
                 Schedule scheduleToCompare = ((Schedule) item[1]);
-                if(subject.getName() != item[0] && (schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
+                if(!subject.getName().equals(item[0]) && (subject.getQuarter().equals(item[2]))
+                        && (schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
                     String result = compareBothSchedules(schedule, scheduleToCompare);
                     if(!result.isEmpty()) { resultConflicts.add(item[0] + " - " + result); }
                 }
@@ -209,11 +210,10 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public void saveAll(MultipartFile file, Course course) throws IOException{
+    public void saveAll(InputStream inputStream, Course course) throws IOException{
         BufferedReader br;
         String line;
-        InputStream is = file.getInputStream();
-        br = new BufferedReader(new InputStreamReader(is));
+        br = new BufferedReader(new InputStreamReader(inputStream));
 
         while ((line = br.readLine()) != null) {
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
@@ -267,8 +267,7 @@ public class SubjectServiceImpl implements SubjectService{
 
     @Override
     public Subject findSubjectIfExists(Subject subject){
-
-        List<Subject> subjects = subjectRepository.sameValues(subject);
+        List<Subject> subjects = subjectRepository.findSameValues(subject);
 
         for (Subject storedSubject: subjects) {
             boolean exists = isExact(subject, storedSubject);
@@ -305,9 +304,11 @@ public class SubjectServiceImpl implements SubjectService{
                 i++;
             }
 
+            return isEqual && isEqualSchedules;
+
         }
 
-        return isEqual;
+        return false;
     }
 
     @Override

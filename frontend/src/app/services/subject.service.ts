@@ -60,6 +60,7 @@ export class SubjectService {
   }
 
   createSubject(subject:Subject, idPod:number){
+    console.log(subject);
     return this.http.post(environment.urlApi + "/pods/" + idPod + "/subjects", subject, this.httpOptionsCookiesCSRF)
     .pipe(catchError(error => this.handleError(error)));
   }

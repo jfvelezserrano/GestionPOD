@@ -34,7 +34,7 @@ public class CourseServiceImpl implements CourseService{
     private SubjectService subjectService;
 
     @Override
-    public boolean exists(String courseName){ return courseRepository.findByName(courseName) != null; }
+    public boolean exists(String courseName){ return courseRepository.findByName(courseName).isPresent(); }
 
     @Override
     public List<Course> findAllOrderByCreationDate(){
@@ -63,19 +63,19 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public List<Course> findByTeacherOrderByCreationDate(Long idTeacher){
-        return courseRepository.findByTeacherOrderByCreationDateDesc(idTeacher);
+    public List<Course> findCoursesTakenByTeacher(Long idTeacher){
+        return courseRepository.findCoursesTakenByTeacher(idTeacher);
     }
 
     @Override
     public Integer[] getGlobalStatistics(Course course){
-        Object[] totalHoursAndNumSubjects = ((Object[]) subjectRepository.getSumTotalHoursAndSubjectsNumber(course.getId()));
+        Integer[] totalHoursAndNumSubjects = subjectRepository.getSumTotalHoursAndSubjectsNumber(course.getId()).get(0);
 
-        Integer totalCharge = ((Long) totalHoursAndNumSubjects[0]).intValue();
-        Integer numSubjects = ((Long) totalHoursAndNumSubjects[1]).intValue();
+        Integer totalCharge = totalHoursAndNumSubjects[0];
+        Integer numSubjects = totalHoursAndNumSubjects[1];
 
-        Integer totalCorrectHours = teacherRepository.getSumCorrectedHours(course.getId());
-        Integer totalChosenHours = teacherRepository.getSumChosenHours(course.getId());
+        Integer totalCorrectHours = teacherRepository.findSumCorrectedHoursByCourse(course.getId());
+        Integer totalChosenHours = teacherRepository.findSumChosenHoursByCourse(course.getId());
 
         totalChosenHours = totalChosenHours != null ? totalChosenHours : 0;
 
@@ -125,9 +125,7 @@ public class CourseServiceImpl implements CourseService{
             }
 
             line.add(subject.getSchedules().size() != 0 ? itemSchedule.toString() : "");
-
             line.add(subject.getAssistanceCareers().size() != 0 ? Arrays.toString(subject.getAssistanceCareers().toArray()) : "");
-
             line.add(subjectAndTeacher[1] != null ? Arrays.toString(((List) subjectAndTeacher[1]).toArray()) : "");
 
             content.add(line.toArray(new String[13]));

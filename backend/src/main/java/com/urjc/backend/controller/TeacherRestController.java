@@ -146,7 +146,7 @@ public class TeacherRestController {
             Teacher teacher = teacherService.findByEmail(authentication.getName());
 
             Sort sort = Sort.by(typeSort).ascending();
-            List<Object[]> mySubjects = subjectService.findByTeacherAndCourse(teacher.getId(), course.get(), sort);
+            List<Object[]> mySubjects = subjectService.findConflictsByTeacherAndCourse(teacher.getId(), course.get(), sort);
 
             List<SubjectTeacherDTO> subjectTeacherDTOs = subjectMapper.listSubjectTeacherDTOs(mySubjects);
             return new ResponseEntity<>(subjectTeacherDTOs, HttpStatus.OK);
@@ -162,7 +162,7 @@ public class TeacherRestController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Teacher teacher = teacherService.findByEmail(authentication.getName());
 
-            List<Course> myCourses = courseService.findByTeacherOrderByCreationDate(teacher.getId());
+            List<Course> myCourses = courseService.findCoursesTakenByTeacher(teacher.getId());
             return new ResponseEntity<>(courseMapper.map(myCourses), HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);

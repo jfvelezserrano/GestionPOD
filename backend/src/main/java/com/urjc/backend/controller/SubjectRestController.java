@@ -113,7 +113,7 @@ public class SubjectRestController {
                                     @RequestParam(value="turn", required = false, defaultValue = "") Character turn,
                                     @RequestParam(value="title", required = false, defaultValue = "") String title,
                                     @RequestParam(value="teacher", required = false, defaultValue = "") String teacher,
-                                    @RequestParam(defaultValue = "typeSort") String typeSort) {
+                                    @RequestParam(defaultValue = "name") String typeSort) {
 
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()) {

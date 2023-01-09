@@ -1,15 +1,12 @@
 package com.urjc.backend.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.util.*;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.urjc.backend.service.TeacherService;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -52,7 +49,7 @@ public class Course {
         newCourseTeacher.setTeacher(teacher);
         newCourseTeacher.setCorrectedHours(hours);
         newCourseTeacher.setOriginalHours(hours);
-        newCourseTeacher.setObservation("");
+        newCourseTeacher.setObservation(null);
 
         this.courseTeachers.add(newCourseTeacher);
     }

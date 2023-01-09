@@ -30,7 +30,7 @@
                                         <ul class="list-group list-group-flush font-card">
                                             <li class="list-group-item">
                                                 <h4 class="card-title"><b>{{mySubject.subject.name}} ({{mySubject.subject.code}})</b>
-                                                    <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Alerta conflicto" class="col-1 btn light-red boton-alerta" (click)="openAlert(alertConflicts, mySubject)">
+                                                    <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Alerta conflicto" class="p-1 btn light-red" (click)="openAlert(alertConflicts, mySubject)">
                                                         <i class="fa fa-exclamation-circle fa-lg"></i>
                                                     </button>
                                                 </h4>
@@ -280,7 +280,7 @@
     </div>
     <div class="offcanvas-body">
         <h5><b>{{subjectTeacher.subject.name}}</b></h5>
-        <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
+        <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
             <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
                 <div class="col-12 d-flex justify-content-start">
                     <div class="row">
@@ -300,7 +300,6 @@
                 </div>
             </li>
         </ul>
-        <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
         <div class="d-flex justify-content-center pt-3">
             <button class="btn mx-auto btn-global theme-blue" (click)="offcanvas.dismiss()">Cerrar</button>
         </div>

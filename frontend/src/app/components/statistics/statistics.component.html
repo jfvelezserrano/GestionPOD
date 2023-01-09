@@ -97,8 +97,8 @@
                         <hr class="mt-2">
                         <span class="section-title">OBSERVACIONES</span>
                         <p class="content-observations">
-                            <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
-                            <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
+                            <small *ngIf="teacherStatistics.observation == null || teacherStatistics.observation == ''">No hay observaciones</small>
+                            <small *ngIf="teacherStatistics.observation">{{teacherStatistics.observation}}</small>
                         </p>
                     </div>
                 </div>

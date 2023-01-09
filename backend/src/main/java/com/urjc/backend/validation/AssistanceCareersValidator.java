@@ -13,11 +13,7 @@ public class AssistanceCareersValidator implements ConstraintValidator<Assistanc
             return true;
         }
 
-        if(assistanceCareers.isEmpty()){
-            return false;
-        }
-
-        Pattern pattern = Pattern.compile("[^\\[\\]<>'\";!=]{1,255}");
+        Pattern pattern = Pattern.compile("[^\\[\\]<>'\";!=]*");
 
         for (String assistanceCareer: assistanceCareers) {
              if(!pattern.matcher(assistanceCareer).matches()){

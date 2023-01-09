@@ -13,7 +13,7 @@ public interface CourseService {
     List<Course> findAllOrderByCreationDate();
     Optional<Course> findLastCourse();
     Optional<Course> findById(Long id);
-    List<Course> findByTeacherOrderByCreationDate(Long idTeacher);
+    List<Course> findCoursesTakenByTeacher(Long idTeacher);
 
     Integer[] getGlobalStatistics(Course course);
 

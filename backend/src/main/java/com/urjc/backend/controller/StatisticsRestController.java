@@ -83,7 +83,7 @@ public class StatisticsRestController {
         Optional<Course> course = courseService.findById(idCourse);
         if (course.isPresent()) {
             Sort sort = Sort.by("name").ascending();
-            List<Subject> mySubjects = subjectService.findNameAndQuarterByTeacherAndCourse(teacher.getId(), course.get(), sort);
+            List<Subject> mySubjects = subjectService.findByCourseAndTeacher(teacher.getId(), course.get(), sort);
             return new ResponseEntity<>(subjectMapper.listSubjectDTO(mySubjects), HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + idCourse);

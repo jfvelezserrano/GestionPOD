@@ -78,7 +78,7 @@ public interface IStatisticsMapper {
         for (Object[] item: listItems) {
             StatisticsTeacherDTO statisticsTeacherDTO;
             statisticsTeacherDTO = toStatisticsTeachersDTO(((String) item[0]), ((CourseTeacher) item[1]),
-                    ((Long) item[2]).intValue(), ((Long) item[3]).intValue(), ((Long) item[4]).intValue());
+                    ((Integer) item[2]), ((Integer) item[3]), ((Integer) item[4]));
 
             statisticsTeacherDTOS.add(statisticsTeacherDTO);
         }
