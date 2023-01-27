@@ -58,16 +58,15 @@ public class TeacherRestController {
 
     @PutMapping("/role")
     public ResponseEntity<TeacherDTO> updateRole(@RequestBody @Valid TeacherDTO teacherDTO) {
-
         Teacher teacher = teacherMapper.toTeacher(teacherDTO);
-        Teacher teacherIfExists = teacherService.findByEmail(teacher.getEmail());
-        if(teacherIfExists != null && !teacherIfExists.getEmail().equals(emailMainAdmin)) {
-            Teacher teacherDDBB = teacherService.findIfIsInCurrentCourse(teacherIfExists.getEmail());
-            if (teacherDDBB != null || (teacherIfExists.getRoles().contains("ADMIN") && teacherIfExists.getRoles() != teacher.getRoles())) {
-                teacherIfExists.setRoles(teacher.getRoles());
-                teacherService.save(teacherIfExists);
+        Teacher teacherDDBB = teacherService.findByEmail(teacher.getEmail());
+        if(teacherDDBB != null && !teacherDDBB.getEmail().equals(emailMainAdmin)) {
+            Teacher teacherInCurrentCourse = teacherService.findIfIsInCurrentCourse(teacherDDBB.getEmail());
+            if (teacherInCurrentCourse != null) {
+                teacherDDBB.setRoles(teacher.getRoles());
+                teacherService.save(teacherDDBB);
 
-                return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherIfExists), HttpStatus.OK);
+                return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherDDBB), HttpStatus.OK);
             }
         }
         throw new GlobalException(HttpStatus.BAD_REQUEST, "El docente que se quiere actualizar es incorrecto o no puede actualizarse");
@@ -88,7 +87,6 @@ public class TeacherRestController {
 
     @PostMapping("/join/{idSubject}")
     public ResponseEntity<Void> joinSubject(@RequestBody @Valid TeacherJoinSubjectDTO teacherJoinSubjectDTO, @PathVariable Long idSubject) {
-
         Optional<Subject> subject = subjectService.findById(idSubject);
 
         if(subject.isPresent()){
@@ -114,7 +112,6 @@ public class TeacherRestController {
 
     @DeleteMapping("/unjoin/{idSubject}")
     public ResponseEntity<Void> unjoinSubject(@PathVariable Long idSubject) {
-
         Optional<Subject> subject = subjectService.findById(idSubject);
 
         if(subject.isPresent()){
@@ -139,7 +136,6 @@ public class TeacherRestController {
     @JsonView(SubjectTeacherDTOStatusAndConflicts.class)
     @GetMapping(value = "/mySubjects")
     public ResponseEntity<List<SubjectTeacherDTO>> findAllMySubjects(@RequestParam(defaultValue = "name") String typeSort){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -156,7 +152,6 @@ public class TeacherRestController {
 
     @GetMapping(value = "/myCourses")
     public ResponseEntity<List<CourseDTO>> findAllMyCourses(){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -170,7 +165,6 @@ public class TeacherRestController {
 
     @GetMapping(value = "/myEditableData")
     public ResponseEntity<CourseTeacherDTO> getEditableData(){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -184,7 +178,6 @@ public class TeacherRestController {
 
     @PutMapping(value = "/myEditableData")
     public ResponseEntity<Void> editData(@RequestBody @Valid CourseTeacherDTO courseTeacherDTO){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

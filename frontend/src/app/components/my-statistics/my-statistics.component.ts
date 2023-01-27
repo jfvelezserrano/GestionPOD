@@ -59,15 +59,15 @@ export class MyStatisticsComponent implements OnInit {
     this.testEmitter.subscribe(data => {
       if(data != undefined && data){
         this.getMates();
-      this.getCourses();
-      this.getEditableData();
+        this.getCourses();
+        this.getEditableData();
       };
     })
   }
 
   ngAfterViewInit():void{
     this.testEmitter.subscribe(data => {
-      if(data != undefined && data){
+      if(data != undefined && data && this.personalStatistics.numSubjects != 0){
         this.getHoursPerSubject();
         this.getPercentageHours();
       };
@@ -86,7 +86,7 @@ export class MyStatisticsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split(";"); 
+        var splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -100,10 +100,6 @@ export class MyStatisticsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.mates = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -113,10 +109,6 @@ export class MyStatisticsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.editableData = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -125,11 +117,8 @@ export class MyStatisticsComponent implements OnInit {
     this.teacherService.editEditableData(form.value).subscribe({
       next: (data) => {
         this.getEditableData();
-        this.getPersonalStatistics();
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
+        this.personalStatistics.correctedHours = this.editableData.correctedHours;
+        this.personalStatistics.percentage = Math.trunc(this.personalStatistics.charge * 100 / this.personalStatistics.correctedHours);
       }
     });
   }
@@ -141,10 +130,6 @@ export class MyStatisticsComponent implements OnInit {
         this.courses = data;
         this.courseChosen = this.courses[0].id;
         this.getSubjectsByCourse();
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -153,10 +138,6 @@ export class MyStatisticsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.subjects = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -174,10 +155,6 @@ export class MyStatisticsComponent implements OnInit {
 
         if(this.personalStatistics.correctedHours != 0){
           this.graphHoursPerSubject();
-        }
-      },
-      error: (error) => {
-        if(error === '404'){
         }
       }
     });
@@ -220,20 +197,21 @@ export class MyStatisticsComponent implements OnInit {
         ]
       },
       options: {
-          scales: {
-              y: {
-                  beginAtZero: true
-              },
-              x: {
-                  ticks: {display: false},
-                  grid:{display: false}
-              }            
-          },
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            },
+            x: {
+                ticks: {display: false},
+                grid:{display: false}
+            }            
+        },
 
-          plugins: {
-              legend: {display: false,
-              position:'bottom'}
-          }
+        plugins: {
+            legend: {display: false,
+            position:'bottom'}
+        }
       }
   });
   }
@@ -253,10 +231,6 @@ export class MyStatisticsComponent implements OnInit {
         });
         if(this.personalStatistics.correctedHours != 0){
           this.graphPercentageHours();
-        }
-      },
-      error: (error) => {
-        if(error === '404'){
         }
       }
     });
@@ -286,9 +260,10 @@ export class MyStatisticsComponent implements OnInit {
         }]
       },
       options: {
+        maintainAspectRatio: false,
         plugins: {
           legend: {display: true,
-            position:'right'},
+          position: 'right'},
         }
       }
     });

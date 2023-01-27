@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TurnConstraint {
-    String message() default "Turno incorrecto, solo se admiten los siguientes caracteres: 'M' y 'T'";
+    String message() default "El campo turno es obligatorio y solo se admiten los siguientes caracteres: 'M' y 'T'";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

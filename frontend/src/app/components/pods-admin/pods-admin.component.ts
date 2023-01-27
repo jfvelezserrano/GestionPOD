@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Course } from 'src/app/models/course.model';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-pods-admin',
@@ -44,7 +45,7 @@ export class PodsAdminComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(form: NgForm) {
     this.showLoaderCreate = true;
 
     var formData = new FormData();
@@ -63,11 +64,12 @@ export class PodsAdminComponent implements OnInit {
       next: (data) => {
         this.showLoaderCreate = false;
         this.error = '';
+        form.reset();
         this.getPods();
       },
       error: (error) => {
         this.showLoaderCreate = false;
-        var splitted = error.split(";"); 
+        var splitted = error.split("\\"); 
         if(splitted[0] == '400'){
           this.error = splitted[1];
         }

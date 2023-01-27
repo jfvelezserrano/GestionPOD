@@ -40,11 +40,6 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.teachers = data;
-      },
-      error: (error) => {
-        var splitted = error.split(";"); 
-        if(splitted[0] == '404'){
-        }
       }
     });
   }

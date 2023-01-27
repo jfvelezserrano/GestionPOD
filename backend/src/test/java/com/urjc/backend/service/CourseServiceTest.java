@@ -1,7 +1,10 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.Data;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.repository.CourseRepository;
+import com.urjc.backend.repository.SubjectRepository;
+import com.urjc.backend.repository.TeacherRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +27,15 @@ import static org.mockito.Mockito.*;
 public class CourseServiceTest {
     @Mock
     CourseRepository courseRepository;
+
+    @Mock
+    TeacherRepository teacherRepository;
+
+    @Mock
+    SubjectRepository subjectRepository;
+
+    @Mock
+    SubjectServiceImpl subjectService;
 
     @InjectMocks
     CourseServiceImpl courseService;
@@ -48,8 +61,8 @@ public class CourseServiceTest {
         when(courseRepository.OrderByCreationDateDesc()).thenReturn(Data.createListCourse("2021-2022", "2022-2023"));
         List<Course> result = courseService.findAllOrderByCreationDate();
         assertAll(() -> assertFalse(result.isEmpty()),
-                () -> assertEquals("2022-2023", result.get(0).getName()),
-                () -> assertEquals("2021-2022", result.get(1).getName()),
+                () -> assertEquals("2021-2022", result.get(0).getName()),
+                () -> assertEquals("2022-2023", result.get(1).getName()),
                 () -> assertEquals(2, result.size()));
         verify(courseRepository).OrderByCreationDateDesc();
     }
@@ -121,6 +134,7 @@ public class CourseServiceTest {
 
         courseService.delete(course.get());
         verify(courseRepository).delete(any());
+        verify(courseRepository).flush();
     }
 
     @Test
@@ -143,14 +157,43 @@ public class CourseServiceTest {
         verify(courseRepository).findCoursesTakenByTeacher(anyLong());
     }
 
+    @Test
+    void Should_ReturnGlobalStatistics_When_GetGlobalStatistics() {
+        Optional<Course> course = Data.createCourse("2022-2023");
+        when(subjectRepository.getSumTotalHoursAndSubjectsNumber(anyLong())).thenReturn(Data.createListIntegers(1200, 400));
+        when(teacherRepository.findSumCorrectedHoursByCourse(anyLong())).thenReturn(1000);
+        when(teacherRepository.findSumChosenHoursByCourse(anyLong())).thenReturn(150);
+        when(subjectService.searchByCourse(any(), eq("Conflicto"), anyString(), any(), anyString(), anyString(), any())).thenReturn(Collections.emptyList());
+        when(subjectService.searchByCourse(any(), eq("Completa"), anyString(), any(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
+
+
+        Integer[] result = courseService.getGlobalStatistics(course.get());
+
+        assertAll(() -> assertEquals(9, result.length),
+                () -> assertEquals(12, result[0]),
+                () -> assertEquals(150, result[1]),
+                () -> assertEquals(1200, result[2]),
+                () -> assertEquals(15, result[3]),
+                () -> assertEquals(1000, result[4]),
+                () -> assertEquals(0, result[5]),
+                () -> assertEquals(2, result[6]),
+                () -> assertEquals(400, result[7]),
+                () -> assertEquals(0, result[8]));
+
+        verify(subjectRepository).getSumTotalHoursAndSubjectsNumber(anyLong());
+        verify(teacherRepository).findSumCorrectedHoursByCourse(anyLong());
+        verify(teacherRepository).findSumChosenHoursByCourse(anyLong());
+        verify(subjectService, times(2)).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any());
+    }
+
    @Test
     void Should_WriteHeaderAndBodyInCSV_When_WritePODInCSV() throws IOException {
        ByteArrayInputStream stream = courseService.writePODInCSV(Data.createBodyForCSV());
 
-       BufferedReader bfReader = new BufferedReader(new InputStreamReader(stream));
+       BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
        String line;
        int count = 0;
-       while((line = bfReader.readLine()) != null){
+       while((line = bufferedReader.readLine()) != null){
            String[] values = line.split(";", -1);
            if(count == 0){
                assertTrue(values[1].equals("Titulación"));

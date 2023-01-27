@@ -31,9 +31,8 @@ h6{
     margin-bottom: 18px;
 }
 
-#doughnutChart{
-    height: 250px;
-    width: 250px;
-    margin-left: 100px;
-    margin-right: 100px;
+.chart-container{
+    display:block;
+    margin:0 auto;
+    height:250px;
 }

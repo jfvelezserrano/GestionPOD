@@ -1,12 +1,13 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Teacher;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 @Service
 public class MailBoxServiceImpl implements MailBoxService {
 
@@ -30,30 +32,25 @@ public class MailBoxServiceImpl implements MailBoxService {
     private JavaMailSender emailSender;
 
     @Autowired
-    private TemplateEngine templateEngine;
+    private ITemplateEngine templateEngine;
 
     @Override
-    public boolean sendEmail(String code, Teacher teacher) {
+    public void sendEmail(String code, Teacher teacher) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        try {
-            helper.setTo(teacher.getEmail());
-            helper.setFrom(emailFrom);
-            helper.setSubject("Acceso a la Gestión POD URJC");
+        helper.setTo(teacher.getEmail());
+        helper.setFrom(emailFrom);
+        helper.setSubject("Acceso a la Gestión POD URJC");
 
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("nameTeacher", teacher.getName());
-            variables.put("code", code);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("nameTeacher", teacher.getName());
+        variables.put("code", code);
 
-            String templateGenerated = this.templateEngine.process("messageMail", new Context(Locale.getDefault(), variables));
+        String templateGenerated = this.templateEngine.process("messageMail", new Context(Locale.getDefault(), variables));
 
-            helper.setText(templateGenerated, true);
-            emailSender.send(message);
-            return true;
-        } catch (MessagingException e) {
-            return false;
-        }
+        helper.setText(templateGenerated, true);
+        emailSender.send(message);
     }
 
     @Override

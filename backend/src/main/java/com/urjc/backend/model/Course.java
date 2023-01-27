@@ -1,9 +1,11 @@
 package com.urjc.backend.model;
 
+import com.urjc.backend.error.exception.CSVValidationException;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +32,7 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL,  orphanRemoval = true)
     @Column(unique = true, nullable = false)
-    private Set<CourseTeacher> courseTeachers = new HashSet<>();
+    private Set<@Valid CourseTeacher> courseTeachers = new HashSet<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(unique = true, nullable = false)
@@ -63,23 +65,21 @@ public class Course {
     }
 
     public void deleteTeacher(Teacher teacher) {
-        CourseTeacher courseTeacherToDelete = new CourseTeacher();
         for (CourseTeacher courseTeacher : courseTeachers) {
             if (courseTeacher.getCourse().equals(this) && courseTeacher.getTeacher().equals(teacher)) {
-                courseTeacherToDelete = courseTeacher;
+                CourseTeacher courseTeacherToDelete = courseTeacher;
+                courseTeachers.remove(courseTeacherToDelete);
                 break;
             }
         }
-        courseTeachers.remove(courseTeacherToDelete);
 
-        POD podToDelete = new POD();
         for (POD pod : pods) {
             if (pod.getCourse().equals(this) && pod.getTeacher().equals(teacher)) {
-                podToDelete = pod;
+                POD podToDelete = pod;
+                pods.remove(podToDelete);
                 break;
             }
         }
-        pods.remove(podToDelete);
     }
 
     public void deleteSubject(Subject subject) {
@@ -118,5 +118,15 @@ public class Course {
             }
         }
         return false;
+    }
+
+    public void validate(String line){
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Object>> errors = validator.validate(this);
+
+        if(!validator.validate(this).isEmpty()){
+            throw new CSVValidationException("Los datos de la siguiente linea son incorrectos: " + line, errors);
+        }
     }
 }

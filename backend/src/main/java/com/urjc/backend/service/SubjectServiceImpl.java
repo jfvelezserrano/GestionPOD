@@ -1,17 +1,17 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Schedule;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
-import com.urjc.backend.repository.CourseRepository;
 import com.urjc.backend.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -20,10 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -219,11 +216,14 @@ public class SubjectServiceImpl implements SubjectService{
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
             String[] values = line.split(";", -1);
 
-            if (!(values[0].equals("Codigo")) && !(values[0].equals(""))) {
+            if (!(line.isBlank()) && !(values[0].equals("Codigo"))) {
+
+                if(values.length != 12){
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de una asignatura en la linea: " + line);
+                }
 
                 Subject subject = setEntryValuesToSubject(values);
-
-                subject.validate();
+                subject.validate(line);
 
                 if(!isCodeInCourse(course.getId(), subject.getCode())) {
                     Subject subjectDDBB = findSubjectIfExists(subject);
@@ -247,20 +247,16 @@ public class SubjectServiceImpl implements SubjectService{
 
     private Subject setEntryValuesToSubject(String[] values) {
         for (int i = 0; i < 10; i++) {
-            if(values[i].equals("")){
+            if(values[i].isBlank()){
                 values[i] = null;
             }
         }
 
         Subject subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
-                values[2], Integer.parseInt(values[3]), values[4], values[6], values[9].charAt(0), values[8]);
+                values[2], Integer.parseInt(values[3]), values[4], values[6], values[9] == null ? null : values[9].charAt(0), values[8]);
 
-        if (!values[10].equals("")) {
-            subject.setSchedulesByString(values[10]);
-        }
-        if (!values[11].equals("")) {
-            subject.setAssistanceCareersByString(values[11]);
-        }
+        subject.setSchedulesByString(values[10]);
+        subject.setAssistanceCareersByString(values[11]);
 
         return subject;
     }

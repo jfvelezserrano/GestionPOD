@@ -54,7 +54,7 @@ export class StatisticsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split(";"); 
+        var splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -69,10 +69,6 @@ export class StatisticsComponent implements OnInit {
     this.statisticsService.getAllTeachersStatistics(this.page, this.typeSort).subscribe({
       next: (data) => {
         this.teachersStatistics = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -84,10 +80,6 @@ export class StatisticsComponent implements OnInit {
       next: (data) => {
         this.teachersStatistics = this.teachersStatistics.concat(data);
         this.isMore = Object.keys(data).length == 12;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }

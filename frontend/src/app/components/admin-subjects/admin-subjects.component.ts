@@ -77,7 +77,7 @@ export class AdminSubjectsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoader = false;
-        var splitted = error.split(";"); 
+        var splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
         }
@@ -187,7 +187,7 @@ export class AdminSubjectsComponent implements OnInit {
         form.reset();
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        var splitted = error.split("\\"); 
         if(splitted[0] == '409'){
           this.error = splitted[1];
         }

@@ -33,7 +33,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 if (error.error instanceof ErrorEvent) {
                     errorMessage = error.error.message;
                 } else {
-                    errorMessage = error.status + ";" + error.error.message;
+                    errorMessage = error.status + "\\" + error.error.message;
                     status = error.status;
                 }
 

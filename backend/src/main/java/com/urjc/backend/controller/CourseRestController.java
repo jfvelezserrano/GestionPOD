@@ -12,7 +12,6 @@ import com.urjc.backend.model.Teacher;
 import com.urjc.backend.service.CourseService;
 import com.urjc.backend.service.SubjectService;
 import com.urjc.backend.service.TeacherService;
-import com.urjc.backend.validation.AssistanceCareersConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,28 +99,30 @@ public class CourseRestController {
                 deleteCourse(newCourse.getId());
                 throw new CSVValidationException(e.getMessage(), e.getViolations());
             }
+            catch (GlobalException e) {
+                deleteCourse(newCourse.getId());
+                throw new GlobalException(HttpStatus.BAD_REQUEST, e.getMessage());
+            }
             catch (Exception e) {
                 deleteCourse(newCourse.getId());
                 throw new GlobalException(HttpStatus.BAD_REQUEST, "Alguno de los ficheros está defectuoso");
             }
+
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         else{
             throw new GlobalException(HttpStatus.BAD_REQUEST, "El nombre introducido ya existe");
         }
-
     }
 
     @GetMapping(value = "")
     public ResponseEntity<List<CourseDTO>> getCourses(){
-
         List<Course> courses = courseService.findAllOrderByCreationDate();
         return new ResponseEntity<>(courseMapper.map(courses), HttpStatus.OK);
     }
 
     @GetMapping(value = "/currentCourse")
     public ResponseEntity<CourseDTO> getCurrentCourse(){
-
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()) {
             return new ResponseEntity<>(courseMapper.toCourseDTO(course.get()), HttpStatus.OK);
@@ -142,7 +144,7 @@ public class CourseRestController {
 
             return new ResponseEntity<>(subjectTeacherDTOList, HttpStatus.OK);
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
     }
 
     @JsonView(TeacherBase.class)
@@ -157,7 +159,7 @@ public class CourseRestController {
 
             return new ResponseEntity<>(listDTO, HttpStatus.OK);
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
     }
 
     @DeleteMapping("/{idPod}/teachers/{idTeacher}")
@@ -187,7 +189,6 @@ public class CourseRestController {
 
     @DeleteMapping("/{idPod}/subjects/{idSubject}")
     public ResponseEntity<Void> deleteSubjectInCourse(@PathVariable Long idPod, @PathVariable Long idSubject) {
-
         Optional<Course> course = courseService.findById(idPod);
         Optional<Subject> subject = subjectService.findById(idSubject);
 

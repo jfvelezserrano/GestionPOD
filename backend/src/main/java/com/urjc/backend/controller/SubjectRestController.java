@@ -6,6 +6,7 @@ import com.urjc.backend.dto.SubjectTeacherDTO;
 import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.error.exception.RedirectException;
 import com.urjc.backend.mapper.ISubjectMapper;
+import com.urjc.backend.mapper.ISubjectMapperImpl;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.service.CourseService;
@@ -23,7 +24,7 @@ import java.util.Optional;
 import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
 
 @RestController
-@RequestMapping("/api/subjects")
+@RequestMapping(value = "/api/subjects", produces = "application/json;charset=UTF-8")
 public class SubjectRestController {
 
     interface SubjectTeacherDTOStatus extends SubjectTeacherDTO.Base, SubjectTeacherDTO.Status {
@@ -70,19 +71,19 @@ public class SubjectRestController {
     @JsonView(SubjectTeacherDTOBase.class)
     @GetMapping(value = "/{id}")
     public ResponseEntity<SubjectTeacherDTO> getByIdInCurrentCourse(@PathVariable Long id){
-        Optional<Subject> subjectOptional = subjectService.findById(id);
-        if(subjectOptional.isPresent()){
-            Optional<Course> course = courseService.findLastCourse();
-            if (course.isPresent() && course.get().isSubjectInCourse(subjectOptional.get())) {
-                List<String> teachers = subjectOptional.get().recordSubject().get(course.get().getName());
+        Optional<Course> course = courseService.findLastCourse();
+        if(course.isPresent()){
+            Optional<Subject> subject = subjectService.findById(id);
+            if (subject.isPresent() && course.get().isSubjectInCourse(subject.get())) {
+                List<String> teachers = subject.get().recordSubject().get(course.get().getName());
 
-                SubjectTeacherDTO subjectTeacherDTO = subjectMapper.toSubjectTeacherDTO(subjectOptional.get(), teachers, 0, null);
+                SubjectTeacherDTO subjectTeacherDTO = subjectMapper.toSubjectTeacherDTO(subject.get(), teachers, 0, null);
 
                 return new ResponseEntity<>(subjectTeacherDTO, HttpStatus.OK);
             }
-            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
+            throw new GlobalException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "")

@@ -1,6 +1,7 @@
 package com.urjc.backend.service;
 
-import com.urjc.backend.error.exception.CSVValidationException;
+import com.urjc.backend.Data;
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
@@ -21,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.urjc.backend.service.DataServices.createBarGraphData;
+import static com.urjc.backend.service.DataServices.createDoughnutChartData;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -190,7 +193,7 @@ public class SubjectServiceTest {
     void Should_ReturnBarGraphData_When_RequestHoursPerSubject() {
         Optional<Course> course = Data.createCourse("2022-2023");
         Optional<Teacher> teacher = Data.createTeacher("Luis Rodriguez", "ejemplo@ejemplo.com");
-        when(subjectRepository.hoursPerSubjectByTeacherAndCourse(anyLong(), anyLong(), any())).thenReturn(Data.createBarGraphData());
+        when(subjectRepository.hoursPerSubjectByTeacherAndCourse(anyLong(), anyLong(), any())).thenReturn(createBarGraphData());
         List<Object[]> result = subjectService.hoursPerSubjectByTeacherAndCourse(teacher.get(), course.get(), Sort.unsorted());
         assertAll(() -> assertEquals(2, result.size()),
                 () -> assertTrue(result.stream().anyMatch(i -> i[0].equals("Multimedia") && ((int) i[1]) == 100 && ((int) i[2]) == 50)),
@@ -202,7 +205,7 @@ public class SubjectServiceTest {
     void Should_ReturnDoughnutChartData_When_RequestPercentageHours() {
         Optional<Course> course = Data.createCourse("2022-2023");
         Optional<Teacher> teacher = Data.createTeacher("Luis Rodriguez", "ejemplo@ejemplo.com");
-        when(subjectRepository.percentageHoursByTeacherAndCourse(anyLong(), anyLong(), anyInt(), any())).thenReturn(Data.createDoughnutChartData());
+        when(subjectRepository.percentageHoursByTeacherAndCourse(anyLong(), anyLong(), anyInt(), any())).thenReturn(createDoughnutChartData());
         when(subjectRepository.totalChosenHoursByTeacherAndCourse(anyLong(), anyLong())).thenReturn(90);
         List<Object[]> result = subjectService.percentageHoursByTeacherAndCourse(teacher.get(), course.get(), Sort.unsorted());
         assertAll(() -> assertEquals(2, result.size()),
@@ -257,7 +260,7 @@ public class SubjectServiceTest {
     void Should_ThrowException_When_SaveWrongFileSubjects() {
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        assertThrows(CSVValidationException.class, () -> {
+        assertThrows(GlobalException.class, () -> {
             subjectService.saveAll(Data.createInputStreamSubjectError(), course.get());
         });
 

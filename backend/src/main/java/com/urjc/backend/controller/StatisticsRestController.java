@@ -52,10 +52,10 @@ public class StatisticsRestController {
 
     @GetMapping(value = "/myData")
     public ResponseEntity<StatisticsPersonalDTO> findPersonalStatistics() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Teacher teacher = teacherService.findByEmail(authentication.getName());
             Integer[] myStatistics = teacherService.findPersonalStatistics(teacher.getId(), course.get());
             return new ResponseEntity<>(statisticsMapper.toStatisticsPersonalDTO(myStatistics), HttpStatus.OK);
         }
@@ -64,10 +64,10 @@ public class StatisticsRestController {
 
     @GetMapping(value = "/myMates")
     public ResponseEntity<List<StatisticsMatesDTO>> findMates() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Teacher teacher = teacherService.findByEmail(authentication.getName());
             List<Object[]> myStatistics = teacherService.findMates(teacher.getId(), course.get().getId());
 
             return new ResponseEntity<>(statisticsMapper.listStatisticsMatesDTO(myStatistics), HttpStatus.OK);
@@ -78,10 +78,10 @@ public class StatisticsRestController {
     @JsonView(SubjectNameAndQuarter.class)
     @GetMapping(value = "/mySubjects/{idCourse}")
     public ResponseEntity<List<SubjectDTO>> findMySubjectsByCourse(@PathVariable Long idCourse) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findById(idCourse);
         if (course.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Teacher teacher = teacherService.findByEmail(authentication.getName());
             Sort sort = Sort.by("name").ascending();
             List<Subject> mySubjects = subjectService.findByCourseAndTeacher(teacher.getId(), course.get(), sort);
             return new ResponseEntity<>(subjectMapper.listSubjectDTO(mySubjects), HttpStatus.OK);
@@ -91,26 +91,26 @@ public class StatisticsRestController {
 
     @GetMapping(value = "/myHoursPerSubject")
     public ResponseEntity<List<StatisticsGraphHoursDTO>> graphHoursPerSubject() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Teacher teacher = teacherService.findByEmail(authentication.getName());
             Sort sort = Sort.by("name").ascending();
-            List<Object[]> subjects = subjectService.hoursPerSubjectByTeacherAndCourse(teacher, course.get(), sort);
-            return new ResponseEntity<>(statisticsMapper.listStatisticsGraphHoursDTO(subjects), HttpStatus.OK);
+            List<Object[]> statistics = subjectService.hoursPerSubjectByTeacherAndCourse(teacher, course.get(), sort);
+            return new ResponseEntity<>(statisticsMapper.listStatisticsGraphHoursDTO(statistics), HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @GetMapping(value = "/myPercentageHoursSubjects")
     public ResponseEntity<List<StatisticsGraphPercentageDTO>> graphPercentageHoursSubjects() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Teacher teacher = teacherService.findByEmail(authentication.getName());
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Teacher teacher = teacherService.findByEmail(authentication.getName());
             Sort sort = Sort.by("name").ascending();
-            List<Object[]> subjects = subjectService.percentageHoursByTeacherAndCourse(teacher, course.get(), sort);
-            return new ResponseEntity<>(statisticsMapper.listStatisticsGraphPercentageDTO(subjects), HttpStatus.OK);
+            List<Object[]> statistics = subjectService.percentageHoursByTeacherAndCourse(teacher, course.get(), sort);
+            return new ResponseEntity<>(statisticsMapper.listStatisticsGraphPercentageDTO(statistics), HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
@@ -123,7 +123,6 @@ public class StatisticsRestController {
         if (course.isPresent()) {
             Pageable pageable = PageRequest.of(page, 12, Sort.by(typeSort).ascending());
             List<Object[]> teachersStatistics = teacherService.allTeachersStatistics(course.get(), pageable);
-
             List<StatisticsTeacherDTO> statisticsTeacherDTOS = statisticsMapper.listStatisticsTeachersDTO(teachersStatistics);
             return new ResponseEntity<>(statisticsTeacherDTOS, HttpStatus.OK);
         }
@@ -134,8 +133,8 @@ public class StatisticsRestController {
     public ResponseEntity<StatisticsGlobalDTO> getGlobalStatistics() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
-            Integer[] myStatistics = courseService.getGlobalStatistics(course.get());
-            return new ResponseEntity<>(statisticsMapper.toStatisticsGlobalDTO(myStatistics), HttpStatus.OK);
+            Integer[] statistics = courseService.getGlobalStatistics(course.get());
+            return new ResponseEntity<>(statisticsMapper.toStatisticsGlobalDTO(statistics), HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }

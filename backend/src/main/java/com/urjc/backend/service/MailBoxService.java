@@ -2,8 +2,10 @@ package com.urjc.backend.service;
 
 import com.urjc.backend.model.Teacher;
 
+import javax.mail.MessagingException;
+
 public interface MailBoxService {
-    boolean sendEmail(String code, Teacher teacher);
+    void sendEmail(String code, Teacher teacher) throws MessagingException;
 
     String generateCodeEmail();
 

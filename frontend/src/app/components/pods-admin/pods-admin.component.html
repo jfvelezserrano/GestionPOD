@@ -4,7 +4,7 @@
         <div class="col-12 col-xl-3 mb-5 mb-xl-0">
             <div class="sticky-top pt-1 mx-4 mx-xl-0 mb-0">
                 <h3><b>Añadir POD</b></h3>
-                <form #createPODform="ngForm" (ngSubmit)="onSubmit()" >
+                <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
                     <div class="mb-3">
                     <label for="curso" class="form-label section-title">Curso</label>
                         <input required #course="ngModel" ngModel name="course" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"

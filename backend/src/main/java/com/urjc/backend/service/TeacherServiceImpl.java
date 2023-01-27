@@ -1,5 +1,6 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -188,7 +190,7 @@ public class TeacherServiceImpl implements TeacherService{
 
     private Teacher setEntryValuesToTeacher(String[] values){
         for (int i = 0; i < values.length - 1; i++) {
-            if(values[i].equals("")){
+            if(values[i].isBlank()){
                 values[i] = null;
             }
         }
@@ -203,17 +205,25 @@ public class TeacherServiceImpl implements TeacherService{
         br = new BufferedReader(new InputStreamReader(inputStream));
         while ((line = br.readLine()) != null) {
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
-            String[] values = line.split(";", -1);
-            if(!values[0].equals("")){
+
+            if(!line.isBlank()){
+                String[] values = line.split(";", -1);
+
+                if(values.length != 3){
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de un docente en la linea: " + line);
+                }
+
                 Teacher teacher = setEntryValuesToTeacher(values);
-                teacher.validate();
+                teacher.validate(line);
 
                 Teacher teacherResult = findByEmail(teacher.getEmail());
                 if (teacherResult == null) {
                     course.addTeacher(teacher, Integer.valueOf(values[2]));
+                    course.validate(line);
                     save(teacher);
                 }else if(!course.isTeacherInCourse(teacherResult)){
                     course.addTeacher(teacherResult, Integer.valueOf(values[2]));
+                    course.validate(line);
                     save(teacherResult);
                 }
             }

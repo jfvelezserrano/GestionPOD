@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +68,6 @@ public class LoginRestController {
         }catch (Exception e) {
             throw new GlobalException(HttpStatus.BAD_GATEWAY, "Algo ha fallado. Revise que la dirección de correo es correcta.");
         }
-
     }
 
     @GetMapping(value = "/verify/{code}")
@@ -96,7 +94,7 @@ public class LoginRestController {
 
             TeacherDTO teacherDTO = teacherMapper.toTeacherDTO(teacher);
 
-           return new ResponseEntity<>(teacherDTO,HttpStatus.OK);
+           return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.UNAUTHORIZED, "Acceso denegado");
     }

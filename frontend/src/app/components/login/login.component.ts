@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
         this.checking = true;
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        var splitted = error.split("\\"); 
         this.error = splitted[1];
       }
     });

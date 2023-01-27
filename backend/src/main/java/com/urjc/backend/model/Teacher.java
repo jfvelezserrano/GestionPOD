@@ -1,5 +1,6 @@
 package com.urjc.backend.model;
 
+import com.urjc.backend.error.exception.CSVValidationException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,11 +63,13 @@ public class Teacher{
         this.pods = new HashSet<>();
     }
 
-    public void validate(){
+    public void validate(String line){
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Object>> errors = validator.validate(this);
+
         if(!validator.validate(this).isEmpty()){
-            throw new ValidationException("Algún dato del docente " + this.name + " es incorrecto");
+            throw new CSVValidationException("Hay datos incorrectos y/o incompletos en el siguiente docente: " + line, errors);
         }
     }
 

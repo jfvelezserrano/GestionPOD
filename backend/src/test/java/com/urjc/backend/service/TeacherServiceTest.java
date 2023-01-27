@@ -1,5 +1,7 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.Data;
+import com.urjc.backend.error.exception.CSVValidationException;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Teacher;
 import com.urjc.backend.repository.CourseRepository;
@@ -13,13 +15,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.urjc.backend.service.DataServices.createStatisticsAllTeachers;
+import static com.urjc.backend.service.DataServices.statisticsByTeacherAndCourse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -132,7 +135,7 @@ public class TeacherServiceTest {
     void Should_ReturnEditableData_When_GetEditableData() {
         Optional<Course> course = Data.createCourse("2023-2024");
         Optional<Teacher> teacher = Data.createTeacher("Luis Rodriguez", "ejemplo@ejemplo.com");
-        List<Object[]> editableDataList = Data.createEditableData();
+        List<Object[]> editableDataList = Data.createListObject(120, null);
         course.get().addTeacher(teacher.get(), 120);
 
         when(teacherRepository.findByEmail(anyString())).thenReturn(teacher.get());
@@ -228,8 +231,8 @@ public class TeacherServiceTest {
     void Should_ReturnStatistics_When_RequestAllTeachersStatistics() {
         Optional<Course> course = Data.createCourse("2022-2023");
         Pageable pageable = PageRequest.of(0, 12, Sort.unsorted());
-        when(teacherRepository.findStatisticsByCourseAndPage(anyLong(), any())).thenReturn(new PageImpl<>(Data.createStatisticsAllTeachers()));
-        when(teacherRepository.statisticsByTeacherAndCourse(anyLong(), anyLong())).thenReturn(Data.statisticsByTeacherAndCourse());
+        when(teacherRepository.findStatisticsByCourseAndPage(anyLong(), any())).thenReturn(new PageImpl<>(createStatisticsAllTeachers()));
+        when(teacherRepository.statisticsByTeacherAndCourse(anyLong(), anyLong())).thenReturn(statisticsByTeacherAndCourse());
 
         List<Object[]> result = teacherService.allTeachersStatistics(course.get(), pageable);
 
@@ -275,9 +278,9 @@ public class TeacherServiceTest {
     @Test
     void Should_ReturnStatistics_When_FindPersonalStatistics() {
         Optional<Course> course = Data.createCourse("2022-2023");
-        when(teacherRepository.statisticsByTeacherAndCourse(anyLong(), anyLong())).thenReturn(Data.statisticsByTeacherAndCourse());
+        when(teacherRepository.statisticsByTeacherAndCourse(anyLong(), anyLong())).thenReturn(statisticsByTeacherAndCourse());
         when(subjectRepository.findByCourseAndTeacher(anyLong(), anyLong(), any())).thenReturn(Data.createListSubject());
-        when(teacherRepository.findEditableData(anyLong(), anyLong())).thenReturn(Data.createEditableData());
+        when(teacherRepository.findEditableData(anyLong(), anyLong())).thenReturn(Data.createListObject(120, null));
 
         Integer[] result = teacherService.findPersonalStatistics(1l, course.get());
         assertAll(() -> assertEquals(40, result[0]),
@@ -293,7 +296,7 @@ public class TeacherServiceTest {
 
     @Test
     void Should_ReturnMates_When_FindMates() {
-        when(teacherRepository.findMatesByTeacherAndCourse(anyLong(), anyLong())).thenReturn(Data.createMates());
+        when(teacherRepository.findMatesByTeacherAndCourse(anyLong(), anyLong())).thenReturn(Data.createListObject(1l, "Luis Rodriguez", "Estadística", 100));
         when(teacherRepository.findChosenHoursByTeacherAndCourse(anyLong(), anyLong())).thenReturn(60);
 
         List<Object[]> result = teacherService.findMates(1l, 1l);
@@ -335,7 +338,7 @@ public class TeacherServiceTest {
     void Should_ThrowException_When_SaveWrongFileTeachers() {
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        assertThrows(ValidationException.class, () -> {
+        assertThrows(CSVValidationException.class, () -> {
             teacherService.saveAll(Data.createInputStreamTeacherError(), course.get());
         });
 
