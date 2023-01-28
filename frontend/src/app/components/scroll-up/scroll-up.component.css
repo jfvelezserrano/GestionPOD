@@ -1,0 +1,15 @@
+#scroll-up{
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    border-radius: 35px;
+    width: 60px;
+    height: 60px;
+    border: none;
+    color: var(--white);
+    background-color: var(--dark-grey);
+}
+
+#scroll-up:hover{
+    background-color: var(--light-red);
+}

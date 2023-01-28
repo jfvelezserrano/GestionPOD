@@ -1,0 +1,12 @@
+.statistics-card{
+    width: 100%;
+    margin-bottom: 2%;
+    padding: 15px;
+    border-left: 8px solid var(--blue);
+}
+
+.content-observations{
+    padding:20px;
+    border-radius: 5px;
+    background-color: rgba(206, 204, 204, 0.295);
+}

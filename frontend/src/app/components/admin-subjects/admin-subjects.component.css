@@ -1,0 +1,48 @@
+#option-morning[type="radio"]{
+    display: none;
+}
+
+#option-afternoon[type="radio"]{
+    display: none;
+}
+
+#option-morning:checked:checked ~ .option-morning,
+#option-afternoon:checked:checked ~ .option-afternoon{
+    border-color: var(--blue); 
+    background: var(--blue); 
+    box-shadow: none;
+}
+
+#option-morning:checked:checked ~ .option-morning span,
+#option-afternoon:checked:checked ~ .option-afternoon span{
+    color: var(--white);
+}
+
+#turns-group{
+    display: inline-flex;
+    height: 50px;
+    width: 360px;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+#turns-group .option{
+    font-weight: bold;
+    color: var(--blue) !important;
+    height: 50px;
+    width: 150px;
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    border-radius: 50px;
+    text-align: center;
+    border: none;
+    transition: all .4s ease-in;
+    box-shadow: 0 4px 15px 0 var(--lighter-grey-1);
+}
+
+#turns-group .option:hover{
+    border: 1px solid var(--blue);
+    transition: all .4s ease-in;
+}

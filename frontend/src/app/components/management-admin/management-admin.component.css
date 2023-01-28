@@ -1,0 +1,14 @@
+#table-admins{
+    background: var(--white);
+    border-radius: 15px;
+}
+
+
+.admin-icon{
+    position: relative;
+    color:var(--blue);
+    background-color: var(--light-blue);
+    padding:18px;
+    border-radius: 5px;
+    vertical-align: middle;
+}

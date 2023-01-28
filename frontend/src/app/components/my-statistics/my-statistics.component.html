@@ -1,0 +1,161 @@
+<app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
+<main class="main-content">
+    <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoaderCourse">
+        <p><i class="fa-solid fa-2xl fa-book"></i></p>
+        <p>No hay ningún curso aún</p>
+    </div>
+    <div class="center-vertically center-horizontally" *ngIf="showLoaderCourse">
+        <app-loader></app-loader>
+    </div>
+    <div class="container-fluid" *ngIf="isCourse && !showLoaderCourse">
+        <div class="row justify-content-center mx-0 mx-lg-5 g-4">
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
+                    <div class="card-body">
+                        <i class="fa fa-calendar-check fa-2x statistics-icon blue"></i> 
+                        <p class="card-text"><b>{{personalStatistics.percentage}}%</b></p>
+                        <h3 class="card-title"><b>Carga Docente</b></h3>
+                        <span class="card-text small m-0"><b>{{personalStatistics.charge}}/{{personalStatistics.correctedHours}}</b></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
+                    <div class="card-body">
+                        <i class="fa fa-calendar fa-2x grey statistics-icon grey"></i> 
+                        <p class="card-text"><b>{{personalStatistics.correctedHours}}h</b></p>
+                        <h3 class="card-title"><b>Fuerza Docente</b></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-statistics-blue p-2 h-100 w-100 shadow">
+                    <div class="card-body">
+                        <i class="fa fa-book-open fa-2x statistics-icon blue"></i> 
+                        <p class="card-text"><b>{{personalStatistics.numSubjects}}</b></p>
+                        <h3 class="card-title"><b>Asignaturas</b></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card card-statistics-grey p-2 h-100 w-100 shadow">
+                    <div class="card-body">
+                        <i class="fa fa-times fa-2x statistics-icon grey"></i> 
+                        <p class="card-text"><b>{{personalStatistics.numConflicts}}</b></p>
+                        <h3 class="card-title"><b>Colisiones docentes</b></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="container-fluid mt-4 px-0 px-xl-5" *ngIf="isCourse">
+        <div class="row gx-4 gy-4 justify-content-center px-0 px-xl-5">
+            <div class="row gy-4">
+                <div class="col-12 col-xl-7">
+                    <article class="box-my-statistics h-100 w-100">
+                        <h3 class="text-center border-bottom"><b>Mis compañeros</b></h3>
+                        <table class="table table-borderless table-responsive" *ngIf="mates.length != 0">
+                            <tbody>
+                                <tr *ngFor="let mate of mates">
+                                    <td>
+                                        <div>
+                                            <span><b>{{mate.mateName}}</b></span><br>
+                                            <span><small class="text-muted">{{mate.mateSubject}}</small></span>
+                                        </div>
+                                    </td>
+                                    <td class="td-progress-bar">
+                                        <span><b>Progreso:</b> {{mate.matePercentage}}%</span>
+                                        <div class="progress" style="height: 8px; width: 90%;">
+                                            <div class="progress-bar" role="progressbar" [style.width]="mate.matePercentage +'%'" aria-valuenow="mate.matePercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center py-3 text-muted" *ngIf="!mates || mates.length == 0">
+                            <p>No hay docentes aún</p>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-12 col-xl-5">
+                    <article class="box-my-statistics h-100 w-100">
+                        <h3 class="text-center border-bottom"><b>Asignaturas por año</b></h3>
+                        <div class="form-group" *ngIf="courseChosen">
+                            <select class="form-select text-muted form-select-sm select-sort" [(ngModel)]="courseChosen" (change)="getSubjectsByCourse()">
+                                <option *ngFor="let course of courses" [ngValue]="course.id">{{course.name}}</option>
+                            </select>
+                        </div>
+                        <table class="table table-borderless" *ngIf="courses.length != 0">
+                            <tbody>
+                                <tr *ngFor="let subject of subjects">
+                                    <td>
+                                        <div>
+                                        <span><b>{{subject.name}}</b></span><br>
+                                        <span><small class="text-muted">{{subject.quarter}}</small></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center py-3 text-muted" *ngIf="!subjects || subjects.length == 0">
+                            <p>No hay asignaturas aún</p>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="col-12 col-xl-4">
+                    <article class="box-my-statistics h-100 w-100">
+                        <h3 class="text-center border-bottom"><b>Horas por asignatura</b></h3>
+                        <div class="chart-container" *ngIf="personalStatistics.numSubjects != 0">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div class="text-center py-3 text-muted" *ngIf="personalStatistics.numSubjects == 0">
+                            <p>No hay asignaturas aún</p>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <article class="box-my-statistics h-100 w-100">
+                        <h3 class="text-center border-bottom"><b>Porcentajes de asignaturas</b></h3>
+                        <div class="chart-container" *ngIf="personalStatistics.numSubjects != 0">
+                            <canvas id="doughnutChart"></canvas>
+                        </div>
+                        <div class="text-center py-3 text-muted" *ngIf="personalStatistics.numSubjects == 0">
+                            <p>No hay asignaturas aún</p>
+                        </div>
+                    </article>
+                </div>   
+
+                <div class="col-12 col-xl-4">
+                    <article id="box-editable-data" class="box-my-statistics h-100 w-100 shadow">
+                        <h3 class="text-center"><b>Mis Datos</b></h3>
+                        <form #formEditEditableData="ngForm" (ngSubmit)="onSubmit(formEditEditableData)">
+                            <div class="form-group">
+                                <label for="inputHoursEditableData">Horas Totales</label>
+                                <input type="number" #correctedHours="ngModel" name="correctedHours" min="0" max="400" [(ngModel)]="editableData.correctedHours" id="inputHoursEditableData" 
+                                class="ml-5 form-control" placeholder="Horas totales" [value]="editableData.correctedHours" required [ngClass]="!correctedHours.valid && correctedHours.touched ? 'border-error' : ''">
+                                <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['min']">El número mínimo es de 0h</span>
+                                <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['max']">El número máximo es de 400h</span>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="inputObservationsEditableData">Mis observaciones</label>
+                                <textarea class="form-control" #observation="ngModel" maxlength="1000" name="observation" [(ngModel)]="editableData.observation" id="inputObservationsEditableData" 
+                                rows="2" placeholder="Mis observaciones" [value]="editableData.observation" pattern="[^\]\[&lt;&gt;&quot;';!=]{0,1000}"
+                                [ngClass]="!observation.valid && observation.touched ? 'border-error' : ''"></textarea>
+                                <span class="error-message-txt m-0" role="alert" *ngIf="observation.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!formEditEditableData.form.valid">Guardar</button>
+                            </div>
+                        </form>
+                    </article>
+                </div>  
+            </div> 
+        </div>
+    </section>
+</main>
+
+

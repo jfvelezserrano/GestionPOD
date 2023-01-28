@@ -1,0 +1,38 @@
+#box-editable-data{
+    background-color: var(--light-blue) !important ;
+    font-weight: 500;
+    color: var(--blue);
+}
+
+#box-editable-data h3{
+    border-bottom: 1px solid var(--blue);
+}
+
+.box-my-statistics{
+    position: relative;
+    padding: 45px;
+    height: 395px !important;
+    background: var(--white);
+    border-radius: 15px;
+    overflow: auto;
+}
+
+.box-my-statistics h3{
+    font-size: 1em;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+}
+
+
+h6{
+    font-family: Arial, serif;
+    justify-content: center;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+}
+
+.chart-container{
+    display:block;
+    margin:0 auto;
+    height:250px;
+}
