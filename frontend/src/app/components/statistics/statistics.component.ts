@@ -54,7 +54,7 @@ export class StatisticsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);

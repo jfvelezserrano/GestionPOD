@@ -12,6 +12,7 @@ import com.urjc.backend.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping(value = "/api")
 public class LoginRestController {
 
     @Autowired
@@ -47,7 +48,7 @@ public class LoginRestController {
     ITeacherMapper teacherMapper;
 
 
-    @PostMapping(value = "/access")
+    @PostMapping("/access")
     public ResponseEntity<Void> sendEmailLogin(@RequestBody @Valid EmailRequestDTO loginRequest, HttpServletRequest request) {
 
         Teacher teacher = teacherService.findIfIsInCurrentCourse(loginRequest.getEmail());
@@ -70,7 +71,7 @@ public class LoginRestController {
         }
     }
 
-    @GetMapping(value = "/verify/{code}")
+    @GetMapping(value = "/verify/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> verify(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
 
        if(mailBoxService.isCorrect(code, request.getRemoteAddr())){
@@ -99,7 +100,7 @@ public class LoginRestController {
         throw new GlobalException(HttpStatus.UNAUTHORIZED, "Acceso denegado");
     }
 
-    @GetMapping(value = "/teacherLogged")
+    @GetMapping(value = "/teacherLogged", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> getTeacherLogged() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

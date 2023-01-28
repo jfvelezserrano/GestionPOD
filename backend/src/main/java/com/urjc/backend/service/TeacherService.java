@@ -3,7 +3,6 @@ package com.urjc.backend.service;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Teacher;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;

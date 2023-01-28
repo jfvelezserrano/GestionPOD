@@ -11,14 +11,13 @@ import { TeacherRoles } from '../models/teacher-roles.model';
 })
 
 export class LoginService {
-  public csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
-  public httpOptionsCookiesCSRF = {
-    headers: new HttpHeaders({ 'X-XSRF-TOKEN': this.csrfToken }),
+  public httpOptionsContentType = {
+    headers: new HttpHeaders().set( 'Content-Type', "application/json"),
     withCredentials: true
   };
 
-  public httpOptionsCookies = {
+  public httpOptionsCredentials = {
     withCredentials: true
   };
 
@@ -29,25 +28,25 @@ export class LoginService {
   }
 
   access(email:string) {
-      return this.http.post(environment.urlApi + "/access", email, this.httpOptionsCookiesCSRF)
+      return this.http.post(environment.urlApi + "/access", email, this.httpOptionsContentType)
       .pipe(catchError(error => this.handleError(error)));
   }
 
   verify(code:string): Observable<TeacherRoles> {
-      return this.http.get<TeacherRoles>(environment.urlApi + "/verify/" + code, this.httpOptionsCookies)
+      return this.http.get<TeacherRoles>(environment.urlApi + "/verify/" + code, this.httpOptionsCredentials)
       .pipe(catchError(error => this.handleError(error))
       ) as Observable<TeacherRoles>;
   }
 
   getTeacherLoggedDDBB(): Observable<TeacherRoles> {
-    return this.http.get<TeacherRoles>(environment.urlApi + "/teacherLogged", this.httpOptionsCookiesCSRF)
+    return this.http.get<TeacherRoles>(environment.urlApi + "/teacherLogged", this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		) as Observable<TeacherRoles>;
   }
 
   logout() {
     this.localStorageService.removeLocalStorage("teacher");
-    return this.http.get(environment.urlApi + "/logout", this.httpOptionsCookies)
+    return this.http.get(environment.urlApi + "/logout", this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error)));
   }
 

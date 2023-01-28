@@ -5,7 +5,6 @@ import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;

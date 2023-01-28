@@ -21,11 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.urjc.backend.service.DataServices.createStatisticsAllTeachers;
-import static com.urjc.backend.service.DataServices.statisticsByTeacherAndCourse;
+import static com.urjc.backend.service.DataServices.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

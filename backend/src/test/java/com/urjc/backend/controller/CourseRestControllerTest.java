@@ -481,7 +481,7 @@ public class CourseRestControllerTest {
     void Should_ThrowException_When_DeleteCourse(){
         when(courseService.findById(anyLong())).thenReturn(Optional.empty());
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             courseRestController.deleteCourse(1l);
         });
 
@@ -555,7 +555,7 @@ public class CourseRestControllerTest {
         teacherJoinCourseDTO.setName("Luis Rodriguez");
         teacherJoinCourseDTO.setHours(120);
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             courseRestController.addNewTeacherToCourse(teacherJoinCourseDTO, 1l);
         });
 
@@ -619,7 +619,7 @@ public class CourseRestControllerTest {
         Optional<Subject> subject = Data.createSubject("54654643", "Estadística");
         when(courseService.findById(anyLong())).thenReturn(Optional.empty());
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             courseRestController.addNewSubjectToCourse(subjectMapper.toSubjectDTO(subject.get()), 1l);
         });
 

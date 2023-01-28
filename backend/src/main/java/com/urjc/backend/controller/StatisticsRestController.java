@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +29,7 @@ import static com.urjc.backend.error.ErrorMessageConstants.NOT_FOUND_ID_COURSE;
 import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
 
 @RestController
-@RequestMapping("/api/statistics")
+@RequestMapping(value = "/api/statistics")
 public class StatisticsRestController {
 
     interface SubjectNameAndQuarter extends SubjectDTO.NameAndQuarter {
@@ -50,7 +51,7 @@ public class StatisticsRestController {
     ISubjectMapper subjectMapper;
 
 
-    @GetMapping(value = "/myData")
+    @GetMapping(value = "/myData", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StatisticsPersonalDTO> findPersonalStatistics() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
@@ -62,7 +63,7 @@ public class StatisticsRestController {
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @GetMapping(value = "/myMates")
+    @GetMapping(value = "/myMates", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StatisticsMatesDTO>> findMates() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
@@ -76,7 +77,7 @@ public class StatisticsRestController {
     }
 
     @JsonView(SubjectNameAndQuarter.class)
-    @GetMapping(value = "/mySubjects/{idCourse}")
+    @GetMapping(value = "/mySubjects/{idCourse}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SubjectDTO>> findMySubjectsByCourse(@PathVariable Long idCourse) {
         Optional<Course> course = courseService.findById(idCourse);
         if (course.isPresent()) {
@@ -89,7 +90,7 @@ public class StatisticsRestController {
         throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + idCourse);
     }
 
-    @GetMapping(value = "/myHoursPerSubject")
+    @GetMapping(value = "/myHoursPerSubject", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StatisticsGraphHoursDTO>> graphHoursPerSubject() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
@@ -102,7 +103,7 @@ public class StatisticsRestController {
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @GetMapping(value = "/myPercentageHoursSubjects")
+    @GetMapping(value = "/myPercentageHoursSubjects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StatisticsGraphPercentageDTO>> graphPercentageHoursSubjects() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
@@ -115,7 +116,7 @@ public class StatisticsRestController {
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @GetMapping(value = "/teachersStatistics")
+    @GetMapping(value = "/teachersStatistics", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StatisticsTeacherDTO>> getTeachersStatistics(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                                             @RequestParam(defaultValue = "name") String typeSort) {
 
@@ -129,7 +130,7 @@ public class StatisticsRestController {
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @GetMapping(value = "")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StatisticsGlobalDTO> getGlobalStatistics() {
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {

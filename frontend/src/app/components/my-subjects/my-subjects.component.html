@@ -162,7 +162,7 @@
                         <div class="mt-4" *ngIf="subjectTeacher && error == ''">
                             <div class="div-input d-flex justify-content-center">
                                 <label for="addedHours"><b>Horas deseadas</b></label>
-                                <input type="number" class="form-control" #hours="ngModel" min="0" max="400" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
+                                <input type="number" class="form-control p-2" #hours="ngModel" min="0" max="400" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
                                 [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
                                 <span> h</span>
                             </div>
@@ -300,6 +300,7 @@
                 </div>
             </li>
         </ul>
+        <p *ngIf="(records | json) == '{}'" class="text-muted text-center mt-4">No se encuentra en ningún curso</p>
         <div class="d-flex justify-content-center pt-3">
             <button class="btn mx-auto btn-global theme-blue" (click)="offcanvas.dismiss()">Cerrar</button>
         </div>

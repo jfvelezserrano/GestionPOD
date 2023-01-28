@@ -48,7 +48,7 @@ export class PodsAdminComponent implements OnInit {
   onSubmit(form: NgForm) {
     this.showLoaderCreate = true;
 
-    var formData = new FormData();
+    let formData = new FormData();
 
     let fileUploadSubjects = this.fileSubjects.nativeElement;
     formData.append("fileSubjects", fileUploadSubjects.files[0]);
@@ -56,7 +56,7 @@ export class PodsAdminComponent implements OnInit {
     let fileUploadTeachers = this.fileTeachers.nativeElement;
     formData.append("fileTeachers", fileUploadTeachers.files[0]);
 
-    var course = new Course(null, this.course.value);
+    let course = new Course(null, this.course.value);
 
     formData.append("course", new Blob([JSON.stringify(course)], { type: 'application/json' }));
 
@@ -69,7 +69,7 @@ export class PodsAdminComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCreate = false;
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '400'){
           this.error = splitted[1];
         }
@@ -86,9 +86,6 @@ export class PodsAdminComponent implements OnInit {
     this.courseService.deletePod(id).subscribe({
       next: (_) => {
         this.getPods();
-      },
-      error: (error) => {
-        
       }
     });
   }

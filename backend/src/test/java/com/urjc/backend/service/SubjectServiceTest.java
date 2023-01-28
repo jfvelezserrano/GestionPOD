@@ -22,8 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.urjc.backend.service.DataServices.createBarGraphData;
-import static com.urjc.backend.service.DataServices.createDoughnutChartData;
+import static com.urjc.backend.service.DataServices.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

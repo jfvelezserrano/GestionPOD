@@ -91,13 +91,8 @@ public interface IStatisticsMapper {
             return null;
         }
 
-        StatisticsPersonalDTO statisticsPersonalDTO = new StatisticsPersonalDTO();
-
-        statisticsPersonalDTO.setPercentage(personalStatistics[0]);
-        statisticsPersonalDTO.setCharge(personalStatistics[1]);
-        statisticsPersonalDTO.setCorrectedHours(personalStatistics[2]);
-        statisticsPersonalDTO.setNumSubjects(personalStatistics[3]);
-        statisticsPersonalDTO.setNumConflicts(personalStatistics[4]);
+        StatisticsPersonalDTO statisticsPersonalDTO = new StatisticsPersonalDTO(personalStatistics[0], personalStatistics[1],
+                personalStatistics[2], personalStatistics[3], personalStatistics[4]);
 
         return statisticsPersonalDTO;
     }
@@ -107,17 +102,8 @@ public interface IStatisticsMapper {
             return null;
         }
 
-        StatisticsGlobalDTO statisticsGlobalDTO = new StatisticsGlobalDTO();
-
-        statisticsGlobalDTO.setPercentageCharge(globalStatistics[0]);
-        statisticsGlobalDTO.setTotalChosenHours(globalStatistics[1]);
-        statisticsGlobalDTO.setTotalCharge(globalStatistics[2]);
-        statisticsGlobalDTO.setPercentageForce(globalStatistics[3]);
-        statisticsGlobalDTO.setTotalCorrectHours(globalStatistics[4]);
-        statisticsGlobalDTO.setPercentageCompletations(globalStatistics[5]);
-        statisticsGlobalDTO.setNumCompletations(globalStatistics[6]);
-        statisticsGlobalDTO.setNumSubjects(globalStatistics[7]);
-        statisticsGlobalDTO.setNumConflicts(globalStatistics[8]);
+        StatisticsGlobalDTO statisticsGlobalDTO = new StatisticsGlobalDTO(globalStatistics[0], globalStatistics[1], globalStatistics[2],
+                globalStatistics[3], globalStatistics[4], globalStatistics[5], globalStatistics[6], globalStatistics[7], globalStatistics[8]);
 
 
         return statisticsGlobalDTO;

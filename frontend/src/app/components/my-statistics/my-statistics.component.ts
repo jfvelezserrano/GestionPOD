@@ -86,7 +86,7 @@ export class MyStatisticsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -222,7 +222,7 @@ export class MyStatisticsComponent implements OnInit {
       next: (data) => {
         this.dataGraphsPercentage = data;
         this.dataGraphsPercentage.forEach((element: StatisticsGraphPercentage) => {
-          var matches = element.subjectName;
+          let matches = element.subjectName;
           if(matches.indexOf(' ') >= 0){
             matches = String(element.subjectName).replace(/[a-z áéíóúñç]/g, "");
           }

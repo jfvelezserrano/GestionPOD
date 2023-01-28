@@ -1,10 +1,14 @@
 package com.urjc.backend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class StatisticsGlobalDTO {
     private Integer percentageCharge;
     private Integer totalChosenHours;

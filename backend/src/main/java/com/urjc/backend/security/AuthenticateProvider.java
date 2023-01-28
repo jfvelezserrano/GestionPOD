@@ -1,7 +1,6 @@
 package com.urjc.backend.security;
 
 import com.urjc.backend.model.Teacher;
-import com.urjc.backend.repository.TeacherRepository;
 import com.urjc.backend.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;

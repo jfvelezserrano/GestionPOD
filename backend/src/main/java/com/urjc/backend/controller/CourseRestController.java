@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
 
 @Validated
 @RestController
-@RequestMapping("/api/pods")
+@RequestMapping(value = "/api/pods")
 public class CourseRestController {
 
     interface TeacherBase extends TeacherDTO.Base {
@@ -115,13 +114,13 @@ public class CourseRestController {
         }
     }
 
-    @GetMapping(value = "")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CourseDTO>> getCourses(){
         List<Course> courses = courseService.findAllOrderByCreationDate();
         return new ResponseEntity<>(courseMapper.map(courses), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/currentCourse")
+    @GetMapping(value = "/currentCourse", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseDTO> getCurrentCourse(){
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()) {
@@ -132,7 +131,7 @@ public class CourseRestController {
     }
 
     @JsonView(SubjectTeacherDTOBase.class)
-    @GetMapping("/{id}/subjects")
+    @GetMapping(value = "/{id}/subjects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SubjectTeacherDTO>> getSubjectsByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @PathVariable Long id, @RequestParam(defaultValue = "name") String typeSort) {
 
@@ -148,7 +147,7 @@ public class CourseRestController {
     }
 
     @JsonView(TeacherBase.class)
-    @GetMapping("/{id}/teachers")
+    @GetMapping(value = "/{id}/teachers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TeacherDTO>> getTeachersByIdCourse(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @PathVariable Long id, @RequestParam(defaultValue = "name") String typeSort) {
         Optional<Course> course = courseService.findById(id);
@@ -218,7 +217,7 @@ public class CourseRestController {
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
     }
 
     @PostMapping("/{id}/teachers")
@@ -238,7 +237,7 @@ public class CourseRestController {
             }
             throw new GlobalException(HttpStatus.CONFLICT, "La dirección de correo ya existe");
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
     }
 
     @PostMapping("/{id}/subjects")
@@ -261,10 +260,10 @@ public class CourseRestController {
             }
             throw new GlobalException(HttpStatus.CONFLICT, "Ya existe una asignatura con ese código");
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NOT_FOUND_ID_COURSE + id);
     }
 
-    @GetMapping(value = "/exportCSV")
+    @GetMapping("/exportCSV")
     public ResponseEntity<Resource> exportCSV() {
 
         Optional<Course> course = courseService.findLastCourse();

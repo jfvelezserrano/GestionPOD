@@ -87,7 +87,7 @@ export class MySubjectsComponent implements OnInit {
         this.error = '';
       },
       error: (error) => {
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.error = splitted[1];
         }
@@ -102,7 +102,7 @@ export class MySubjectsComponent implements OnInit {
         this.getMySubjects();
       },
       error: (error) => {
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.error = splitted[1];
         }
@@ -131,7 +131,7 @@ export class MySubjectsComponent implements OnInit {
         this.error = '';
       },
       error: (error) => {
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.error = splitted[1];
         }
@@ -150,7 +150,7 @@ export class MySubjectsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoader = false;
-        var splitted = error.split("\\"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);

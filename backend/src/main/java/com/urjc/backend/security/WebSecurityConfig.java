@@ -91,12 +91,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new GrantedAuthorityDefaults("");
     }
 
-
     @Bean
     CorsConfigurationSource corsConfigurationSource()
     {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://localhost:8443/api", "http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8443/api", "http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(Boolean.TRUE);
