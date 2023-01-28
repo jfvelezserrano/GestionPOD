@@ -3,16 +3,17 @@ package com.urjc.backend.service;
 import com.urjc.backend.model.Course;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 public interface CourseService {
-    Boolean exists(String courseName);
+    boolean exists(String courseName);
 
     List<Course> findAllOrderByCreationDate();
     Optional<Course> findLastCourse();
     Optional<Course> findById(Long id);
-    List<Course> findByTeacherOrderByCreationDate(Long idTeacher);
+    List<Course> findCoursesTakenByTeacher(Long idTeacher);
 
     Integer[] getGlobalStatistics(Course course);
 
@@ -20,6 +21,6 @@ public interface CourseService {
 
     void delete(Course course);
 
-    ByteArrayInputStream writePODInCSV(List<String[]> body);
+    ByteArrayInputStream writePODInCSV(List<String[]> body) throws IOException;
     List<String[]> createContentForCSV(List<Object[]> subjectsAndTeachersCurrentCourse);
 }

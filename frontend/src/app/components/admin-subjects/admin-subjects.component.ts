@@ -8,7 +8,6 @@ import { SubjectTeacherBase } from 'src/app/models/subject-teacher-base.model';
 import { NgForm } from '@angular/forms';
 import { Schedule } from 'src/app/models/schedule.model';
 import { Subject } from 'src/app/models/subject.model';
-import { getLocaleFirstDayOfWeek } from '@angular/common';
 
 
 
@@ -78,7 +77,7 @@ export class AdminSubjectsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoader = false;
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
         }
@@ -188,7 +187,7 @@ export class AdminSubjectsComponent implements OnInit {
         form.reset();
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '409'){
           this.error = splitted[1];
         }

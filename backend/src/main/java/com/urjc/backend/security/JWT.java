@@ -16,30 +16,30 @@ import java.util.Date;
 public class JWT {
 
     @Value("${jwt.secret.key}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     @Value("#{T(java.lang.Integer).parseInt('${jwt.expiration.time}')}")
-    private int EXPIRATION_TIME;
+    private int expirationTime;
 
     @Value("#{T(io.jsonwebtoken.SignatureAlgorithm).forName('${jwt.algorithm}')}")
-    private SignatureAlgorithm ALGORITHM;
+    private SignatureAlgorithm algorithm;
 
     public String createJWT(String email) {
-        byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
-        Key finalKey = new SecretKeySpec(secretKeyBytes, ALGORITHM.getJcaName());
+        byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(secretKey);
+        Key finalKey = new SecretKeySpec(secretKeyBytes, algorithm.getJcaName());
 
         return Jwts.builder()
                 .setHeaderParam("typ","JWT")
                 .setIssuedAt(new Date(new Date().getTime()))
-                .setExpiration(new Date(new Date().getTime() + EXPIRATION_TIME))
+                .setExpiration(new Date(new Date().getTime() + expirationTime))
                 .setSubject(email)
-                .signWith(ALGORITHM, finalKey)
+                .signWith(algorithm, finalKey)
                 .compact();
     }
 
-    public Boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration()
@@ -47,18 +47,17 @@ public class JWT {
     }
 
     public Claims decodeJWT(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+        return Jwts.parser()
+                .setSigningKey(secretKey)
                 .parseClaimsJws(token).getBody();
-        return claims;
     }
 
     public boolean isSignatureVerified(String token){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(DatatypeConverter.parseBase64Binary(SECRET_KEY), ALGORITHM.getJcaName());
+        SecretKeySpec secretKeySpec = new SecretKeySpec(DatatypeConverter.parseBase64Binary(secretKey), algorithm.getJcaName());
         String[] chunks = token.split("\\.");
         String tokenWithoutSignature = chunks[0] + "." + chunks[1];
         String signature = chunks[2];
-        DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(ALGORITHM, secretKeySpec);
+        DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(algorithm, secretKeySpec);
 
         return validator.isValid(tokenWithoutSignature, signature);
     }

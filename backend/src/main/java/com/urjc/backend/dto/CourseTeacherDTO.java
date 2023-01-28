@@ -9,7 +9,7 @@ import javax.validation.constraints.*;
 @Setter
 public class CourseTeacherDTO {
 
-    @NotNull(message = "Se deben indicar las horas elegidas")
+    @NotNull(message = "Se debe indicar la fuerza del docente")
     @Min(value = 0, message = "El número mínimo es de {value}h")
     @Max(value = 400, message = "El número máximo es de {value}h")
     private Integer correctedHours;

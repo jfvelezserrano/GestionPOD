@@ -2,8 +2,9 @@
     <div class="background-black-opacity">
         <div class="content text-center p-5">
             <h1>{{status}}</h1>
-            <p class="ooups"><span>Parece que ha habido un problema</span></p>
-            <p><span>Nosotros nos encargamos de todo</span></p>
+            <p class="ooups" *ngIf="status != 500"><span>{{message}}</span></p>
+            <p class="ooups" *ngIf="status == 500"><span>¡Oops! Algo no ha ido bien. Inténtelo más tarde.</span></p>
+            <p><span>Por favor, vuelva a la página de inicio</span></p>
             <button routerLink="" type="button" class="btn mx-2 mt-5 col-4 btn-global theme-red">Ir a Inicio</button>
         </div>
     </div>

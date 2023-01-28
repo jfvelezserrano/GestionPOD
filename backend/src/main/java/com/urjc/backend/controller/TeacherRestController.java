@@ -2,6 +2,8 @@ package com.urjc.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.dto.*;
+import com.urjc.backend.error.exception.GlobalException;
+import com.urjc.backend.error.exception.RedirectException;
 import com.urjc.backend.mapper.ICourseMapper;
 import com.urjc.backend.mapper.ISubjectMapper;
 import com.urjc.backend.mapper.ITeacherMapper;
@@ -14,18 +16,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static com.urjc.backend.error.ErrorMessageConstants.NO_COURSE_YET;
+
 @RestController
-@RequestMapping("/api/teachers")
+@RequestMapping(value = "/api/teachers")
 public class TeacherRestController {
 
     interface SubjectTeacherDTOStatusAndConflicts extends SubjectTeacherDTO.Base, SubjectTeacherDTO.Status,
@@ -53,24 +57,23 @@ public class TeacherRestController {
     @Autowired
     ICourseMapper courseMapper;
 
-    @PutMapping("/role")
+    @PutMapping(value = "/role", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> updateRole(@RequestBody @Valid TeacherDTO teacherDTO) {
-
         Teacher teacher = teacherMapper.toTeacher(teacherDTO);
-        Teacher teacherIfExists = teacherService.findByEmail(teacher.getEmail());
-        if(teacherIfExists != null && !teacherIfExists.getEmail().equals(emailMainAdmin)) {
-            Teacher teacherDDBB = teacherService.findIfIsInCurrentCourse(teacherIfExists.getEmail());
-            if (teacherDDBB != null || (teacherIfExists.getRoles().contains("ADMIN") && teacherIfExists.getRoles() != teacher.getRoles())) {
-                teacherIfExists.setRoles(teacher.getRoles());
-                teacherService.save(teacherIfExists);
+        Teacher teacherDDBB = teacherService.findByEmail(teacher.getEmail());
+        if(teacherDDBB != null && !teacherDDBB.getEmail().equals(emailMainAdmin)) {
+            Teacher teacherInCurrentCourse = teacherService.findIfIsInCurrentCourse(teacherDDBB.getEmail());
+            if (teacherInCurrentCourse != null) {
+                teacherDDBB.setRoles(teacher.getRoles());
+                teacherService.save(teacherDDBB);
 
-                return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherIfExists), HttpStatus.OK);
+                return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherDDBB), HttpStatus.OK);
             }
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El docente que se quiere actualizar es incorrecto o no puede actualizarse");
+        throw new GlobalException(HttpStatus.BAD_REQUEST, "El docente que se quiere actualizar es incorrecto o no puede actualizarse");
     }
 
-    @GetMapping(value = "")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TeacherDTO>> findAllByRole(@RequestParam(value = "role", required = false) String role){
         Optional<Course> course = courseService.findLastCourse();
         if (role == null && course.isPresent()) {
@@ -80,12 +83,11 @@ public class TeacherRestController {
             List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
             return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
     @PostMapping("/join/{idSubject}")
-    public ResponseEntity<Void> joinSubject(@RequestBody TeacherJoinSubjectDTO teacherJoinSubjectDTO, @PathVariable Long idSubject) {
-
+    public ResponseEntity<Void> joinSubject(@RequestBody @Valid TeacherJoinSubjectDTO teacherJoinSubjectDTO, @PathVariable Long idSubject) {
         Optional<Subject> subject = subjectService.findById(idSubject);
 
         if(subject.isPresent()){
@@ -104,14 +106,13 @@ public class TeacherRestController {
                 teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
+        throw new GlobalException(HttpStatus.NOT_FOUND, "No existe esa asignatura");
     }
 
     @DeleteMapping("/unjoin/{idSubject}")
     public ResponseEntity<Void> unjoinSubject(@PathVariable Long idSubject) {
-
         Optional<Subject> subject = subjectService.findById(idSubject);
 
         if(subject.isPresent()){
@@ -128,46 +129,43 @@ public class TeacherRestController {
                 teacherService.save(teacher);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ");
+        throw new RedirectException(HttpStatus.NOT_FOUND, "No se ha encontrado la asignatura con id " + idSubject);
     }
 
     @JsonView(SubjectTeacherDTOStatusAndConflicts.class)
-    @GetMapping(value = "/mySubjects")
+    @GetMapping(value = "/mySubjects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SubjectTeacherDTO>> findAllMySubjects(@RequestParam(defaultValue = "name") String typeSort){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Teacher teacher = teacherService.findByEmail(authentication.getName());
 
             Sort sort = Sort.by(typeSort).ascending();
-            List<Object[]> mySubjects = subjectService.findByTeacherAndCourse(teacher.getId(), course.get(), sort);
+            List<Object[]> mySubjects = subjectService.findConflictsByTeacherAndCourse(teacher.getId(), course.get(), sort);
 
             List<SubjectTeacherDTO> subjectTeacherDTOs = subjectMapper.listSubjectTeacherDTOs(mySubjects);
             return new ResponseEntity<>(subjectTeacherDTOs, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @GetMapping(value = "/myCourses")
+    @GetMapping(value = "/myCourses", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CourseDTO>> findAllMyCourses(){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Teacher teacher = teacherService.findByEmail(authentication.getName());
 
-            List<Course> myCourses = courseService.findByTeacherOrderByCreationDate(teacher.getId());
+            List<Course> myCourses = courseService.findCoursesTakenByTeacher(teacher.getId());
             return new ResponseEntity<>(courseMapper.map(myCourses), HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @GetMapping(value = "/myEditableData")
+    @GetMapping(value = "/myEditableData", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseTeacherDTO> getEditableData(){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -176,12 +174,11 @@ public class TeacherRestController {
             CourseTeacherDTO courseTeacherDTO = teacherMapper.toTeacherEditableDataDTO(((Integer) myEditableData[0]), ((String) myEditableData[1]));
             return new ResponseEntity<>(courseTeacherDTO, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
-    @PutMapping(value = "/myEditableData")
+    @PutMapping("/myEditableData")
     public ResponseEntity<Void> editData(@RequestBody @Valid CourseTeacherDTO courseTeacherDTO){
-
         Optional<Course> course = courseService.findLastCourse();
         if (course.isPresent()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -191,6 +188,6 @@ public class TeacherRestController {
             teacherService.save(teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay ningún curso aún");
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 }

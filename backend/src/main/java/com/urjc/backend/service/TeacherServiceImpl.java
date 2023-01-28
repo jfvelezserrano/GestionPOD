@@ -1,5 +1,6 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
@@ -11,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -20,13 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class TeacherServiceImpl implements TeacherService{
+
+    private static final String ADMIN = "ADMIN";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;
@@ -49,7 +51,7 @@ public class TeacherServiceImpl implements TeacherService{
             return null;
         }
 
-        if(teacher.getRoles().contains("ADMIN")){
+        if(teacher.getRoles().contains(ADMIN)){
             return teacher;
         }
 
@@ -66,8 +68,7 @@ public class TeacherServiceImpl implements TeacherService{
         return teacherRepository.findByEmail(email);
     }
 
-    @Override
-    public List<Teacher> findByCourse(Long idCourse){
+    private List<Teacher> findByCourse(Long idCourse){
         return teacherRepository.findByCourse(idCourse);
     }
 
@@ -86,7 +87,8 @@ public class TeacherServiceImpl implements TeacherService{
 
     @Override
     public Object[] getEditableData(String email, Course course){
-        return ((Object[]) teacherRepository.getEditableData(email, course.getId()));
+        Teacher teacher = findByEmail(email);
+        return teacherRepository.findEditableData(teacher.getId(), course.getId()).get(0);
     }
 
     @Override
@@ -98,11 +100,11 @@ public class TeacherServiceImpl implements TeacherService{
     public void updateAdminsInLastCourse(){
         Optional<Course> lastCourse = courseRepository.findFirst1ByOrderByCreationDateDesc();
         if(lastCourse.isPresent()) {
-            List<Teacher> admins = teacherRepository.findByRole("ADMIN");
+            List<Teacher> admins = teacherRepository.findByRole(ADMIN);
 
             for (Teacher teacher : admins) {
                 if (!teacher.getEmail().equals(emailMainAdmin) && (!lastCourse.get().isTeacherInCourse(teacher))) {
-                    teacher.getRoles().remove("ADMIN");
+                    teacher.getRoles().remove(ADMIN);
                     save(teacher);
                 }
                 if(teacher.getEmail().equals(emailMainAdmin) && (!lastCourse.get().isTeacherInCourse(teacher))){
@@ -119,22 +121,21 @@ public class TeacherServiceImpl implements TeacherService{
 
     @Override
     public List<Teacher> findAllByCourse(Long id, Pageable pageable) {
-        Page<Teacher> p = teacherRepository.findByCoursePage(id, pageable);
-        return p.getContent();
+        return teacherRepository.findByCoursePage(id, pageable).getContent();
     }
 
     @Override
     public List<Object[]> allTeachersStatistics(Course course, Pageable pageable) {
 
-        Page<Object[]> listDataTeachers = teacherRepository.allTeachersStatistics(course.getId(), pageable);
+        Page<Object[]> listDataTeachers = teacherRepository.findStatisticsByCourseAndPage(course.getId(), pageable);
 
         List<Object[]> resultList = new ArrayList<>();
 
         for (Object[] dataTeachers: listDataTeachers) {
-            Object[] personalStatistics = ((Object[]) teacherRepository.statisticsByTeacherAndCourse(((Teacher) dataTeachers[0]).getId(), course.getId()));
+            Integer[] personalStatistics = teacherRepository.statisticsByTeacherAndCourse(((Teacher) dataTeachers[0]).getId(), course.getId()).get(0);
             Object[] finalData = new Object[]{((Teacher) dataTeachers[0]).getName(), dataTeachers[1],
-                    personalStatistics[0] != null ? personalStatistics[0] : 0L,
-                    personalStatistics[1] != null ? personalStatistics[1] : 0L, personalStatistics[2] };
+                    personalStatistics[0] != null ? personalStatistics[0] : 0,
+                    personalStatistics[1] != null ? personalStatistics[1] : 0, personalStatistics[2] };
             resultList.add(finalData);
         }
         return resultList;
@@ -154,14 +155,12 @@ public class TeacherServiceImpl implements TeacherService{
     public Integer[] findPersonalStatistics(Long idTeacher, Course course){
         int numConflicts = 0;
 
-        Object[] statisticsObject = ((Object[]) teacherRepository.statisticsByTeacherAndCourse(idTeacher, course.getId()));
+        Integer[] statistics = teacherRepository.statisticsByTeacherAndCourse(idTeacher, course.getId()).get(0);
 
-        statisticsObject[0] = statisticsObject[0] != null ? statisticsObject[0] : 0L;
-        statisticsObject[1] = statisticsObject[1] != null ? statisticsObject[1] : 0L;
+        statistics[0] = statistics[0] != null ? statistics[0] : 0;
+        statistics[1] = statistics[1] != null ? statistics[1] : 0;
 
-        Integer[] statistics = Arrays.stream(statisticsObject).map(o -> ((Long) o).intValue()).toArray(Integer[]::new);
-
-        for (Subject subject:subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), Sort.unsorted())) {
+        for (Subject subject:subjectRepository.findByCourseAndTeacher(course.getId(), idTeacher, Sort.unsorted())) {
             List<String> teachers = subject.recordSubject().get(course.getName());
             Integer totalChosenHours = teachers.stream().map(item -> Integer.parseInt(item.substring(0, item.indexOf("h")))).reduce(0, Integer::sum);
             if(totalChosenHours > subject.getTotalHours() && subject.getTotalHours() != 0){
@@ -169,11 +168,10 @@ public class TeacherServiceImpl implements TeacherService{
             }
         }
 
-        Integer correctedHours = teacherRepository.getCorrectedHoursByIdTeacher(idTeacher, course.getId());
+        Object[] result = teacherRepository.findEditableData(idTeacher, course.getId()).get(0);
+        Integer correctedHours = (Integer) result[0];
 
-        Integer[] result = new Integer[]{ statistics[0], statistics[1], correctedHours, statistics[2], numConflicts };
-
-        return result;
+        return new Integer[]{ statistics[0], statistics[1], correctedHours, statistics[2], numConflicts };
     }
 
     @Override
@@ -183,43 +181,49 @@ public class TeacherServiceImpl implements TeacherService{
 
         //get their totalChosenHours percentage
         for (Object[] mate: mates) {
-            Integer chosenHoursTeacher = teacherRepository.chosenHoursTeacher(((Long) mate[0]), idCourse);
+            Integer chosenHoursTeacher = teacherRepository.findChosenHoursByTeacherAndCourse(((Long) mate[0]), idCourse);
             Object[] obj = new Object[]{mate[1], mate[2], chosenHoursTeacher * 100/ ((Integer) mate[3]) };
             result.add(obj);
         }
         return result;
     }
 
-    @Override
-    public void setNullValues(String[] values){
+    private Teacher setEntryValuesToTeacher(String[] values){
         for (int i = 0; i < values.length - 1; i++) {
-            if(values[i] == ""){
+            if(values[i].isBlank()){
                 values[i] = null;
             }
         }
+
+        return new Teacher(values[0], values[1]);
     }
 
     @Override
-    public void saveAll(MultipartFile file, Course course) throws IOException{
+    public void saveAll(InputStream inputStream, Course course) throws IOException{
         BufferedReader br;
         String line;
-        InputStream is = file.getInputStream();
-        br = new BufferedReader(new InputStreamReader(is));
+        br = new BufferedReader(new InputStreamReader(inputStream));
         while ((line = br.readLine()) != null) {
-            line = line.replaceAll("[\"=\'#!]", "");
-            String[] values = line.split(";", -1);
-            if(!values[0].equals("")){
-                Teacher teacher;
+            line = line.replaceAll("[\\[\\]<>'\"!=]", "");
 
-                setNullValues(values);
-                teacher = new Teacher(values[0], values[1]);
+            if(!line.isBlank()){
+                String[] values = line.split(";", -1);
+
+                if(values.length != 3){
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de un docente en la linea: " + line);
+                }
+
+                Teacher teacher = setEntryValuesToTeacher(values);
+                teacher.validate(line);
 
                 Teacher teacherResult = findByEmail(teacher.getEmail());
                 if (teacherResult == null) {
                     course.addTeacher(teacher, Integer.valueOf(values[2]));
+                    course.validate(line);
                     save(teacher);
-                }else if(teacherResult != null && !course.isTeacherInCourse(teacherResult)){
+                }else if(!course.isTeacherInCourse(teacherResult)){
                     course.addTeacher(teacherResult, Integer.valueOf(values[2]));
+                    course.validate(line);
                     save(teacherResult);
                 }
             }

@@ -1,17 +1,17 @@
 package com.urjc.backend.service;
 
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.model.Course;
 import com.urjc.backend.model.Schedule;
 import com.urjc.backend.model.Subject;
 import com.urjc.backend.model.Teacher;
-import com.urjc.backend.repository.CourseRepository;
 import com.urjc.backend.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -20,9 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -46,12 +44,12 @@ public class SubjectServiceImpl implements SubjectService{
     @Override
     public List<Object[]> findByCoursePage(Course course, Pageable pageable) {
 
-        Page<Subject> p3 = subjectRepository.findByCoursePage(course.getId(), pageable);
+        Page<Subject> subjects = subjectRepository.findByCoursePage(course.getId(), pageable);
 
         //generate result to return and get teachers joined to each subject of a specific course
         List<Object[]> resultList = new ArrayList<>();
 
-        for (Subject subject:p3.getContent()) {
+        for (Subject subject:subjects.getContent()) {
             List<String> teachers = subject.recordSubject().get(course.getName());
             Object[] obj = new Object[] { subject, teachers };
             resultList.add(obj);
@@ -106,8 +104,8 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<Subject> findNameAndQuarterByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort) {
-        return subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), typeSort);
+    public List<Subject> findByCourseAndTeacher(Long idTeacher, Course course, Sort typeSort) {
+        return subjectRepository.findByCourseAndTeacher(course.getId(), idTeacher, typeSort);
     }
 
     @Override
@@ -118,20 +116,20 @@ public class SubjectServiceImpl implements SubjectService{
     @Override
     public List<Object[]> percentageHoursByTeacherAndCourse(Teacher teacher, Course course, Sort typeSort) {
         Integer totalHours = subjectRepository.totalChosenHoursByTeacherAndCourse(teacher.getId(), course.getId());
-        return subjectRepository.percentageHoursByTeacherAndCourse(teacher.getId(), course.getId(), totalHours,typeSort);
+        return subjectRepository.percentageHoursByTeacherAndCourse(teacher.getId(), course.getId(), totalHours, typeSort);
     }
 
     @Override
-    public List<Object[]> findByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort){
-        List<Subject> mySubjects = subjectRepository.findByTeacherAndCourse(idTeacher, course.getId(), typeSort);
+    public List<Object[]> findConflictsByTeacherAndCourse(Long idTeacher, Course course, Sort typeSort){
+        List<Subject> mySubjects = subjectRepository.findByCourseAndTeacher(course.getId(), idTeacher, typeSort);
 
-        if(mySubjects.size() != 0) {
+        if(!mySubjects.isEmpty()) {
             //get all schedules from my subjects
             List<Object[]> schedulesFromAllMySubjects = new ArrayList<>();
 
             for (Subject subject : mySubjects) {
                 for (Schedule schedule : subject.getSchedules()) {
-                    Object[] item = {subject.getName(), schedule};
+                    Object[] item = {subject.getName(), schedule, subject.getQuarter()};
                     schedulesFromAllMySubjects.add(item);
                 }
             }
@@ -152,7 +150,7 @@ public class SubjectServiceImpl implements SubjectService{
             return resultList;
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     private Integer getLeftHoursInSubject(List<String> teachers, Subject subject){
@@ -171,32 +169,11 @@ public class SubjectServiceImpl implements SubjectService{
 
         for (Schedule schedule: subject.getSchedules()) {
             for (Object[] item: allSchedulesFromMySubjects) {
-                if(subject.getName() != item[0]) {
-                    Schedule scheduleToCompare = ((Schedule) item[1]);
-
-                    if ((schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
-
-                        LocalTime scheduleStartTime = LocalTime.parse(schedule.getStartTime());
-                        LocalTime scheduleEndTime = LocalTime.parse(schedule.getEndTime());
-                        LocalTime scheduleToCompareStartTime = LocalTime.parse(scheduleToCompare.getStartTime());
-                        LocalTime scheduleToCompareEndTime = LocalTime.parse(scheduleToCompare.getEndTime());
-
-                        //time overlap
-                        if ((( (scheduleStartTime.isBefore(scheduleToCompareStartTime)) || (scheduleStartTime.compareTo(scheduleToCompareStartTime) == 0) )
-                                && scheduleToCompareStartTime.isBefore(scheduleEndTime)) ||
-                                (scheduleStartTime.isAfter(scheduleToCompareStartTime) && scheduleStartTime.isBefore(scheduleToCompareEndTime))) {
-                            String result = item[0] + " - Solapamiento de horarios";
-                            resultConflicts.add(result);
-                        }
-
-                        //nearby schedules
-                        else if ((scheduleStartTime.compareTo(scheduleToCompareEndTime) == 0) ||
-                                (Math.abs(scheduleStartTime.until(scheduleToCompareEndTime, ChronoUnit.MINUTES)) < 30) ||
-                                (Math.abs(scheduleEndTime.until(scheduleToCompareStartTime, ChronoUnit.MINUTES)) < 30)) {
-                            String result = item[0] + " - Horarios cercanos";
-                            resultConflicts.add(result);
-                        }
-                    }
+                Schedule scheduleToCompare = ((Schedule) item[1]);
+                if(!subject.getName().equals(item[0]) && (subject.getQuarter().equals(item[2]))
+                        && (schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
+                    String result = compareBothSchedules(schedule, scheduleToCompare);
+                    if(!result.isEmpty()) { resultConflicts.add(item[0] + " - " + result); }
                 }
             }
         }
@@ -204,31 +181,49 @@ public class SubjectServiceImpl implements SubjectService{
         return resultConflicts;
     }
 
+    private String compareBothSchedules(Schedule schedule, Schedule scheduleToCompare){
+        String result = "";
+
+        LocalTime scheduleStartTime = LocalTime.parse(schedule.getStartTime());
+        LocalTime scheduleEndTime = LocalTime.parse(schedule.getEndTime());
+        LocalTime scheduleToCompareStartTime = LocalTime.parse(scheduleToCompare.getStartTime());
+        LocalTime scheduleToCompareEndTime = LocalTime.parse(scheduleToCompare.getEndTime());
+
+        //time overlap
+        if ((((scheduleStartTime.isBefore(scheduleToCompareStartTime)) || (scheduleStartTime.compareTo(scheduleToCompareStartTime) == 0))
+                && scheduleToCompareStartTime.isBefore(scheduleEndTime)) ||
+                (scheduleStartTime.isAfter(scheduleToCompareStartTime) && scheduleStartTime.isBefore(scheduleToCompareEndTime))) {
+            result = "Solapamiento de horarios";
+        }
+
+        //nearby schedules
+        else if ((scheduleStartTime.compareTo(scheduleToCompareEndTime) == 0) ||
+                (Math.abs(scheduleStartTime.until(scheduleToCompareEndTime, ChronoUnit.MINUTES)) < 30) ||
+                (Math.abs(scheduleEndTime.until(scheduleToCompareStartTime, ChronoUnit.MINUTES)) < 30)) {
+            result = "Horarios cercanos";
+        }
+
+         return result;
+    }
+
     @Override
-    public void saveAll(MultipartFile file, Course course) throws IOException{
+    public void saveAll(InputStream inputStream, Course course) throws IOException{
         BufferedReader br;
         String line;
-        InputStream is = file.getInputStream();
-        br = new BufferedReader(new InputStreamReader(is));
+        br = new BufferedReader(new InputStreamReader(inputStream));
 
         while ((line = br.readLine()) != null) {
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
             String[] values = line.split(";", -1);
 
-            if (!(values[0].equals("Codigo")) && !(values[0].equals(""))) {
+            if (!(line.isBlank()) && !(values[0].equals("Codigo"))) {
 
-                Subject subject;
-
-                setNullValues(values);
-                subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
-                        values[2], Integer.parseInt(values[3]), values[4], values[6], values[9].charAt(0), values[8]);
-
-                if (!values[10].equals("")) {
-                    subject.setSchedulesByString(values[10]);
+                if(values.length != 12){
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de una asignatura en la linea: " + line);
                 }
-                if (!values[11].equals("")) {
-                    subject.setAssistanceCareersByString(values[11]);
-                }
+
+                Subject subject = setEntryValuesToSubject(values);
+                subject.validate(line);
 
                 if(!isCodeInCourse(course.getId(), subject.getCode())) {
                     Subject subjectDDBB = findSubjectIfExists(subject);
@@ -246,25 +241,32 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public Boolean isCodeInCourse(Long idCourse, String code) {
+    public boolean isCodeInCourse(Long idCourse, String code) {
         return subjectRepository.findByCourseAndCode(idCourse, code) != null;
     }
 
-    private void setNullValues(String[] values){
+    private Subject setEntryValuesToSubject(String[] values) {
         for (int i = 0; i < 10; i++) {
-            if(values[i] == ""){
+            if(values[i].isBlank()){
                 values[i] = null;
             }
         }
+
+        Subject subject = new Subject(values[0], values[5], values[1], Integer.parseInt(values[7]),
+                values[2], Integer.parseInt(values[3]), values[4], values[6], values[9] == null ? null : values[9].charAt(0), values[8]);
+
+        subject.setSchedulesByString(values[10]);
+        subject.setAssistanceCareersByString(values[11]);
+
+        return subject;
     }
 
     @Override
     public Subject findSubjectIfExists(Subject subject){
-
-        List<Subject> subjects = subjectRepository.sameValues(subject);
+        List<Subject> subjects = subjectRepository.findSameValues(subject);
 
         for (Subject storedSubject: subjects) {
-            Boolean exists = isExact(subject, storedSubject);
+            boolean exists = isExact(subject, storedSubject);
             if(exists){
                 return storedSubject;
             }
@@ -273,41 +275,35 @@ public class SubjectServiceImpl implements SubjectService{
         return null;
     }
 
-    private Boolean isExact(Subject subject, Subject storedSubject){
+    private boolean isExact(Subject subject, Subject storedSubject){
 
-        Boolean isEqual = storedSubject != null;
+        boolean isEqual = storedSubject != null;
 
         if(isEqual) {
             isEqual = ((storedSubject.getAssistanceCareers().size() == 0) && (subject.getAssistanceCareers() == null)) ||
                     storedSubject.getAssistanceCareers().size() == subject.getAssistanceCareers().size();
 
-            if(isEqual && storedSubject.getAssistanceCareers().size() != 0) {
-                for (int i = 0; i < storedSubject.getAssistanceCareers().size(); i++) {
-                    isEqual = subject.getAssistanceCareers().get(i).equals(storedSubject.getAssistanceCareers().get(i));
-                    if (!isEqual) {
-                        break;
-                    }
-                }
+            int i = 0;
+            while(isEqual && i < storedSubject.getAssistanceCareers().size()){
+                isEqual = subject.getAssistanceCareers().get(i).equals(storedSubject.getAssistanceCareers().get(i));
+                i++;
             }
 
-            Boolean isEqualSchedules = ((storedSubject.getSchedules().size() == 0) && (subject.getSchedules() == null)) ||
+            boolean isEqualSchedules = ((storedSubject.getSchedules().size() == 0) && (subject.getSchedules() == null)) ||
                     storedSubject.getSchedules().size() == subject.getSchedules().size();
 
-            if(isEqual && isEqualSchedules && storedSubject.getSchedules().size() != 0) {
-                for (int i = 0; i < storedSubject.getSchedules().size(); i++) {
-                    isEqual = subject.getSchedules().get(i).getDayWeek().equals(storedSubject.getSchedules().get(i).getDayWeek()) &&
-                            subject.getSchedules().get(i).getStartTime().equals(storedSubject.getSchedules().get(i).getStartTime()) &&
-                            subject.getSchedules().get(i).getEndTime().equals(storedSubject.getSchedules().get(i).getEndTime());
-                    if (!isEqual) {
-                        break;
-                    }
-                }
+            i = 0;
+            while(isEqual && isEqualSchedules && i < storedSubject.getSchedules().size()){
+                isEqual = subject.getSchedules().get(i).getDayWeek().equals(storedSubject.getSchedules().get(i).getDayWeek()) &&
+                        subject.getSchedules().get(i).getStartTime().equals(storedSubject.getSchedules().get(i).getStartTime()) &&
+                        subject.getSchedules().get(i).getEndTime().equals(storedSubject.getSchedules().get(i).getEndTime());
+                i++;
             }
+
+            return isEqual && isEqualSchedules;
+
         }
 
-        if(isEqual){
-            return true;
-        }
         return false;
     }
 

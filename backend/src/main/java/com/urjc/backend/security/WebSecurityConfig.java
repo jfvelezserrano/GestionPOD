@@ -26,15 +26,11 @@ import java.util.Arrays;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String ADMIN = "ADMIN";
+    private static final String TEACHER = "TEACHER";
+
     @Autowired
     public AuthenticateProvider authenticateProvider;
-
-    /*@Autowired
-    public void configureGlobalSecurity(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth.inMemoryAuthentication().withUser("a.merinom.2017@alumnos.urjc.es")
-                .roles("USER", "ADMIN");
-    }*/
 
     private final JwtFilter jwtFilter;
 
@@ -43,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(authenticateProvider);
     }
 
@@ -55,20 +51,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/access").permitAll()
                 .antMatchers("/api/verify/**").permitAll()
-                .antMatchers("/api/pods/**").hasRole("ADMIN")
-                .antMatchers("/api/subjects/**").hasRole("TEACHER")
-                .antMatchers(HttpMethod.PUT,"/api/teachers/role").hasRole("ADMIN")
-                .regexMatchers(HttpMethod.GET,"/.*role=.*").hasRole("ADMIN")
-                .regexMatchers("/api/teachers").hasRole("TEACHER")
-                .antMatchers("/api/teachers/**").hasRole("TEACHER")
-                .antMatchers("/api/statistics/**").hasRole("TEACHER")
+                .antMatchers("/api/pods/**").hasRole(ADMIN)
+                .antMatchers("/api/subjects/**").hasRole(TEACHER)
+                .antMatchers(HttpMethod.PUT,"/api/teachers/role").hasRole(ADMIN)
+                .regexMatchers(HttpMethod.GET,"/.*role=.*").hasRole(ADMIN)
+                .regexMatchers("/api/teachers").hasRole(TEACHER)
+                .antMatchers("/api/teachers/**").hasRole(TEACHER)
+                .antMatchers("/api/statistics/**").hasRole(TEACHER)
                 .anyRequest().authenticated();
 
-        /*http.csrf().ignoringAntMatchers("/api/access")
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());*/
-
         http.csrf().disable();
-
         http.cors();
 
         http.authorizeRequests()
@@ -99,12 +91,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new GrantedAuthorityDefaults("");
     }
 
-
     @Bean
     CorsConfigurationSource corsConfigurationSource()
     {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://localhost:8443/api", "http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8443/api", "http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(Boolean.TRUE);

@@ -2,7 +2,7 @@
 <main class="container-fluid main-content">
     <div class="row justify-content-center">
         <div class="col-12 col-xl-3 mb-5 mb-xl-0">
-            <div class="sticky-top mx-4 mx-xl-0 mb-0">
+            <div class="sticky-top pt-1 mx-4 mx-xl-0 mb-0">
                 <h3><b>Añadir POD</b></h3>
                 <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
                     <div class="mb-3">
@@ -13,11 +13,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="asignaturas-file" class="form-label section-title">Asignaturas CSV</label>
-                        <input required #fileSubjects ngModel name="fileSubjects" class="form-control" ngf-max-size="2MB" type="file" accept=".csv">
+                        <input required #fileSubjects ngModel name="fileSubjects" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=null;" accept=".csv">
                     </div>
                     <div class="mb-3">
                         <label for="profesores-file" class="form-label section-title">Profesores CSV</label>
-                        <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" accept=".csv">
+                        <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=null;" accept=".csv">
                     </div>
                     <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
                     <div class="d-flex justify-content-center pt-3">

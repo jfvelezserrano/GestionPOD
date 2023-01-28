@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, Input } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { StatisticsGlobal } from 'src/app/models/statistics-global.model';
 import { StatisticsTeacher } from 'src/app/models/statistics-teacher.model';
@@ -54,7 +54,7 @@ export class StatisticsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -69,10 +69,6 @@ export class StatisticsComponent implements OnInit {
     this.statisticsService.getAllTeachersStatistics(this.page, this.typeSort).subscribe({
       next: (data) => {
         this.teachersStatistics = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -84,10 +80,6 @@ export class StatisticsComponent implements OnInit {
       next: (data) => {
         this.teachersStatistics = this.teachersStatistics.concat(data);
         this.isMore = Object.keys(data).length == 12;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }

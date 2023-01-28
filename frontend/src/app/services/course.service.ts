@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Course } from '../models/course.model';
@@ -9,11 +9,13 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class CourseService {
-  
-  public csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
-  public httpOptionsCookiesCSRF = {
-    headers: new HttpHeaders({ 'X-XSRF-TOKEN': this.csrfToken}),
+  public httpOptionsContentType = {
+    headers: new HttpHeaders().set( 'Content-Type', "application/json"),
+    withCredentials: true
+  };
+
+  public httpOptionsCredentials = {
     withCredentials: true
   };
 
@@ -22,37 +24,37 @@ export class CourseService {
   ) { }
 
   createPOD(pod:FormData) {
-    return this.http.post(environment.urlApi + "/pods", pod, this.httpOptionsCookiesCSRF)
+    return this.http.post(environment.urlApi + "/pods", pod, this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		);
   }
 
   getPODs(): Observable<Course[]>{
-    return this.http.get<Course[]>(environment.urlApi + "/pods", this.httpOptionsCookiesCSRF)
+    return this.http.get<Course[]>(environment.urlApi + "/pods", this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		) as Observable<Course[]>;
   }
 
   getCurrentCourse(): Observable<Course>{
-    return this.http.get<Course>(environment.urlApi + "/pods/currentCourse", this.httpOptionsCookiesCSRF)
+    return this.http.get<Course>(environment.urlApi + "/pods/currentCourse", this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		) as Observable<Course>;
   }
 
   deleteTeacherInPod(idPod:number, idTeacher:number){
-    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCookiesCSRF)
+    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		);
   }
 
   deleteSubjectInPod(idPod:number, idSubject:number){
-    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/subjects/" + idSubject, this.httpOptionsCookiesCSRF)
+    return this.http.delete(environment.urlApi + "/pods/" + idPod + "/subjects/" + idSubject, this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		);
   }
 
-  deletePod(id: any) {
-    return this.http.delete(environment.urlApi + "/pods/" + id, this.httpOptionsCookiesCSRF)
+  deletePod(id: number) {
+    return this.http.delete(environment.urlApi + "/pods/" + id, this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
 		);
   }

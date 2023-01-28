@@ -80,7 +80,7 @@
                         <div class="row justify-content-start">
                             <div class="col-12 col-xl-12">
                                 <div class="d-flex justify-content-between">
-                                    <span><small>Horas asignadas</small></span>
+                                    <span><small>Carga Docente</small></span>
                                     <span><b>{{teacherStatistics.percentage}}%</b></span>
                                 </div>
                                 <div class="col-12">
@@ -97,8 +97,8 @@
                         <hr class="mt-2">
                         <span class="section-title">OBSERVACIONES</span>
                         <p class="content-observations">
-                            <small *ngIf="teacherStatistics.observation != ''">{{teacherStatistics.observation}}</small>
-                            <small *ngIf="teacherStatistics.observation == ''">No hay observaciones</small>
+                            <small *ngIf="teacherStatistics.observation == null || teacherStatistics.observation == ''">No hay observaciones</small>
+                            <small *ngIf="teacherStatistics.observation">{{teacherStatistics.observation}}</small>
                         </p>
                     </div>
                 </div>

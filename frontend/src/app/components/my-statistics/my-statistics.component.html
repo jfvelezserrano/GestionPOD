@@ -108,7 +108,9 @@
                 <div class="col-12 col-xl-4">
                     <article class="box-my-statistics h-100 w-100">
                         <h3 class="text-center border-bottom"><b>Horas por asignatura</b></h3>
-                        <canvas id="barChart" *ngIf="personalStatistics.numSubjects != 0"></canvas>
+                        <div class="chart-container" *ngIf="personalStatistics.numSubjects != 0">
+                            <canvas id="barChart"></canvas>
+                        </div>
                         <div class="text-center py-3 text-muted" *ngIf="personalStatistics.numSubjects == 0">
                             <p>No hay asignaturas aún</p>
                         </div>
@@ -118,7 +120,9 @@
                 <div class="col-12 col-xl-4">
                     <article class="box-my-statistics h-100 w-100">
                         <h3 class="text-center border-bottom"><b>Porcentajes de asignaturas</b></h3>
-                        <canvas id="doughnutChart" *ngIf="personalStatistics.numSubjects != 0"></canvas>
+                        <div class="chart-container" *ngIf="personalStatistics.numSubjects != 0">
+                            <canvas id="doughnutChart"></canvas>
+                        </div>
                         <div class="text-center py-3 text-muted" *ngIf="personalStatistics.numSubjects == 0">
                             <p>No hay asignaturas aún</p>
                         </div>

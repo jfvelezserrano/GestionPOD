@@ -4,7 +4,6 @@ import com.urjc.backend.dto.CourseTeacherDTO;
 import com.urjc.backend.dto.TeacherDTO;
 import com.urjc.backend.model.Teacher;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

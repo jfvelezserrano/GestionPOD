@@ -10,7 +10,7 @@
     
     <div class="row justify-content-center" *ngIf="isCourse && !showLoaderCourse">
         <div class="col-12 col-md-4 col-xl-2 mb-5 mb-md-0">
-            <div class="sticky-top mx-4 mx-md-0 mb-0">
+            <div class="sticky-top pt-1 mx-4 mx-md-0 mb-0">
                 <div class="d-flex justify-content-between">
                     <h3><b>Filtrar</b></h3>
                     <button type="button" class="col-2 btn button-actions-red" [disabled]="!occupation && !quarter && !titleChosen && !turn && !emailTeacherChosen" 
@@ -189,7 +189,7 @@
     </div>
     <div class="offcanvas-body">
         <h5><b>{{subjectToShow.subject.name}}</b></h5>
-        <ul class="list-group list-group-flush" *ngIf="(records | json) != '{}'">
+        <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
             <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
                 <div class="col-12 d-flex justify-content-start">
                     <div class="row">
@@ -209,7 +209,7 @@
                 </div>
             </li>
         </ul>
-        <p *ngIf="(records | json) == '{}'" class="text-muted text-center">No se encuentra en ningún curso</p>
+        <p *ngIf="(records | json) == '{}'" class="text-muted text-center mt-4">No se encuentra en ningún curso</p>
         <div class="d-flex justify-content-center pt-3">
             <button class="btn mx-auto btn-global theme-blue" (click)="offcanvas.dismiss()">Cerrar</button>
         </div>

@@ -17,13 +17,11 @@ public class ScheduleDTO {
     @DayWeekConstraint
     private Character dayWeek;
 
-    @Pattern(regexp = "[0-9]{2}:[0-9]{2}", message = "La hora de inicio se debe escribir con el siguiente formato numérico: 00:00")
-    @Size(max = 5, message = "Máximo un valor de {max}")
+    @Pattern(regexp = "\\d{2}:\\d{2}", message = "La hora de inicio se debe escribir con el siguiente formato numérico: 00:00")
     @NotBlank(message = "Se debe completar la hora de inicio")
     private String startTime;
 
-    @Pattern(regexp = "[0-9]{2}:[0-9]{2}", message = "La hora de fin se debe escribir con el siguiente formato numérico: 00:00")
-    @Size(max = 5, message = "Máximo un valor de {max}")
+    @Pattern(regexp = "\\d{2}:\\d{2}", message = "La hora de fin se debe escribir con el siguiente formato numérico: 00:00")
     @NotBlank(message = "Se debe completar la hora de fin")
     private String endTime;
 }

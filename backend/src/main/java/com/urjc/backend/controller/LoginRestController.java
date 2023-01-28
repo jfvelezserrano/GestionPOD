@@ -1,26 +1,24 @@
 package com.urjc.backend.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.urjc.backend.dto.EmailRequestDTO;
 import com.urjc.backend.dto.TeacherDTO;
+import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.mapper.ITeacherMapper;
 import com.urjc.backend.model.Teacher;
-import com.urjc.backend.security.JWT;
 import com.urjc.backend.security.AuthenticateProvider;
+import com.urjc.backend.security.JWT;
 import com.urjc.backend.service.MailBoxService;
 import com.urjc.backend.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping(value = "/api")
 public class LoginRestController {
 
     @Autowired
@@ -50,32 +48,31 @@ public class LoginRestController {
     ITeacherMapper teacherMapper;
 
 
-    @PostMapping(value = "/access")
+    @PostMapping("/access")
     public ResponseEntity<Void> sendEmailLogin(@RequestBody @Valid EmailRequestDTO loginRequest, HttpServletRequest request) {
 
         Teacher teacher = teacherService.findIfIsInCurrentCourse(loginRequest.getEmail());
 
         if(teacher == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La dirección de correo es incorrecta");
+            throw new GlobalException(HttpStatus.NOT_FOUND, "La dirección de correo es incorrecta");
         }
 
         String ip = request.getRemoteAddr();
 
-        Long randomCode = mailBoxService.generateCodeEmail();
+        String code = mailBoxService.generateCodeEmail();
 
-        mailBoxService.addCode(randomCode, loginRequest.getEmail(), ip);
+        mailBoxService.addCode(code, loginRequest.getEmail(), ip);
 
         try{
-            mailBoxService.sendEmail(randomCode, teacher);
+            mailBoxService.sendEmail(code, teacher);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Algo ha fallado. Revise que la dirección de correo es correcta.");
+            throw new GlobalException(HttpStatus.BAD_GATEWAY, "Algo ha fallado. Revise que la dirección de correo es correcta.");
         }
-
     }
 
-    @GetMapping(value = "/verify/{code}")
-    public ResponseEntity<TeacherDTO> verify(@PathVariable Long code, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping(value = "/verify/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TeacherDTO> verify(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
 
        if(mailBoxService.isCorrect(code, request.getRemoteAddr())){
             String email = mailBoxService.getEmailByCode(code);
@@ -98,22 +95,21 @@ public class LoginRestController {
 
             TeacherDTO teacherDTO = teacherMapper.toTeacherDTO(teacher);
 
-           return new ResponseEntity<>(teacherDTO,HttpStatus.OK);
+           return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
         }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        throw new GlobalException(HttpStatus.UNAUTHORIZED, "Acceso denegado");
     }
 
-    @GetMapping(value = "/teacherLogged")
+    @GetMapping(value = "/teacherLogged", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> getTeacherLogged() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication == null){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Acceso denegado");
         }
 
         Teacher teacherLogged = teacherService.findByEmail(authentication.getName());
-
         return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherLogged),HttpStatus.OK);
     }
 }

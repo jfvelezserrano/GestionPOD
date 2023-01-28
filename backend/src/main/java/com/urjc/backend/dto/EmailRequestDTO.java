@@ -5,12 +5,11 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 public class EmailRequestDTO {
-    @Email
+    @Email(message = "Introduzca un email válido")
     @NotBlank(message = "Se debe completar el email")
     private String email;
 }

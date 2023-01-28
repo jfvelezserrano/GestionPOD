@@ -27,7 +27,7 @@ public class TeacherDTO {
     @JsonView(Base.class)
     private String name;
 
-    @Email
+    @Email(message = "Introduzca un email válido")
     @NotBlank(message = "Se debe completar el email")
     @JsonView(Base.class)
     private String email;

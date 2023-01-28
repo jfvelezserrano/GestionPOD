@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -69,29 +69,30 @@ export class MySubjectsComponent implements OnInit {
   }
 
   onSubmit(form:NgForm){
-    this.joinSubject(form);
+    this.joinSubject({hours: this.chosenHours});
+    form.resetForm();
   }
 
   onSubmitEdit(form:NgForm){
     this.idChosenSubject = this.subjectToEdit.subject.id;
-    this.joinSubject(form);
+    this.joinSubject(form.value);
+    form.resetForm();
   }
 
-  joinSubject(form:NgForm){
-     this.teacherService.joinSubject(this.idChosenSubject, form.value).subscribe({
+  joinSubject(form:any){
+     this.teacherService.joinSubject(this.idChosenSubject, form).subscribe({
       next: (data) => {
         this.getMySubjects();
         this.subjectTeacher = undefined;
         this.error = '';
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.error = splitted[1];
         }
       }
     });
-    form.resetForm();
   }
 
   unjoinToSubject(id:number){
@@ -101,7 +102,7 @@ export class MySubjectsComponent implements OnInit {
         this.getMySubjects();
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.error = splitted[1];
         }
@@ -130,7 +131,7 @@ export class MySubjectsComponent implements OnInit {
         this.error = '';
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.error = splitted[1];
         }
@@ -149,7 +150,7 @@ export class MySubjectsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoader = false;
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -196,6 +197,7 @@ export class MySubjectsComponent implements OnInit {
   }
 
   openJoinSubject(model:any) {
+    this.subjectTeacher = undefined;
     this.modalService.open(model, {});
   }
 

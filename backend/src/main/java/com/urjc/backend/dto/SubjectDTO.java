@@ -1,10 +1,12 @@
 package com.urjc.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.urjc.backend.validation.AssistanceCareersConstraint;
 import com.urjc.backend.validation.TurnConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
@@ -16,6 +18,7 @@ public class SubjectDTO {
     public interface NameAndQuarter {
     }
 
+    @Id
     private Long id;
 
     @NotBlank(message = "Se debe completar el código")
@@ -69,9 +72,8 @@ public class SubjectDTO {
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     private String career;
 
-    private List<@NotNull(message = "Se deben añadir grupos de asistencia")
-    @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
-    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=") String> assistanceCareers;
+    @AssistanceCareersConstraint
+    private List<String> assistanceCareers;
 
     private List<@Valid ScheduleDTO> schedules;
 

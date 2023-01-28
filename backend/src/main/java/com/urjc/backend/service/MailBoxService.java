@@ -2,17 +2,19 @@ package com.urjc.backend.service;
 
 import com.urjc.backend.model.Teacher;
 
+import javax.mail.MessagingException;
+
 public interface MailBoxService {
-    boolean sendEmail(Long randomCode, Teacher teacher);
+    void sendEmail(String code, Teacher teacher) throws MessagingException;
 
-    Long generateCodeEmail();
+    String generateCodeEmail();
 
-    Boolean isCorrect(Long code, String ip);
+    boolean isCorrect(String code, String ip);
 
-    void addCode(Long code, String email, String ip);
+    void addCode(String code, String email, String ip);
 
-    void removeCode(Long code);
+    void removeCode(String code);
 
-    String getEmailByCode(Long code);
+    String getEmailByCode(String code);
 
 }

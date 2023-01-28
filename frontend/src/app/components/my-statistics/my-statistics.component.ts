@@ -1,7 +1,7 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { TeacherService } from 'src/app/services/teacher.service';
-import Chart from 'chart.js/auto';
+import Chart, { ChartType } from 'chart.js/auto';
 import { NgForm } from '@angular/forms';
 import { StatisticsPersonal } from 'src/app/models/statistics-personal.model';
 import { StatisticsMates } from 'src/app/models/statistics-mates.model';
@@ -59,15 +59,15 @@ export class MyStatisticsComponent implements OnInit {
     this.testEmitter.subscribe(data => {
       if(data != undefined && data){
         this.getMates();
-      this.getCourses();
-      this.getEditableData();
+        this.getCourses();
+        this.getEditableData();
       };
     })
   }
 
   ngAfterViewInit():void{
     this.testEmitter.subscribe(data => {
-      if(data != undefined && data){
+      if(data != undefined && data && this.personalStatistics.numSubjects != 0){
         this.getHoursPerSubject();
         this.getPercentageHours();
       };
@@ -86,7 +86,7 @@ export class MyStatisticsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -100,10 +100,6 @@ export class MyStatisticsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.mates = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -113,10 +109,6 @@ export class MyStatisticsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.editableData = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -125,10 +117,8 @@ export class MyStatisticsComponent implements OnInit {
     this.teacherService.editEditableData(form.value).subscribe({
       next: (data) => {
         this.getEditableData();
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
+        this.personalStatistics.correctedHours = this.editableData.correctedHours;
+        this.personalStatistics.percentage = Math.trunc(this.personalStatistics.charge * 100 / this.personalStatistics.correctedHours);
       }
     });
   }
@@ -140,10 +130,6 @@ export class MyStatisticsComponent implements OnInit {
         this.courses = data;
         this.courseChosen = this.courses[0].id;
         this.getSubjectsByCourse();
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -152,10 +138,6 @@ export class MyStatisticsComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.subjects = data;
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
@@ -173,10 +155,6 @@ export class MyStatisticsComponent implements OnInit {
 
         if(this.personalStatistics.correctedHours != 0){
           this.graphHoursPerSubject();
-        }
-      },
-      error: (error) => {
-        if(error === '404'){
         }
       }
     });
@@ -219,20 +197,21 @@ export class MyStatisticsComponent implements OnInit {
         ]
       },
       options: {
-          scales: {
-              y: {
-                  beginAtZero: true
-              },
-              x: {
-                  ticks: {display: false},
-                  grid:{display: false}
-              }            
-          },
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            },
+            x: {
+                ticks: {display: false},
+                grid:{display: false}
+            }            
+        },
 
-          plugins: {
-              legend: {display: false,
-              position:'bottom'}
-          }
+        plugins: {
+            legend: {display: false,
+            position:'bottom'}
+        }
       }
   });
   }
@@ -243,7 +222,7 @@ export class MyStatisticsComponent implements OnInit {
       next: (data) => {
         this.dataGraphsPercentage = data;
         this.dataGraphsPercentage.forEach((element: StatisticsGraphPercentage) => {
-          var matches = element.subjectName;
+          let matches = element.subjectName;
           if(matches.indexOf(' ') >= 0){
             matches = String(element.subjectName).replace(/[a-z áéíóúñç]/g, "");
           }
@@ -253,17 +232,13 @@ export class MyStatisticsComponent implements OnInit {
         if(this.personalStatistics.correctedHours != 0){
           this.graphPercentageHours();
         }
-      },
-      error: (error) => {
-        if(error === '404'){
-        }
       }
     });
   }
 
   graphPercentageHours(){
     this.chartPercentage = new Chart("doughnutChart", {
-      type: 'doughnut',
+      type: 'doughnut' as ChartType,
       data: {
         labels:this.subjectsGraphPercentage,
         datasets: [{
@@ -285,9 +260,10 @@ export class MyStatisticsComponent implements OnInit {
         }]
       },
       options: {
+        maintainAspectRatio: false,
         plugins: {
           legend: {display: true,
-            position:'right'},
+          position: 'right'},
         }
       }
     });

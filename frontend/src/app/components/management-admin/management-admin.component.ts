@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TeacherRoles } from 'src/app/models/teacher-roles.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeacherService } from 'src/app/services/teacher.service';
@@ -40,11 +40,6 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.teachers = data;
-      },
-      error: (error) => {
-        var splitted = error.split(";"); 
-        if(splitted[0] == '404'){
-        }
       }
     });
   }

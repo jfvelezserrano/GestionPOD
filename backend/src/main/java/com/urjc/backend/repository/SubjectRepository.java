@@ -16,7 +16,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
             "AND su.code = :#{#subject.code} AND su.name = :#{#subject.name} AND su.quarter = :#{#subject.quarter} " +
             "AND su.title = :#{#subject.title} AND su.totalHours = :#{#subject.totalHours} AND su.turn = :#{#subject.turn} " +
             "AND su.type = :#{#subject.type} AND su.year = :#{#subject.year} ")
-    List<Subject> sameValues(@Param("subject") Subject subject);
+    List<Subject> findSameValues(@Param("subject") Subject subject);
 
     @Query(" SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c LEFT JOIN subject.pods pods" +
             " WHERE c.id = :id group by subject ")
@@ -28,7 +28,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
             "AND (:title IS NULL OR subject.title = :title) AND (:emailTeacher IS NULL OR (pt.email = :emailTeacher AND pc.id=:idCourse)) " +
             "group by subject ")
     List<Subject> search(@Param("idCourse") Long idCourse, @Param("quarter") String quarter, @Param("turn") Character turn,
-                                             @Param("title") String title, @Param("emailTeacher") String emailTeacher, Sort sort);
+                         @Param("title") String title, @Param("emailTeacher") String emailTeacher, Sort sort);
 
     @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id ")
     List<Subject> findByCourse(@Param("id") Long id);
@@ -38,7 +38,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
 
     @Query("SELECT subject FROM Subject subject JOIN subject.pods pods JOIN pods.course c JOIN pods.teacher t" +
             " WHERE c.id = :idCourse AND t.id = :idTeacher")
-    List<Subject> findByTeacherAndCourse(@Param("idTeacher") Long idTeacher, @Param("idCourse") Long idCourse, Sort typeSort);
+    List<Subject> findByCourseAndTeacher(@Param("idCourse") Long idCourse, @Param("idTeacher") Long idTeacher, Sort typeSort);
 
     @Query("SELECT DISTINCT subject.title FROM Subject subject")
     List<String> getTitles();
@@ -66,6 +66,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
 
     @Query("SELECT SUM(subject.totalHours) as totalCharge, COUNT(subject.id) as numSubjects FROM Subject subject " +
             "JOIN subject.courseSubjects sc JOIN sc.course c WHERE c.id = :idCourse")
-    Object getSumTotalHoursAndSubjectsNumber(Long idCourse);
+    List<Integer[]> getSumTotalHoursAndSubjectsNumber(Long idCourse);
 
 }

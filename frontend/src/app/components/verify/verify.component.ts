@@ -10,7 +10,7 @@ import { LoginService } from '../../services/login.service';
   providers: [LoginService, LocalStorageService]
 })
 export class VerifyComponent implements OnInit {
-  public code: number;
+  public code: string;
 
   constructor(
     private route: ActivatedRoute,

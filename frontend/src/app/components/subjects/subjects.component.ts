@@ -87,7 +87,7 @@ export class SubjectsComponent implements OnInit {
       },
       error: (error) => {
         this.showLoaderCourse = false;
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
           this.isCourse = false;
           this.testEmitter.next(this.isCourse);
@@ -138,7 +138,7 @@ export class SubjectsComponent implements OnInit {
   }
  
   saveCSV(body: string, fileName:string) {
-    var blob = new Blob([body], {type: 'text/csv; charset=utf-8'});
+    let blob = new Blob([body], {type: 'text/csv; charset=utf-8'});
     saveAs(blob, fileName + '.csv');
   }
 }

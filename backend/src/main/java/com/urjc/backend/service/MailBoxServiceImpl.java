@@ -1,81 +1,77 @@
 package com.urjc.backend.service;
 
 import com.urjc.backend.model.Teacher;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 @Service
 public class MailBoxServiceImpl implements MailBoxService {
-
-    @Value("#{T(java.lang.Integer).parseInt('${mail.minimum.number.code}')}")
-    private int minCode;
-
-    @Value("#{T(java.lang.Integer).parseInt('${mail.maximum.number.code}')}")
-    private int maxCode;
 
     @Value("${spring.mail.username}")
     private String emailFrom;
 
-    private Map<Long, List<String>> codesMap = new HashMap<>();
+    private Map<String, List<String>> codesMap = new HashMap<>();
 
     @Autowired
     private JavaMailSender emailSender;
 
     @Autowired
-    private TemplateEngine templateEngine;
+    private ITemplateEngine templateEngine;
 
     @Override
-    public boolean sendEmail(Long randomCode, Teacher teacher) {
+    public void sendEmail(String code, Teacher teacher) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        try {
-            helper.setTo(teacher.getEmail());
-            helper.setFrom(emailFrom);
-            helper.setSubject("Acceso a la Gestión POD URJC");
+        helper.setTo(teacher.getEmail());
+        helper.setFrom(emailFrom);
+        helper.setSubject("Acceso a la Gestión POD URJC");
 
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("nameTeacher", teacher.getName());
-            variables.put("code", randomCode);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("nameTeacher", teacher.getName());
+        variables.put("code", code);
 
-            String templateGenerated = this.templateEngine.process("messageMail", new Context(Locale.getDefault(), variables));
+        String templateGenerated = this.templateEngine.process("messageMail", new Context(Locale.getDefault(), variables));
 
-            helper.setText(templateGenerated, true);
-            emailSender.send(message);
-            return true;
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return false;
-        }
+        helper.setText(templateGenerated, true);
+        emailSender.send(message);
     }
 
     @Override
-    public Long generateCodeEmail() {
+    public String generateCodeEmail() {
         removeAllExpiredCodes();
 
-        Long randomNumber = (long) Math.floor(minCode + (Math.random() * maxCode));
+        UUID uuid = UUID.randomUUID();
+        SecureRandom random = new SecureRandom();
+        String code = uuid + "-" + random.nextInt();
 
-        while (existsCode(randomNumber)) {
-            randomNumber = (long) Math.floor(minCode + (Math.random() * maxCode));
+        while (existsCode(code)) {
+            uuid = UUID.randomUUID();
+            random = new SecureRandom();
+
+            code = uuid + "-" + random;
         }
 
-        return Long.valueOf(randomNumber);
+        return code;
     }
 
-    public Boolean isCorrect(Long code, String ip) {
+    public boolean isCorrect(String code, String ip) {
         if (existsCode(code)) {
             List<String> values = this.codesMap.get(code);
 
@@ -84,7 +80,7 @@ public class MailBoxServiceImpl implements MailBoxService {
         return false;
     }
 
-    public void addCode(Long code, String email, String ip) {
+    public void addCode(String code, String email, String ip) {
         if (!existsCode(code)) {
             this.codesMap.put(code, new ArrayList<>());
             this.codesMap.get(code).add(email);
@@ -93,29 +89,29 @@ public class MailBoxServiceImpl implements MailBoxService {
         }
     }
 
-    public void removeCode(Long code) {
+    public void removeCode(String code) {
         this.codesMap.remove(code);
     }
 
-    public String getEmailByCode(Long code) {
+    public String getEmailByCode(String code) {
         return this.codesMap.get(code).get(0);
     }
 
-    private String getDateExpirationByCode(Long code) {
+    private String getDateExpirationByCode(String code) {
         return this.codesMap.get(code).get(2);
     }
 
     private void removeAllExpiredCodes() {
-        Iterator<Long> iterator = this.codesMap.keySet().iterator();
+        Iterator<String> iterator = this.codesMap.keySet().iterator();
         while (iterator.hasNext()) {
-            Long code = iterator.next();
+            String code = iterator.next();
             if (isDateExpired(getDateExpirationByCode(code))) {
                 removeCode(code);
             }
         }
     }
 
-    private Boolean existsCode(Long code) {
+    private boolean existsCode(String code) {
         return this.codesMap.get(code) != null;
     }
 
@@ -128,7 +124,6 @@ public class MailBoxServiceImpl implements MailBoxService {
             isExpired = date.before(currentDate);
 
         } catch (ParseException e) {
-            e.printStackTrace();
             isExpired = true;
         }
 

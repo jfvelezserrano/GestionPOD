@@ -20,9 +20,6 @@ class CourseSubjectKey implements Serializable {
     @Column(name = "course_id")
     Long courseId;
 
-
-    public CourseSubjectKey() {}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

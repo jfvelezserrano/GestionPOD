@@ -33,13 +33,13 @@ export class ErrorInterceptor implements HttpInterceptor {
                 if (error.error instanceof ErrorEvent) {
                     errorMessage = error.error.message;
                 } else {
-                    errorMessage = error.status + ";" + error.error.message;
+                    errorMessage = error.status + "\\" + error.error.message;
                     status = error.status;
                 }
 
-                if(!error.error || error.error.message == " " || (error.error.message != " " && status != 400 && status != 404 && status != 409 && status != 502)){
+                if(!error.error || error.error.redirect){
                   const navigationExtras: NavigationExtras = {
-                    state: {status: status, message: errorMessage}
+                    state: {status: status, message: error.error.message}
                   };
                 
                   this.router.navigate(['error'], navigationExtras);

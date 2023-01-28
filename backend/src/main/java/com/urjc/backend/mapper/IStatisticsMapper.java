@@ -2,12 +2,11 @@ package com.urjc.backend.mapper;
 
 import com.urjc.backend.dto.*;
 import com.urjc.backend.model.CourseTeacher;
-import com.urjc.backend.model.Subject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -17,7 +16,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsMatesDTO> listStatisticsMatesDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsMatesDTO> statisticsMatesDTOS = new ArrayList<>();
@@ -34,7 +33,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsGraphHoursDTO> listStatisticsGraphHoursDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsGraphHoursDTO> statisticsGraphHoursDTOS = new ArrayList<>();
@@ -51,7 +50,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsGraphPercentageDTO> listStatisticsGraphPercentageDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsGraphPercentageDTO> statisticsGraphPercentageDTOS = new ArrayList<>();
@@ -71,7 +70,7 @@ public interface IStatisticsMapper {
 
     default List<StatisticsTeacherDTO> listStatisticsTeachersDTO(List<Object[]> listItems){
         if ( listItems == null ) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<StatisticsTeacherDTO> statisticsTeacherDTOS = new ArrayList<>();
@@ -79,7 +78,7 @@ public interface IStatisticsMapper {
         for (Object[] item: listItems) {
             StatisticsTeacherDTO statisticsTeacherDTO;
             statisticsTeacherDTO = toStatisticsTeachersDTO(((String) item[0]), ((CourseTeacher) item[1]),
-                    ((Long) item[2]).intValue(), ((Long) item[3]).intValue(), ((Long) item[4]).intValue());
+                    ((Integer) item[2]), ((Integer) item[3]), ((Integer) item[4]));
 
             statisticsTeacherDTOS.add(statisticsTeacherDTO);
         }
@@ -92,13 +91,8 @@ public interface IStatisticsMapper {
             return null;
         }
 
-        StatisticsPersonalDTO statisticsPersonalDTO = new StatisticsPersonalDTO();
-
-        statisticsPersonalDTO.setPercentage(personalStatistics[0]);
-        statisticsPersonalDTO.setCharge(personalStatistics[1]);
-        statisticsPersonalDTO.setCorrectedHours(personalStatistics[2]);
-        statisticsPersonalDTO.setNumSubjects(personalStatistics[3]);
-        statisticsPersonalDTO.setNumConflicts(personalStatistics[4]);
+        StatisticsPersonalDTO statisticsPersonalDTO = new StatisticsPersonalDTO(personalStatistics[0], personalStatistics[1],
+                personalStatistics[2], personalStatistics[3], personalStatistics[4]);
 
         return statisticsPersonalDTO;
     }
@@ -108,17 +102,8 @@ public interface IStatisticsMapper {
             return null;
         }
 
-        StatisticsGlobalDTO statisticsGlobalDTO = new StatisticsGlobalDTO();
-
-        statisticsGlobalDTO.setPercentageCharge(globalStatistics[0]);
-        statisticsGlobalDTO.setTotalChosenHours(globalStatistics[1]);
-        statisticsGlobalDTO.setTotalCharge(globalStatistics[2]);
-        statisticsGlobalDTO.setPercentageForce(globalStatistics[3]);
-        statisticsGlobalDTO.setTotalCorrectHours(globalStatistics[4]);
-        statisticsGlobalDTO.setPercentageCompletations(globalStatistics[5]);
-        statisticsGlobalDTO.setNumCompletations(globalStatistics[6]);
-        statisticsGlobalDTO.setNumSubjects(globalStatistics[7]);
-        statisticsGlobalDTO.setNumConflicts(globalStatistics[8]);
+        StatisticsGlobalDTO statisticsGlobalDTO = new StatisticsGlobalDTO(globalStatistics[0], globalStatistics[1], globalStatistics[2],
+                globalStatistics[3], globalStatistics[4], globalStatistics[5], globalStatistics[6], globalStatistics[7], globalStatistics[8]);
 
 
         return statisticsGlobalDTO;

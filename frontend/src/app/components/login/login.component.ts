@@ -59,7 +59,6 @@ export class LoginComponent implements OnInit {
 
   onSubmit(form:NgForm) {
     this.error = '';
-    console.log(form.value);
     this.loginService.access(form.value).subscribe({
       next: (data) => {
         form.reset();
@@ -67,7 +66,7 @@ export class LoginComponent implements OnInit {
         this.checking = true;
       },
       error: (error) => {
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         this.error = splitted[1];
       }
     });

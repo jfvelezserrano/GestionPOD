@@ -16,8 +16,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Optional<Course> findFirst1ByOrderByCreationDateDesc();
 
-    Course findByName(String name);
+    Optional<Course> findByName(String name);
 
     @Query("SELECT c FROM Teacher teacher JOIN teacher.courseTeachers ct JOIN ct.course c WHERE teacher.id = :idTeacher ORDER BY c.creationDate DESC")
-    List<Course> findByTeacherOrderByCreationDateDesc(@Param("idTeacher") Long idTeacher);
+    List<Course> findCoursesTakenByTeacher(@Param("idTeacher") Long idTeacher);
 }

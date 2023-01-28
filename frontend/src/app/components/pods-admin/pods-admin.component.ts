@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from 'src/app/services/course.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Course } from 'src/app/models/course.model';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-pods-admin',
@@ -44,10 +45,10 @@ export class PodsAdminComponent implements OnInit {
     });
   }
 
-  onSubmit(form:any) {
+  onSubmit(form: NgForm) {
     this.showLoaderCreate = true;
 
-    var formData = new FormData();
+    let formData = new FormData();
 
     let fileUploadSubjects = this.fileSubjects.nativeElement;
     formData.append("fileSubjects", fileUploadSubjects.files[0]);
@@ -55,19 +56,20 @@ export class PodsAdminComponent implements OnInit {
     let fileUploadTeachers = this.fileTeachers.nativeElement;
     formData.append("fileTeachers", fileUploadTeachers.files[0]);
 
-    var objectNameCourse = {name: this.course.value};
+    let course = new Course(null, this.course.value);
 
-    formData.append("course", new Blob([JSON.stringify(objectNameCourse)], { type: 'application/json' }));
+    formData.append("course", new Blob([JSON.stringify(course)], { type: 'application/json' }));
 
     this.courseService.createPOD(formData).subscribe({
       next: (data) => {
         this.showLoaderCreate = false;
         this.error = '';
+        form.reset();
         this.getPods();
       },
       error: (error) => {
         this.showLoaderCreate = false;
-        var splitted = error.split(";"); 
+        let splitted = error.split("\\"); 
         if(splitted[0] == '400'){
           this.error = splitted[1];
         }
@@ -84,9 +86,6 @@ export class PodsAdminComponent implements OnInit {
     this.courseService.deletePod(id).subscribe({
       next: (_) => {
         this.getPods();
-      },
-      error: (error) => {
-        
       }
     });
   }
