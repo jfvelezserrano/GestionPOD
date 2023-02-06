@@ -73,13 +73,11 @@ export class AdminSubjectsComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.subjectsTeachersBase = data;
-        this.isCourse = true;
       },
       error: (error) => {
         this.showLoader = false;
         let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
-          this.isCourse = false;
         }
       }
     });

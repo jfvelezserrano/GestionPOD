@@ -37,8 +37,8 @@
         <div class="col-12 col-xl-6">
             <div class="row">
                 <div class="col-12 d-flex justify-content-between">
-                    <span *ngIf="!pods" class="my-auto">Mostrando 0 resultados</span>
-                    <span *ngIf="pods" class="my-auto">Mostrando {{pods.length}} resultados</span>
+                    <span *ngIf="!pods" class="my-auto d-none d-sm-block">Mostrando 0 resultados</span>
+                    <span *ngIf="pods" class="my-auto d-none d-sm-block">Mostrando {{pods.length}} resultados</span>
                     <div>
                         <span class="my-auto"><small>Ordenar por </small></span>
                         <select class="form-select-sm text-muted select-sort my-auto">
@@ -69,8 +69,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                        <div class="col-2 mt-5">
+                    <div class="row center-horizontally center-vertically" *ngIf="showLoader">
+                        <div class="col-2">
                         <app-loader></app-loader>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
             </div>
             <div class="modal-body">
               <div class="px-4 center">
-                <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+                <img src="assets/images/delete.webp" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
                 <h4 class="modal-title"><b>Eliminar {{pod.name}}</b></h4>
                 <span>¿Desea realmente eliminar el curso {{pod.name}} del Plan Docente Actual?</span>
               </div>

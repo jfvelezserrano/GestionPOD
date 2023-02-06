@@ -1,7 +1,7 @@
 <app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
 <main class="container-fluid main-content">
   <div class="row justify-content-center">
-    <div class="col-12 col-xl-3 mb-5 mb-xl-0">
+    <div class="col-12 col-lg-3 mb-5 mb-lg-0">
       <div class="sticky-top pt-1 mx-4 mx-xl-0 mb-0">
         <h3><b>Añadir Administrador</b></h3>
         <form #formAddAdmin="ngForm" ngNativeValidate (ngSubmit)="onSubmit(formAddAdmin)">
@@ -21,22 +21,22 @@
       </div>
     </div>
 
-    <div class="col-xl-1 mx-3 p-0 d-none d-xl-block" style="width: 1px;">
+    <div class="col-lg-1 mx-3 p-0 d-none d-lg-block" style="width: 1px;">
       <div class="vr min-vh-75 h-100"></div>
     </div>
 
-    <div class="col-12 col-xl-6">
+    <div class="col-12 col-lg-6">
       <div class="row">
         <div class="col-12 d-flex justify-content-between">
           <span *ngIf="!admins" class="my-auto">Mostrando 0 resultados</span>
           <span *ngIf="admins" class="my-auto">Mostrando {{admins.length}} resultados</span>
         </div>
         <div class="col-12 content-all-cards">
-          <div id="table-admins" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 m-0">
+          <div id="table-admins">
             <table class="table table-borderless">
               <tbody>
                 <tr *ngFor="let admin of admins">
-                  <td class="center"><i class="fa fa-user-shield admin-icon"></i> </td>
+                  <td class="center d-none d-sm-block"><i class="fa fa-user-shield admin-icon"></i> </td>
                   <td>
                     <span><b>{{admin.name}}</b></span><br>
                     <span><small class="text-muted">{{admin.email}}</small></span>
@@ -65,9 +65,9 @@
           </div>
           <div class="modal-body">
             <div class="px-4 center">
-              <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+              <img src="assets/images/delete.webp" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
               <h4 class="modal-title"><b>Eliminar Administrador</b><b id="teacherToDelete"></b></h4>
-              <span>¿Desea realmente eliminar al docente {{adminTeacher.name}} del Plan Docente Actual?</span>
+              <span>¿Desea realmente quitar al docente {{adminTeacher.name}} como administrador?</span>
             </div>
           </div>
           <div class="modal-footer mb-3">

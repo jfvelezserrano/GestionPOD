@@ -2,7 +2,8 @@
   <nav class="navbar navbar-expand-lg navbar-expand-lg navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href=# [routerLink]="['/subjects']">
-        <img src="assets/images/URJC-Logo.jpg" width="175" height="87" class="d-inline-block align-top" alt="Logo URJC">
+        <img src="assets/images/logo.webp" width="175" height="87" class="img-fluid align-top d-none d-md-block" alt="Logo URJC">
+        <img src="assets/images/logo.webp" width="175" height="87" style="width: 60px; height: 87px;  object-fit: cover; object-position: -20% 0;" class="align-top d-md-none" alt="Logo URJC">
       </a>
       <span class="navbar-brand h1 my-auto">Gestión POD</span>
     
@@ -10,7 +11,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarToggler">
-        <ul class="navbar-nav me-auto text-center mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto text-center">
           <li class="nav-item" [routerLinkActive]="['active']">
             <a class="nav-link" data-toggle="tab" href=# [routerLink]="['/subjects']">Asignaturas</a>
           </li>
@@ -36,9 +37,9 @@
             </ul>
           </li>
         </ul>
-        <div class="nav navbar-nav truncate" *ngIf="teacher">
-          <span class="nav-item align-self-center" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm white d-lg-none"></i>{{email}}</span> 
-          <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg red"></i><span class="d-xl-none d-lg-none">Cerrar sesión</span></a>
+        <div class="nav navbar-nav truncate-labels" *ngIf="teacher">
+          <span class="nav-item align-self-center nav-link" style="color: #8C8C8C;"><i class="fas fa-user-alt fa-sm white d-lg-none"></i>{{email}}</span> 
+          <a type="button" class="nav-item align-self-center nav-link" (click)="logout()"><i class="fas fa-sign-out-alt fa-lg red"></i><span class="d-lg-none">Cerrar sesión</span></a>
         </div>
       </div>
     </div>

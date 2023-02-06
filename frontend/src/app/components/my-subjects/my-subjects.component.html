@@ -12,8 +12,8 @@
             <div class="col-12 col-md-10 offset-md-1">
                 <div class="row">
                     <div class="col-12 d-flex justify-content-between my-auto">
-                        <span *ngIf="!mySubjects" class="my-auto">Mostrando 0 resultados</span>
-                        <span *ngIf="mySubjects" class="my-auto">Mostrando {{mySubjects.length}} resultados</span>
+                        <span *ngIf="!mySubjects" class="my-auto d-none d-sm-block">Mostrando 0 resultados</span>
+                        <span *ngIf="mySubjects" class="my-auto d-none d-sm-block">Mostrando {{mySubjects.length}} resultados</span>
                         <div>
                             <span class="my-auto me-2"><small>Ordenar por</small></span>
                             <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getMySubjects()">
@@ -39,13 +39,13 @@
                                                     <small *ngIf="0 > mySubject.leftHours" class="truncate label-subject-occupation-light-red">Colisión docente</small>
                                                     <small *ngIf="mySubject.leftHours > 0" class="truncate label-subject-occupation-blue">Libre</small> 
                                                 </span><br>
-                                                <small><i class="fa fa-clock fa-sm"></i>{{mySubject.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{mySubject.subject.campus}}</small>
+                                                <small><i class="fa fa-clock fa-sm me-1"></i>{{mySubject.subject.totalHours}}h<i class="fa fa-map-marker-alt fa-sm me-1 ms-2"></i>{{mySubject.subject.campus}}</small>
                                                 <p class="card-text" *ngIf="mySubject.subject.turn == 'T'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Tarde</small></p>
                                                 <p class="card-text" *ngIf="mySubject.subject.turn == 'M'"><small class="text-muted">Curso {{mySubject.subject.year}} | {{mySubject.subject.quarter}} | {{mySubject.subject.type}} | Turno Mañana</small></p>
-                                                <p class="label-subject-groups"><small><b>GRUPO</b></small><span class="badge">{{mySubject.subject.career}}</span></p>
-                                                <p class="label-subject-groups"><small><b>GRUPOS ASISTENCIA</b></small>
-                                                    <span  class="badge" *ngIf="mySubject.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                                    <span class="badge" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
+                                                <p class="label-subject-groups"><small class="me-2"><b>GRUPO</b></small><span class="badge">{{mySubject.subject.career}}</span></p>
+                                                <p class="label-subject-groups"><small class="me-2"><b>GRUPOS ASISTENCIA</b></small>
+                                                    <span  class="badge my-1" *ngIf="mySubject.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
+                                                    <span class="badge my-1" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
                                                 </p>
                                             </li>
                                             <li class="list-group-item" *ngIf="mySubject.joinedTeachers">
@@ -54,9 +54,10 @@
                                                 </p>
                                             </li>
                                             <li class="list-group-item">
-                                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                                                    <span class="text-muted" *ngIf="mySubject.subject.schedules.length == 0"><small class="truncate">No hay horarios</small></span>
-                                                    <span class="text-muted" *ngFor="let schedule of mySubject.subject.schedules"><small class="truncate"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
+                                                <p class="card-text">
+                                                    <i class="fa fa-calendar fa-sm"></i>
+                                                    <span class="text-muted" *ngIf="mySubject.subject.schedules.length == 0"><small class="truncate ms-1">No hay horarios</small></span>
+                                                    <span class="text-muted" *ngFor="let schedule of mySubject.subject.schedules"><small class="truncate ms-1"><b>{{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
                                                 </p>
                                             </li>
                                         </ul>
@@ -72,13 +73,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                            <div class="col-2 mt-5">
-                            <app-loader></app-loader>
-                            </div>
-                        </div>
-                        <div class="text-center no-data center-vertically" *ngIf="(!mySubjects && !showLoader) || (mySubjects && mySubjects.length == 0 && !showLoader)">
+                        <div class="text-center no-data center-vertically" *ngIf="!mySubjects || (mySubjects && mySubjects.length == 0)">
                             <p><i class="fa-solid fa-2xl fa-book-open"></i></p>
                             <p>No hay asignaturas aún</p>
                         </div>
@@ -99,77 +94,75 @@
             
             <form id="formChooseSubject" #formChooseSubject="ngForm" (ngSubmit)="onSubmit(formChooseSubject)">
                 <div class="modal-body">
-                    <div class="px-4">
-                        <h3 class="modal-title"><b>Añadir Asignatura</b></h3>
-                        <div class="container mb-3">
-                            <div class="row">
-                                <div class="col-10">
-                                    <input type="text" class="form-control h-100" list="titlesList" (change)="setUndefinedValue()" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" id="inputGrado" placeholder="Titulación"
-                                    #code="ngModel" name="code" [(ngModel)]="codeChosenSubject" [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
-                                    <datalist id="titlesList">
-                                        <option *ngFor="let item of subjects" [value]="item.code">{{item.name}}</option>
-                                    </datalist>
-                                </div>
-                                <div class="col-2">
-                                    <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || code.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
-                                </div>
+                    <h3 class="modal-title"><b>Añadir Asignatura</b></h3>
+                    <div class="container mb-3">
+                        <div class="row">
+                            <div class="col-10">
+                                <input type="text" class="form-control h-100" list="titlesList" (change)="setUndefinedValue()" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" id="inputGrado" placeholder="Titulación"
+                                #code="ngModel" name="code" [(ngModel)]="codeChosenSubject" [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
+                                <datalist id="titlesList">
+                                    <option *ngFor="let item of subjects" [value]="item.code">{{item.name}}</option>
+                                </datalist>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || code.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
                             </div>
                         </div>
-                        <div class="text-center mt-2" *ngIf="code.errors?.['pattern']">
-                            <span class="error-message-txt text-center" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                        </div>
-                        <div class="text-center mt-2" *ngIf="error != ''">
-                            <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
-                        </div>
-                        <div class="card" *ngIf="subjectTeacher && error == ''">
-                            <div class="row g-0">
-                                <div class="col">
-                                    <div class="card-body">
-                                        <ul class="list-group list-group-flush font-card">
-                                            <li class="list-group-item">
-                                                <h4 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h4>
-                                                <span class="card-subtitle text-muted m-0">{{subjectTeacher.subject.title}}</span><br>
-                                                <small><i class="fa fa-clock fa-sm"></i>{{subjectTeacher.subject.totalHours}}h <i class="fa fa-map-marker-alt fa-sm"></i>{{subjectTeacher.subject.campus}}</small>
-                                                <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
-                                                <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
-                                                <p class="label-subject-groups"><small><b>GRUPO</b></small><span class="badge">{{subjectTeacher.subject.career}}</span></p>
-                                                <p class="label-subject-groups"><small><b>GRUPOS ASISTENCIA</b></small>
-                                                    <span  class="badge" *ngIf="subjectTeacher.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                                    <span class="badge" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
-                                                </p>
-                                            </li>
-                                            <li class="list-group-item" *ngIf="subjectTeacher.joinedTeachers">
-                                                <p class="card-text">
-                                                    <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
-                                                </p>
-                                            </li>
-                                            <li class="list-group-item" *ngIf="!subjectTeacher.joinedTeachers || subjectTeacher.joinedTeachers.length == 0">
-                                                <p class="card-text">
-                                                    <span><small class="text-muted">No hay docentes asignados</small><br></span>
-                                                </p>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
-                                                    <span class="text-muted" *ngIf="subjectTeacher.subject.schedules.length == 0"><small class="truncate">No hay horarios</small></span>
-                                                    <span class="text-muted" *ngFor="let schedule of subjectTeacher.subject.schedules"><small class="truncate"><b> {{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
-                                                </p>
-                                            </li>
-                                        </ul>
-                                    </div>
+                    </div>
+                    <div class="text-center mt-2" *ngIf="code.errors?.['pattern']">
+                        <span class="error-message-txt text-center" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                    </div>
+                    <div class="text-center mt-2" *ngIf="error != ''">
+                        <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                    </div>
+                    <div class="card" *ngIf="subjectTeacher && error == ''">
+                        <div class="row g-0">
+                            <div class="col">
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush font-card">
+                                        <li class="list-group-item">
+                                            <h4 class="card-subtitle mb-2 text-muted"><b>{{subjectTeacher.subject.name}} ({{subjectTeacher.subject.code}})</b></h4>
+                                            <span class="card-subtitle text-muted m-0">{{subjectTeacher.subject.title}}</span><br>
+                                            <small><i class="fa fa-clock fa-sm me-1"></i>{{subjectTeacher.subject.totalHours}}h<i class="fa fa-map-marker-alt fa-sm me-1 ms-2"></i>{{subjectTeacher.subject.campus}}</small>
+                                            <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'T'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Tarde</small></p>
+                                            <p class="card-text" *ngIf="subjectTeacher.subject.turn == 'M'"><small class="text-muted">Curso {{subjectTeacher.subject.year}} | {{subjectTeacher.subject.quarter}} | {{subjectTeacher.subject.type}} | Turno Mañana</small></p>
+                                            <p class="label-subject-groups"><small class="me-2"><b>GRUPO</b></small><span class="badge">{{subjectTeacher.subject.career}}</span></p>
+                                            <p class="label-subject-groups"><small class="me-2"><b>GRUPOS ASISTENCIA</b></small>
+                                                <span  class="badge my-1" *ngIf="subjectTeacher.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
+                                                <span class="badge my-1" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
+                                            </p>
+                                        </li>
+                                        <li class="list-group-item" *ngIf="subjectTeacher.joinedTeachers">
+                                            <p class="card-text">
+                                                <span *ngFor="let teacher of subjectTeacher.joinedTeachers"><small class="text-muted"><b>{{teacher}}</b></small><br></span>
+                                            </p>
+                                        </li>
+                                        <li class="list-group-item" *ngIf="!subjectTeacher.joinedTeachers || subjectTeacher.joinedTeachers.length == 0">
+                                            <p class="card-text">
+                                                <span><small class="text-muted">No hay docentes asignados</small><br></span>
+                                            </p>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <p class="card-text"><i class="fa fa-calendar fa-sm"></i>
+                                                <span class="text-muted" *ngIf="subjectTeacher.subject.schedules.length == 0"><small class="truncate ms-1">No hay horarios</small></span>
+                                                <span class="text-muted" *ngFor="let schedule of subjectTeacher.subject.schedules"><small class="truncate ms-1"><b>{{schedule.dayWeek}}</b> - ({{schedule.startTime}} a {{schedule.endTime}})</small></span>
+                                            </p>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-4" *ngIf="subjectTeacher && error == ''">
-                            <div class="div-input d-flex justify-content-center">
-                                <label for="addedHours"><b>Horas deseadas</b></label>
-                                <input type="number" class="form-control p-2" #hours="ngModel" min="0" max="400" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
-                                [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
-                                <span> h</span>
-                            </div>
-                            <div class="text-center mt-2">
-                                <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
-                                <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
-                            </div>
+                    </div>
+                    <div class="mt-4" *ngIf="subjectTeacher && error == ''">
+                        <div class="div-input d-flex justify-content-center">
+                            <label for="addedHours"><b>Horas deseadas</b></label>
+                            <input type="number" class="form-control p-2" #hours="ngModel" min="1" max="400" name="hours" [(ngModel)]="chosenHours" required id="addedHours"
+                            [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''">
+                            <span class="ms-1">h</span>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 1h</span>
+                            <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
                         </div>
                     </div>
                 </div>  
@@ -215,7 +208,7 @@
             </div>
             <div class="modal-body">
               <div class="px-4 center">
-                <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+                <img src="assets/images/delete.webp" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
                 <h4 class="modal-title"><b>Eliminar {{subjectToDelete.subject.name}}</b></h4>
                 <span>¿Desea realmente quitar {{subjectToDelete.subject.name}} de sus asignaturas?</span>
               </div>
@@ -241,7 +234,7 @@
                             <li class="list-group-item">
                                 <small class="text-muted"><b>DOCENTES</b></small>
                                 <p class="card-text">
-                                    <span *ngFor="let subject of subjectToEdit.joinedTeachers" class="truncate">
+                                    <span *ngFor="let subject of subjectToEdit.joinedTeachers">
                                         <small class="text-muted"><b>{{subject}}</b></small><br>
                                     </span>
                                 </p>
@@ -251,16 +244,16 @@
                         <div class="mt-2 div-input d-flex justify-content-center ">
                             <label for="hoursSubject"><b>Horas asignatura</b></label>
                             <input type="number" id="hoursSubject" disabled placeholder="{{subjectToEdit.subject.totalHours}}" class="text-muted p-2"/>
-                            <span> h</span>
+                            <span class="ms-1">h</span>
                         </div>
                         <div class="mt-2 div-input d-flex justify-content-center">
                             <label for="inputHours"><b>Horas escogidas</b></label>
-                            <input class="form-control p-2" type="number" required min="0" max="400" #hours="ngModel" name="hours" ngModel
+                            <input class="form-control p-2" type="number" required min="1" max="400" #hours="ngModel" name="hours" ngModel
                             id="inputHours" [ngClass]="!hours.valid && hours.touched ? 'border-error' : ''"/>
-                            <span> h</span>
+                            <span class="ms-1">h</span>
                         </div>
                         <div class="mt-2 div-input d-flex justify-content-center" *ngIf="hours.errors?.['max'] || hours.errors?.['min']">
-                            <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
+                            <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 1h</span>
                             <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El valor máximo es de 400h</span>
                         </div>
                     </div>
@@ -278,7 +271,7 @@
         <h4 class="offcanvas-title">Historial</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body px-4">
         <h5><b>{{subjectTeacher.subject.name}}</b></h5>
         <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
             <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
@@ -293,14 +286,14 @@
                         <div class="col-8">
                             <span class="course-history blue">{{item.key}}</span><br>
                             <div *ngFor="let teacherName of getValues(item.value)">
-                                <span class="teacher-history truncate">{{teacherName}}</span><br>
+                                <span class="teacher-history">{{teacherName}}</span><br>
                             </div>
                         </div>
                     </div>
                 </div>
             </li>
         </ul>
-        <p *ngIf="(records | json) == '{}'" class="text-muted text-center mt-4">No se encuentra en ningún curso</p>
+        <p *ngIf="(records | json) == '{}'" class="text-muted text-center mt-4">No hay docentes asignados en ningún curso</p>
         <div class="d-flex justify-content-center pt-3">
             <button class="btn mx-auto btn-global theme-blue" (click)="offcanvas.dismiss()">Cerrar</button>
         </div>

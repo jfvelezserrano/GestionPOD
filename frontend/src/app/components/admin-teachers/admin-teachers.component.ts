@@ -26,7 +26,6 @@ export class AdminTeachersComponent implements OnInit {
   public page: number;
   public typeSort: string;
   public isMore: boolean;
-  public isCourse: boolean;
   public error: string;
   public mainAdmin: string = environment.main_admin;
   public showLoader:boolean = false;
@@ -63,13 +62,11 @@ export class AdminTeachersComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.teachers = data;
-        this.isCourse = true;
       },
       error: (error) => {
         this.showLoader = false;
         let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
-          this.isCourse = false;
         }
       }
     });

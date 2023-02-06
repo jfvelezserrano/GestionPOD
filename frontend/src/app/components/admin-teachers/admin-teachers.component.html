@@ -1,21 +1,16 @@
 <app-navbar [currentSection]="currentSection" [currentSubsection]="currentSubsection"></app-navbar>
 <main class="container-fluid main-content">
-  <div class="text-center no-data center-vertically" *ngIf="!isCourse && !showLoader">
-      <p><i class="fa-solid fa-2xl fa-book"></i></p>
-      <p>No hay ningún curso aún</p>
-  </div>
-
   <div class="center-vertically center-horizontally" *ngIf="showLoader">
     <app-loader></app-loader>
   </div>
 
-  <div class="row" *ngIf="isCourse && !showLoader">
+  <div class="row" *ngIf="!showLoader">
       <div class="col">  
         <div class="col-12 col-md-10 offset-md-1">
           <div class="row">
             <div class="col-12 d-flex justify-content-between">
-              <span *ngIf="!teachers" class="my-auto">Mostrando 0 resultados</span>
-              <span *ngIf="teachers" class="my-auto">Mostrando {{teachers.length}} resultados</span>
+              <span *ngIf="!teachers" class="my-auto d-none d-sm-block">Mostrando 0 resultados</span>
+              <span *ngIf="teachers" class="my-auto d-none d-sm-block">Mostrando {{teachers.length}} resultados</span>
               <div>
                 <span class="my-auto me-2"><small>Ordenar por</small></span>
                 <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
@@ -47,12 +42,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                <div class="col-2 mt-5">
-                  <app-loader></app-loader>
-                </div>
-              </div>
-              <div class="text-center no-data center-vertically" *ngIf="teachers && teachers.length == 0 && !showLoader">
+              <div class="text-center no-data center-vertically" *ngIf="teachers && teachers.length == 0">
                 <p><i class="fa-solid fa-2xl fa-user"></i></p>
                 <p>No hay docentes aún</p>
               </div>
@@ -89,8 +79,8 @@
                     <fieldset>
                       <legend class="border-top py-2 my-2 ml-3">Horas</legend>
                       <div class="form-group col-12">
-                        <input type="number" class="form-control" required placeholder="Número de horas" min="0" max="400" #hours="ngModel" name="hours" ngModel>
-                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 0h</span>
+                        <input type="number" class="form-control" required placeholder="Número de horas" min="1" max="400" #hours="ngModel" name="hours" ngModel>
+                        <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['min']">El número mínimo es de 1h</span>
                         <span class="error-message-txt m-0" role="alert" *ngIf="hours.errors?.['max']">El número máximo es de 400h</span>
                       </div>
                     </fieldset>
@@ -111,7 +101,7 @@
           </div>
           <div class="modal-body">
             <div class="px-4 center">
-              <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+              <img src="assets/images/delete.webp" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
               <h4 class="modal-title"><b>Eliminar a {{teacher.name}}</b><b id="teacherToDelete"></b></h4>
               <span>¿Desea realmente eliminar al docente {{teacher.name}} del Plan Docente Actual?</span>
             </div>

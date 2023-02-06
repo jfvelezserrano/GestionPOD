@@ -11,9 +11,7 @@ import com.urjc.backend.service.MailBoxService;
 import com.urjc.backend.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -73,7 +71,6 @@ public class LoginRestController {
 
     @GetMapping(value = "/verify/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> verify(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
-
        if(mailBoxService.isCorrect(code, request.getRemoteAddr())){
             String email = mailBoxService.getEmailByCode(code);
 

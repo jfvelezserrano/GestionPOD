@@ -26,6 +26,9 @@ public class MailBoxServiceImpl implements MailBoxService {
     @Value("${spring.mail.username}")
     private String emailFrom;
 
+    @Value("${url.application.mail}")
+    private String url;
+
     private Map<String, List<String>> codesMap = new HashMap<>();
 
     @Autowired
@@ -45,6 +48,7 @@ public class MailBoxServiceImpl implements MailBoxService {
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("nameTeacher", teacher.getName());
+        variables.put("url", url);
         variables.put("code", code);
 
         String templateGenerated = this.templateEngine.process("messageMail", new Context(Locale.getDefault(), variables));

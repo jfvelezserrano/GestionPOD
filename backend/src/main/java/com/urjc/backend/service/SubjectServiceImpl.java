@@ -129,7 +129,7 @@ public class SubjectServiceImpl implements SubjectService{
 
             for (Subject subject : mySubjects) {
                 for (Schedule schedule : subject.getSchedules()) {
-                    Object[] item = {subject.getName(), schedule, subject.getQuarter()};
+                    Object[] item = {subject.getCode(), schedule, subject.getQuarter(), subject.getName()};
                     schedulesFromAllMySubjects.add(item);
                 }
             }
@@ -170,10 +170,10 @@ public class SubjectServiceImpl implements SubjectService{
         for (Schedule schedule: subject.getSchedules()) {
             for (Object[] item: allSchedulesFromMySubjects) {
                 Schedule scheduleToCompare = ((Schedule) item[1]);
-                if(!subject.getName().equals(item[0]) && (subject.getQuarter().equals(item[2]))
+                if(!subject.getCode().equals(item[0]) && (subject.getQuarter().equals(item[2]))
                         && (schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
                     String result = compareBothSchedules(schedule, scheduleToCompare);
-                    if(!result.isEmpty()) { resultConflicts.add(item[0] + " - " + result); }
+                    if(!result.isEmpty()) { resultConflicts.add(item[3] + " - " + result); }
                 }
             }
         }

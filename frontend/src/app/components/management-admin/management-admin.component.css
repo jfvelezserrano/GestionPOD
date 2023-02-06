@@ -1,6 +1,9 @@
 #table-admins{
+    position: relative;
+    padding: 30px;
     background: var(--white);
     border-radius: 15px;
+    overflow: auto;
 }
 
 
@@ -11,4 +14,10 @@
     padding:18px;
     border-radius: 5px;
     vertical-align: middle;
+}
+
+@media (max-width:1200px){
+    .sticky-top{
+        position: static !important;
+    }
 }

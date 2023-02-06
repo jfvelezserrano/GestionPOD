@@ -79,11 +79,12 @@ public class TeacherRestController {
         if (role == null && course.isPresent()) {
             List<Teacher> teachers = teacherService.findAllByCourse(course.get().getId(), Pageable.unpaged());
             return new ResponseEntity<>(teacherMapper.map(teachers), HttpStatus.OK);
-        } else if (role != null){
-            List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
-            return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
+        } else if(role == null && course.isEmpty()){
+            role = "ADMIN";
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
+
+        List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
+        return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
     }
 
     @PostMapping("/join/{idSubject}")

@@ -65,26 +65,26 @@ public class ErrorsHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Object> handleBadRequest(DataIntegrityViolationException e) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), true);
+    public ResponseEntity<Object> handleBadRequest() {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,"Se ha producido un error con los datos", true);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, e.getMessage(), true);
+    public ResponseEntity<Object> handleAccessDeniedException() {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, "Operación denegada", true);
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({InvalidDataAccessApiUsageException.class, DataAccessException.class})
-    protected ResponseEntity<Object> handleConflict(RuntimeException e) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, e.getMessage(), true);
+    protected ResponseEntity<Object> handleConflict() {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, "Operación denegada por uso incorrecto", true);
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({RuntimeException.class, Exception.class})
-    public ResponseEntity<ErrorResponse> handleExceptions(Exception e){
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), true);
+    public ResponseEntity<ErrorResponse> handleExceptions(){
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Se ha producido un error", true);
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

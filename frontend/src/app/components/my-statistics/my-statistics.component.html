@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    <section class="container-fluid mt-4 px-0 px-xl-5" *ngIf="isCourse">
+    <section class="container-fluid mt-4 px-0 px-xl-5" *ngIf="isCourse && !showLoaderCourse">
         <div class="row gx-4 gy-4 justify-content-center px-0 px-xl-5">
             <div class="row gy-4">
                 <div class="col-12 col-xl-7">
@@ -135,9 +135,9 @@
                         <form #formEditEditableData="ngForm" (ngSubmit)="onSubmit(formEditEditableData)">
                             <div class="form-group">
                                 <label for="inputHoursEditableData">Horas Totales</label>
-                                <input type="number" #correctedHours="ngModel" name="correctedHours" min="0" max="400" [(ngModel)]="editableData.correctedHours" id="inputHoursEditableData" 
+                                <input type="number" #correctedHours="ngModel" name="correctedHours" min="1" max="400" [(ngModel)]="editableData.correctedHours" id="inputHoursEditableData" 
                                 class="ml-5 form-control" placeholder="Horas totales" [value]="editableData.correctedHours" required [ngClass]="!correctedHours.valid && correctedHours.touched ? 'border-error' : ''">
-                                <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['min']">El número mínimo es de 0h</span>
+                                <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['min']">El número mínimo es de 1h</span>
                                 <span class="error-message-txt m-0" role="alert" *ngIf="correctedHours.errors?.['max']">El número máximo es de 400h</span>
                             </div>
                             <div class="form-group mt-2">

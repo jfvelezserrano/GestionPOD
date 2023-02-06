@@ -20,7 +20,7 @@ public class TeacherJoinCourseDTO {
     private String email;
 
     @NotNull(message = "Se deben completar la fuerza del docente")
-    @Min(value = 0, message = "El número mínimo es de {value}h")
+    @Min(value = 1, message = "El número mínimo es de {value}h")
     @Max(value = 400, message = "El número máximo es de {value}h")
     private Integer hours;
 }

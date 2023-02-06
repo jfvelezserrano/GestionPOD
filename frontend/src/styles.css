@@ -24,7 +24,7 @@
 }
 
 #current-section{
-    background-image: url("assets/images/urjc-secciones.jpg");
+    background-image: url("assets/images/sections.webp");
     background-position: center;
     background-size: cover;
     color: var(--white);
@@ -210,6 +210,7 @@ html, body {
     font-family: 'Oswald', sans-serif !important;
     height: 100%;
     width: 100%;
+    margin: 0;
     color: var(--font);
     background-color: var(--background);
 }
@@ -231,10 +232,6 @@ html, body {
     padding-top: 0;
     margin-bottom: 20px;
     font-size: x-large !important;
-}
-
-span{
-    margin: 4px;
 }
 
 .content-all-cards{
@@ -324,15 +321,15 @@ span{
     background-color: var(--lighter-red);
 }
 
-.truncate{
+.truncate-labels{
     white-space: nowrap !important;
   	overflow: hidden !important;
   	text-overflow: ellipsis !important;
 }
 
-.sticky{
-    position: sticky;
-    top: 0;
+.truncate{
+    display: inline-block;
+    width: max-content;
 }
 
 .label-subject-groups span{
@@ -464,6 +461,7 @@ label span{
 
 .center-vertically{
     margin-top: 200px; 
+    margin-bottom: 200px; 
 }
 
 .course-history{
@@ -496,3 +494,9 @@ label span{
 .border-error{
     border: 0.11em solid var(--light-red);
 }
+
+@media (max-width: 575px){  
+    .btn-global{
+      width: 100% !important;
+    }
+  }

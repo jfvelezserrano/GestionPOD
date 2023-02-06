@@ -156,22 +156,6 @@ public class TeacherRestControllerTest {
     }
 
     @Test
-    void Should_ThrowException_When_FindAllByRoleAndCourse() {
-        when(courseService.findLastCourse()).thenReturn(Optional.empty());
-
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
-            teacherRestController.findAllByRole(null);
-        });
-
-        assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),
-                () -> assertEquals(NO_COURSE_YET, exception.getMessage()));
-
-        verify(courseService).findLastCourse();
-        verify(teacherService, never()).findAllByCourse(anyLong(), any());
-        verify(teacherService, never()).findAllByRole(anyString());
-    }
-
-    @Test
     void Should_JoinToASubject_When_RequestJoinSubject() {
         Optional<Subject> subject = Data.createSubject("247857274", "Estadistica");
         Optional<Course> course = Data.createCourse("2022-2023");

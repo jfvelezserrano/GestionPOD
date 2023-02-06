@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 public class TeacherJoinSubjectDTO {
 
     @NotNull(message = "Se deben completar las horas elegidas por el docente")
-    @Min(value = 0, message = "El número mínimo de horas es de {value}")
+    @Min(value = 1, message = "El número mínimo de horas es de {value}")
     @Max(value = 400, message = "El número máximo de horas es de {value}")
     private Integer hours;
 }
