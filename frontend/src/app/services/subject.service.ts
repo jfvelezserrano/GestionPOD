@@ -43,6 +43,12 @@ export class SubjectService {
 		) as Observable<string[]>;
   }
 
+  getSubjectsCurrentCourse(): Observable<string[]>{
+    return this.http.get<string[]>(environment.urlApi + "/subjects/currentSubjects", this.httpOptionsCredentials)
+    .pipe(catchError(error => this.handleError(error))
+		) as Observable<string[]>;
+  }
+
   getCampus(): Observable<string[]>{
     return this.http.get<string[]>(environment.urlApi + "/subjects/campus", this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))
@@ -78,12 +84,13 @@ export class SubjectService {
 		) as Observable<Map<String, String[]>>;
   }
 
-  search(typeSort:string, occupation?:string, quarter?:string, turn?:string, title?:string, emailTeacher?:string): Observable<SubjectTeacherStatus[]>{
+  search(typeSort:string, occupation?:string, quarter?:string, turn?:string, title?:string, subjectName?:string, emailTeacher?:string): Observable<SubjectTeacherStatus[]>{
     let params:any = {};
     if (occupation) params.occupation = occupation;
     if (quarter) params.quarter = quarter;
     if (turn) params.turn = turn;
     if (title) params.title = title;
+    if (subjectName) params.subject = subjectName;
     if (emailTeacher) params.teacher = emailTeacher;
     params.typeSort = typeSort;
 

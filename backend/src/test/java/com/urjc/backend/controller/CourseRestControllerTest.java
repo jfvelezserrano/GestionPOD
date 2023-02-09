@@ -637,7 +637,7 @@ public class CourseRestControllerTest {
     void Should_CreateBodyCSV_When_ExportCSV() throws IOException {
         Optional<Course> course = Data.createCourse("2022-2023");
         when(courseService.findLastCourse()).thenReturn(course);
-        when(subjectService.searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
+        when(subjectService.searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
         when(courseService.createContentForCSV(any())).thenReturn(Data.createBodyForCSV());
         when(courseService.writePODInCSV(any())).thenReturn(DataControllers.createByteArrayInputStream(Data.createBodyForCSV()));
 
@@ -648,7 +648,7 @@ public class CourseRestControllerTest {
                 () -> assertEquals("POD_2022-2023", result.getHeaders().getContentDisposition().toString()));
 
         verify(courseService).findLastCourse();
-        verify(subjectService).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any());
+        verify(subjectService).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), anyString(), any());
         verify(courseService).createContentForCSV(any());
     }
 
@@ -656,7 +656,7 @@ public class CourseRestControllerTest {
     void Should_ThrowExceptionNotPossibleToDownload_When_ExportCSV() throws IOException {
         Optional<Course> course = Data.createCourse("2022-2023");
         when(courseService.findLastCourse()).thenReturn(course);
-        when(subjectService.searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
+        when(subjectService.searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
         when(courseService.createContentForCSV(any())).thenReturn(Data.createBodyForCSV());
         when(courseService.writePODInCSV(any())).thenReturn(null);
 
@@ -668,7 +668,7 @@ public class CourseRestControllerTest {
                 () -> assertEquals("No se ha podido descargar el POD actual", exception.getMessage()));
 
         verify(courseService).findLastCourse();
-        verify(subjectService).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any());
+        verify(subjectService).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), anyString(), any());
         verify(courseService).createContentForCSV(any());
     }
 
@@ -684,7 +684,7 @@ public class CourseRestControllerTest {
                 () -> assertEquals(NO_COURSE_YET, exception.getMessage()));
 
         verify(courseService).findLastCourse();
-        verify(subjectService, never()).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any());
+        verify(subjectService, never()).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), anyString(), any());
         verify(courseService, never()).createContentForCSV(any());
     }
 }

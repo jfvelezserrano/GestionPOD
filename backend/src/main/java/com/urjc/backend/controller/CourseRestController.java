@@ -270,7 +270,7 @@ public class CourseRestController {
         if(course.isPresent()) {
             Sort sort = Sort.unsorted();
             List<Object[]> subjectsAndTeachersCurrentCourse =
-                    subjectService.searchByCourse(course.get(), "", "", null, "", "", sort);
+                    subjectService.searchByCourse(course.get(), "", "", null, "", "", "", sort);
 
             List<String[]> body = courseService.createContentForCSV(subjectsAndTeachersCurrentCourse);
 

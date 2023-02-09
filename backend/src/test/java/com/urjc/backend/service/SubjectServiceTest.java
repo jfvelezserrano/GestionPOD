@@ -97,10 +97,10 @@ public class SubjectServiceTest {
 
     @Test
     void Should_ReturnList_When_SearchSubjectsBySpecificValues() {
-        when(subjectRepository.search(anyLong(), anyString(), any(), anyString(), anyString(), any())).thenReturn(Data.createListSubject());
+        when(subjectRepository.search(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), any())).thenReturn(Data.createListSubject());
         List<Object[]> result = subjectService.searchByCourse(Data.createCourse("2022-2023").get(),
                 "Libre", "Segundo Cuatrimestre", 'M', "(2034) Grado Ingeniería Software (M)",
-                "ejemplo@ejemplo.com", Sort.unsorted());
+                "ejemplo@ejemplo.com", "Estadística", Sort.unsorted());
 
         assertAll(() -> assertEquals(2, result.size()),
                 () -> assertTrue(result.stream().anyMatch(s -> ((Subject) s[0]).getName().equals("Estadística"))),
@@ -109,18 +109,18 @@ public class SubjectServiceTest {
                 () -> assertTrue(result.stream().anyMatch(s -> ((Subject) s[0]).getTitle().equals("(2034) Grado Ingeniería Software (M)"))),
                 () -> assertTrue(result.stream().anyMatch(s -> ((Integer) s[2]) < ((Subject) s[0]).getTotalHours())));
 
-        verify(subjectRepository).search(anyLong(), anyString(), any(), anyString(), anyString(), any());
+        verify(subjectRepository).search(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), any());
     }
 
     @Test
     void Should_ReturnEmptyList_When_SearchSubjectsByNonCommonValues() {
-        when(subjectRepository.search(anyLong(), anyString(), any(), anyString(), anyString(), any())).thenReturn(Collections.emptyList());
+        when(subjectRepository.search(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), any())).thenReturn(Collections.emptyList());
         List<Object[]> result = subjectService.searchByCourse(Data.createCourse("2022-2023").get(),
                 "Libre", "Segundo Cuatrimestre", 'T', "(2034) Grado Ingeniería Software (M)",
-                "ejemplo@ejemplo.com", Sort.unsorted());
+                "ejemplo@ejemplo.com", "Estadística", Sort.unsorted());
 
         assertAll(() -> assertEquals(0, result.size()));
-        verify(subjectRepository).search(anyLong(), anyString(), any(), anyString(), anyString(), any());
+        verify(subjectRepository).search(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), any());
     }
 
     @Test
@@ -349,6 +349,17 @@ public class SubjectServiceTest {
                 () -> result.stream().anyMatch(s -> s.equals("(2034) Grado Ingeniería Software (M)")),
                 () -> result.stream().anyMatch(s -> s.equals("(2033) Grado Ingeniería Informática (M)")));
         verify(subjectRepository).getTitlesByCourse(anyLong());
+    }
+
+    @Test
+    void Should_ReturnSubjectsName_When_RequestGetSubjectsByCourse() {
+        Optional<Course> course = Data.createCourse("2022-2023");
+        when(subjectRepository.getSubjectsByCourse(anyLong())).thenReturn(Data.createListStrings("Estadística", "Multimedia"));
+        List<String> result = subjectService.getSubjectsByCourse(course.get().getId());
+        assertAll(() -> assertEquals(2, result.size()),
+                () -> result.stream().anyMatch(s -> s.equals("Estadística")),
+                () -> result.stream().anyMatch(s -> s.equals("Multimedia")));
+        verify(subjectRepository).getSubjectsByCourse(anyLong());
     }
 
     @Test

@@ -58,6 +58,16 @@ public class SubjectRestController {
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 
+    @GetMapping(value = "/currentSubjects", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getSubjectsCurrentCourse() {
+
+        Optional<Course> course = courseService.findLastCourse();
+        if(course.isPresent()){
+            return new ResponseEntity<>(subjectService.getSubjectsByCourse(course.get().getId()), HttpStatus.OK);
+        }
+        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
+    }
+
     @GetMapping(value = "/campus", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getCampus(){
         return new ResponseEntity<>(subjectService.getCampus(), HttpStatus.OK);
@@ -114,14 +124,15 @@ public class SubjectRestController {
                                     @RequestParam(value="turn", required = false, defaultValue = "") Character turn,
                                     @RequestParam(value="title", required = false, defaultValue = "") String title,
                                     @RequestParam(value="teacher", required = false, defaultValue = "") String teacher,
+                                    @RequestParam(value="subject", required = false, defaultValue = "") String subject,
                                     @RequestParam(defaultValue = "name") String typeSort) {
 
         Optional<Course> course = courseService.findLastCourse();
         if(course.isPresent()) {
             Sort sort = Sort.by(typeSort).ascending();
-            List<Object[]> list = subjectService.searchByCourse(course.get(), occupation, quarter, turn, title, teacher, sort);
+            List<Object[]> subjects = subjectService.searchByCourse(course.get(), occupation, quarter, turn, title, teacher, subject, sort);
 
-            List<SubjectTeacherDTO> subjectTeacherDTOS = subjectMapper.listSubjectTeacherDTOs(list);
+            List<SubjectTeacherDTO> subjectTeacherDTOS = subjectMapper.listSubjectTeacherDTOs(subjects);
             return new ResponseEntity<>(subjectTeacherDTOS, HttpStatus.OK);
         }
         throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);

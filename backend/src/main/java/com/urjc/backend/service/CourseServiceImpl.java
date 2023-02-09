@@ -80,8 +80,8 @@ public class CourseServiceImpl implements CourseService{
         totalCharge = totalCharge != null ? totalCharge : 0;
         totalChosenHours = totalChosenHours != null ? totalChosenHours : 0;
 
-        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", null, "", "", Sort.unsorted()).size();
-        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", null, "", "", Sort.unsorted()).size();
+        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", null, "", "", "", Sort.unsorted()).size();
+        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", null, "", "", "", Sort.unsorted()).size();
 
         return new Integer[]{ (totalCharge == 0 ? 0 : totalChosenHours * 100/totalCharge), totalChosenHours,
                 totalCharge, (totalCorrectHours == 0 ? 0 : totalChosenHours * 100/totalCorrectHours), totalCorrectHours,

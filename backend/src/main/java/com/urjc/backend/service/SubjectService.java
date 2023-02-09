@@ -20,7 +20,8 @@ public interface SubjectService {
 
     List<Object[]> findByCoursePage(Course course, Pageable pageable);
 
-    List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title, String emailTeacher, Sort sort);
+    List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title,
+                                  String emailTeacher, String subjectName, Sort sort);
 
     List<Subject> findByCourse(Long id);
 
@@ -43,6 +44,8 @@ public interface SubjectService {
     List<String> getTitles();
 
     List<String> getTitlesByCourse(Long idCourse);
+
+    List<String> getSubjectsByCourse(Long idCourse);
 
     List<String> getCampus();
 

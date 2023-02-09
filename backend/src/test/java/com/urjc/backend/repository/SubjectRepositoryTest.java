@@ -38,7 +38,7 @@ public class SubjectRepositoryTest {
 
     @Test
     void Should_ReturnSubjects_When_SearchSubjectsBySpecificValues() {
-        List<Subject> subjects = subjectRepository.search(1l, "Segundo Cuatrimestre", 'T', null, null, Sort.unsorted());
+        List<Subject> subjects = subjectRepository.search(1l, "Segundo Cuatrimestre", 'T', null, null, null, Sort.unsorted());
         assertAll(() -> assertEquals(1, subjects.size()),
                 () -> assertEquals(5l, subjects.get(0).getId()));
     }
@@ -70,6 +70,22 @@ public class SubjectRepositoryTest {
         assertAll(() -> assertEquals(2, titles.size()),
                 () -> assertTrue(titles.stream().anyMatch(t -> t.equals("(2034) Grado Ingeniería Software (M)"))),
                 () -> assertTrue(titles.stream().anyMatch(t -> t.equals("(2034) Grado Ingeniería Informática (T)"))));
+    }
+
+    @Test
+    void Should_ReturnTitles_When_RequestAllTitlesByCourse() {
+        List<String> titles = subjectRepository.getTitlesByCourse(1l);
+        assertAll(() -> assertEquals(2, titles.size()),
+                () -> assertTrue(titles.stream().anyMatch(t -> t.equals("(2034) Grado Ingeniería Software (M)"))),
+                () -> assertTrue(titles.stream().anyMatch(t -> t.equals("(2034) Grado Ingeniería Informática (T)"))));
+    }
+
+    @Test
+    void Should_ReturnSubjectsName_When_RequestAllSubjectsByCourse() {
+        List<String> subjectsName = subjectRepository.getSubjectsByCourse(1l);
+        assertAll(() -> assertEquals(2, subjectsName.size()),
+                () -> assertTrue(subjectsName.stream().anyMatch(s -> s.equals("Asignatura 1"))),
+                () -> assertTrue(subjectsName.stream().anyMatch(s -> s.equals("Asignatura 2"))));
     }
 
     @Test

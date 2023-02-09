@@ -56,15 +56,13 @@
                     </div>
 
                     <div class="border-top py-2 my-2 ml-3">
-                        <div class="form-group">
-                            <label for="inputTitle" class="form-label section-title">Titulación</label>
-                                <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #title="ngModel"
-                                name="title" [(ngModel)]="titleChosen" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
-                                <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                            <datalist id="titleList">
-                                <option *ngFor="let itemTitle of titles" [ngValue]="itemTitle">{{itemTitle}}</option>
-                            </datalist>
-                        </div>
+                        <label for="inputTitle" class="form-label section-title">Titulación</label>
+                            <input type="text" class="form-control" list="titleList" id="inputTitle" placeholder="Titulación" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #title="ngModel"
+                            name="title" [(ngModel)]="titleChosen" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
+                            <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        <datalist id="titleList">
+                            <option *ngFor="let itemTitle of titles" [ngValue]="itemTitle">{{itemTitle}}</option>
+                        </datalist>
                     </div>
 
                     <div class="border-top py-2 my-2 ml-3">
@@ -91,8 +89,18 @@
                         </datalist>
                     </div>
 
+                    <div class="border-top py-2 my-2 ml-3">
+                        <label for="inputSubject" class="form-label section-title">Asignatura</label>
+                            <input type="text" class="form-control" list="subjectList" id="inputSubject" placeholder="Asignatura" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #subject="ngModel"
+                            name="subject" [(ngModel)]="subjectChosen" [ngClass]="!subject.valid && subject.touched ? 'border-error' : ''">
+                            <span class="error-message-txt m-0" role="alert" *ngIf="subject.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        <datalist id="subjectList">
+                            <option *ngFor="let itemSubject of subjects" [ngValue]="itemSubject">{{itemSubject}}</option>
+                        </datalist>
+                    </div>
+
                     <div class="d-flex justify-content-center pt-3">
-                        <button type="submit" class="btn mx-auto btn-global theme-red" [disabled]="title.errors?.['pattern']" >Filtrar</button>
+                        <button type="submit" class="btn mx-auto btn-global theme-red" [disabled]="title.errors?.['pattern'] || subject.errors?.['pattern']" >Filtrar</button>
                     </div>
 
                 </form>

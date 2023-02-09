@@ -59,13 +59,15 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title, String emailTeacher, Sort sort) {
+    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title,
+                                         String emailTeacher, String subjectName, Sort sort) {
 
         if(quarter.equals("")){ quarter = null; }
         if(title.equals("")){ title = null; }
         if(emailTeacher.equals("")){ emailTeacher = null; }
+        if(subjectName.equals("")){ subjectName = null; }
 
-        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, emailTeacher, sort);
+        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, emailTeacher, subjectName, sort);
 
         //generate result to return and get teachers joined to each subject of a specific course
         List<Object[]> resultList = new ArrayList<>();
@@ -315,6 +317,11 @@ public class SubjectServiceImpl implements SubjectService{
     @Override
     public List<String> getTitlesByCourse(Long idCourse) {
         return subjectRepository.getTitlesByCourse(idCourse);
+    }
+
+    @Override
+    public List<String> getSubjectsByCourse(Long idCourse) {
+        return subjectRepository.getSubjectsByCourse(idCourse);
     }
 
     @Override
