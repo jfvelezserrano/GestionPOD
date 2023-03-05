@@ -84,7 +84,6 @@ public class Subject {
     private Set<POD> pods;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<CourseSubject> courseSubjects;
 
     @AssistanceCareersConstraint
@@ -144,15 +143,17 @@ public class Subject {
 
     public void setAssistanceCareersByString(String assistanceCareer) {
         if(!assistanceCareer.equals("")) {
-            List<String> values = List.of(assistanceCareer.split(", "));
-            this.assistanceCareers = values;
+            this.assistanceCareers = List.of(assistanceCareer.split(", "));
         }
     }
 
     public Map<String, List<String>> recordSubject(){
-        Map<String, List<String>> recordMap = new HashMap<>();
+        Map<String, List<String>> recordMap = new LinkedHashMap<>();
 
-        for (POD pod:this.getPods()) {
+        List<POD> podsList = new ArrayList<>(this.getPods());
+        Collections.sort(podsList, Comparator.comparing(p -> p.getCourse().getCreationDate()));
+
+        for (POD pod:podsList) {
             List<String> values = new ArrayList<>();
             String courseName = pod.getCourse().getName();
             if(recordMap.containsKey(courseName)){

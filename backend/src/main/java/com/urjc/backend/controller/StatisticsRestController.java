@@ -45,10 +45,10 @@ public class StatisticsRestController {
     private SubjectService subjectService;
 
     @Autowired
-    IStatisticsMapper statisticsMapper;
+    private IStatisticsMapper statisticsMapper;
 
     @Autowired
-    ISubjectMapper subjectMapper;
+    private ISubjectMapper subjectMapper;
 
 
     @GetMapping(value = "/myData", produces = MediaType.APPLICATION_JSON_VALUE)

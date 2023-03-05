@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class LoginRestController {
 
     @Autowired
-    JWT jwt;
+    private JWT jwt;
 
     @Autowired
     private AuthenticateProvider authenticationManager;
@@ -43,7 +43,7 @@ public class LoginRestController {
     private TeacherService teacherService;
 
     @Autowired
-    ITeacherMapper teacherMapper;
+    private ITeacherMapper teacherMapper;
 
 
     @PostMapping("/access")

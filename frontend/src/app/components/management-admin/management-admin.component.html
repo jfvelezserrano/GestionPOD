@@ -8,7 +8,7 @@
           <div class="form-group mb-3">
             <label for="chooseAdmin" class="form-label section-title">Correo Electrónico</label>
             <input type="email" class="form-control" required #email="ngModel" name="email" [(ngModel)]="emailNewAdmin" list="teachersList" id="chooseAdmin" 
-            placeholder="example@example.com" email [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
+            placeholder="Correo Electrónico" email [ngClass]="!email.valid && email.touched ? 'border-error' : ''">
             <datalist id="teachersList">
               <option *ngFor="let item of teachers" [ngValue]="item.email">{{item.email}}</option>
             </datalist>

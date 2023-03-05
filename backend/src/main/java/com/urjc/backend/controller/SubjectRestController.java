@@ -40,7 +40,7 @@ public class SubjectRestController {
     private CourseService courseService;
 
     @Autowired
-    ISubjectMapper subjectMapper;
+    private ISubjectMapper subjectMapper;
 
 
     @GetMapping(value = "/titles", produces = MediaType.APPLICATION_JSON_VALUE)

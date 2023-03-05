@@ -45,7 +45,7 @@ public class CourseRestController {
     interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
 
-    public static final String TYPE_FILE = "text/csv";
+    private final String TYPE_FILE = "text/csv";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;
@@ -60,13 +60,13 @@ public class CourseRestController {
     private TeacherService teacherService;
 
     @Autowired
-    ITeacherMapper teacherMapper;
+    private ITeacherMapper teacherMapper;
 
     @Autowired
-    ICourseMapper courseMapper;
+    private ICourseMapper courseMapper;
 
     @Autowired
-    ISubjectMapper subjectMapper;
+    private ISubjectMapper subjectMapper;
 
 
     @PostMapping(value = "", consumes = { "multipart/form-data"})

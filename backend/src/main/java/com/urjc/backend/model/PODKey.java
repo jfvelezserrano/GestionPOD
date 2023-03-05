@@ -14,13 +14,13 @@ import java.util.Objects;
 class PODKey implements Serializable {
 
     @Column(name = "subject_id")
-    Long subjectId;
+    private Long subjectId;
 
     @Column(name = "course_id")
-    Long courseId;
+    private Long courseId;
 
     @Column(name = "teacher_id")
-    Long teacherId;
+    private Long teacherId;
 
     @Override
     public boolean equals(Object o) {

@@ -41,8 +41,8 @@ public class TeacherServiceTest {
     @InjectMocks
     TeacherServiceImpl teacherService;
 
-    private static final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
-    private static final String nameMainAdmin = "Alicia Merino Martínez";
+    private final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
+    private final String nameMainAdmin = "Merino Martínez, Alicia";
 
     @Test
     void Should_ReturnNull_When_TeacherNotExists() {

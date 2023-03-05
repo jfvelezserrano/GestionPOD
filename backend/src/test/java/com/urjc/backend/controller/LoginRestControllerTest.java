@@ -35,6 +35,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class LoginRestControllerTest {
 
+    private static final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
+
     @Mock
     TeacherServiceImpl teacherService;
 
@@ -57,7 +59,7 @@ public class LoginRestControllerTest {
         when(teacherService.findIfIsInCurrentCourse(anyString())).thenReturn(null);
         MockHttpServletRequest request = new MockHttpServletRequest();
         EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
-        emailRequestDTO.setEmail("a.merinom.2017@alumnos.urjc.es");
+        emailRequestDTO.setEmail(emailMainAdmin);
 
 
         GlobalException exception = assertThrows(GlobalException.class, () -> {
@@ -82,7 +84,7 @@ public class LoginRestControllerTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
-        emailRequestDTO.setEmail("a.merinom.2017@alumnos.urjc.es");
+        emailRequestDTO.setEmail(emailMainAdmin);
 
         loginRestController.sendEmailLogin(emailRequestDTO, request);
 
@@ -101,7 +103,7 @@ public class LoginRestControllerTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         EmailRequestDTO emailRequestDTO = new EmailRequestDTO();
-        emailRequestDTO.setEmail("a.merinom.2017@alumnos.urjc.es");
+        emailRequestDTO.setEmail(emailMainAdmin);
 
         GlobalException exception = assertThrows(GlobalException.class, () -> {
             loginRestController.sendEmailLogin(emailRequestDTO, request);

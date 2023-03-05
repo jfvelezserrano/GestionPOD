@@ -28,7 +28,7 @@ import java.util.Optional;
 @Transactional
 public class TeacherServiceImpl implements TeacherService{
 
-    private static final String ADMIN = "ADMIN";
+    private final String ADMIN = "ADMIN";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;

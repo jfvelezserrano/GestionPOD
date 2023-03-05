@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class CourseTeacher {
 
     @EmbeddedId
-    CourseTeacherKey id = new CourseTeacherKey();
+    private CourseTeacherKey id = new CourseTeacherKey();
 
     @ManyToOne
     @MapsId("courseId")

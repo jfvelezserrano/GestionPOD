@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 public class CourseRestControllerTest {
 
     private static final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
-    private static final String nameMainAdmin = "Alicia Merino Martinez";
+    private static final String nameMainAdmin = "Merino Martínez, Alicia";
 
     @Mock
     SubjectServiceImpl subjectService;

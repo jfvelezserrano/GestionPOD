@@ -49,13 +49,13 @@ public class TeacherRestController {
     private SubjectService subjectService;
 
     @Autowired
-    ITeacherMapper teacherMapper;
+    private ITeacherMapper teacherMapper;
 
     @Autowired
-    ISubjectMapper subjectMapper;
+    private ISubjectMapper subjectMapper;
 
     @Autowired
-    ICourseMapper courseMapper;
+    private ICourseMapper courseMapper;
 
     @PutMapping(value = "/role", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> updateRole(@RequestBody @Valid TeacherDTO teacherDTO) {
