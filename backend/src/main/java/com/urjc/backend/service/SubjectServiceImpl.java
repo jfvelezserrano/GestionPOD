@@ -218,7 +218,7 @@ public class SubjectServiceImpl implements SubjectService{
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
             String[] values = line.split(";", -1);
 
-            if (!(line.isBlank()) && !(values[0].equals("Codigo"))) {
+            if (!(line.isBlank()) && !(values[0].equals("Código"))) {
 
                 if(values.length != 12){
                     throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de una asignatura en la linea: " + line);

@@ -45,7 +45,7 @@ public class CourseRestController {
     interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
 
-    private final String TYPE_FILE = "text/csv";
+    private static final String TYPE_FILE = "text/csv";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;
@@ -281,7 +281,7 @@ public class CourseRestController {
             try {
                  resource = new InputStreamResource(courseService.writePODInCSV(body));
             }catch (Exception e){
-                throw new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "No se ha podido descargar el POD actual");
+                throw new RedirectException(HttpStatus.INTERNAL_SERVER_ERROR, "No se ha podido descargar el POD actual");
             }
 
             return ResponseEntity.ok()
@@ -291,6 +291,6 @@ public class CourseRestController {
                     .body(resource);
         }
 
-        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 }

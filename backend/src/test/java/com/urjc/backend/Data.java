@@ -143,7 +143,7 @@ public class Data {
 
     public static InputStream createInputStreamSubject() throws IOException {
         List<String> content = new ArrayList<>();
-        content.add("Codigo;Titulación;Campus;Curso;Semestre;Asignatura;Tipo;Horas;Grupo;Turno;Horario;Grupos asisten;Profesores\n");
+        content.add("Código;Titulación;Campus;Curso;Semestre;Asignatura;Tipo;Horas;Grupo;Turno;Horario;Grupos asisten;Profesores\n");
         content.add("2241019G1;(2241) Grado Psicología (Ar);Aranjuez;1;Segundo Cuatrimestre;Herramientas Tecnológicas para el Ejercicio de la Psicología (Grupo 1);Formación Básica;5;G_PSICO_1A(Ar);M;J(11:00 - 12:00);\n");
         content.add("2061012;(2061) Grado Ingeniería Informática (O);On-line;2;Primer Cuatrimestre;Programación Orientada a Objetos;Obligatoria;0;G_INFonline_2A(O);M;;");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -159,7 +159,7 @@ public class Data {
 
     public static InputStream createInputStreamSubjectError() throws IOException {
         List<String> content = new ArrayList<>();
-        content.add("Codigo;Titulación;Campus;Curso;Semestre;Asignatura;Tipo;Horas;Grupo;Turno;Horario;Grupos asisten;Profesores\n");
+        content.add("Código;Titulación;Campus;Curso;Semestre;Asignatura;Tipo;Horas;Grupo;Turno;Horario;Grupos asisten;Profesores\n");
         content.add("2241019G1;(2241) Grado Psicología (Ar);;1;Segundo Cuatrimestre;Herramientas Tecnológicas para el Ejercicio de la Psicología (Grupo 1);Formación Básica;5;G_PSICO_1A(Ar);M;J(11:00 - 12:00);;");
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

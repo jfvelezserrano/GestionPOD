@@ -17,6 +17,7 @@ export class ManagementAdminComponent implements OnInit {
   public adminTeacher: TeacherRoles;
   public emailNewAdmin: string;
   public error: string;
+  public showLoader:boolean;
   public currentSection: string = "Administrador";
   public currentSubsection: string = "Administrador > Gestión Altas";
   public mainAdmin: string = environment.main_admin;
@@ -26,6 +27,7 @@ export class ManagementAdminComponent implements OnInit {
     private teacherService: TeacherService,
     private modalService: NgbModal
     ) { 
+      this.showLoader = false;
       this.emailNewAdmin = "";
       this.adminTeacher = new TeacherRoles(-1, "", "", []);
     }
@@ -45,9 +47,11 @@ export class ManagementAdminComponent implements OnInit {
   }
 
   getAdmins() {
+    this.showLoader = true;
     this.teacherService.findByRole("ADMIN")
     .subscribe({
       next: (data) => {
+        this.showLoader = false;
         this.admins = data;
       }
     });

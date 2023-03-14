@@ -20,7 +20,7 @@ export class AdminSubjectsComponent implements OnInit {
   public subjectsTeachersBase: Array<SubjectTeacherBase> = [];
   public idPod: number;
   public currentSection: string = "Administrador";
-  public currentSubsection: string = "Administrador > Cursos > Asignaturas";
+  public currentSubsection: string = "Administrador > PODs > Asignaturas";
   public subject: Subject;
   public titles: string[];
   public allCampus: string[];

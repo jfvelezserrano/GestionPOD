@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CourseServiceTest {
+class CourseServiceTest {
     @Mock
     CourseRepository courseRepository;
 
@@ -196,8 +196,8 @@ public class CourseServiceTest {
        while((line = bufferedReader.readLine()) != null){
            String[] values = line.split(";", -1);
            if(count == 0){
-               assertTrue(values[1].equals("Titulación"));
-               assertTrue(values[2].equals("Campus"));
+               assertEquals("Titulación", values[1]);
+               assertEquals("Campus", values[2]);
            } else{
                assertTrue(values[0].equals("4564654") && values[2].equals("Móstoles"));
            }

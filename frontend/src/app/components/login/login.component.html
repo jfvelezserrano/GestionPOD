@@ -35,7 +35,7 @@
               </form>
     
               <div class="px-4 px-sm-5 pb-3" *ngIf="status == 'sentCode'" >
-                <small>El email de verificación enviado expira en: </small>
+                <small>El correo de verificación enviado expira en: </small>
                 <b><countdown #countdown [config]="{ leftTime: 300, format: 'm:ss' }" (event)="finish($event)">$!m!</countdown></b>
               </div>
     

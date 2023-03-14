@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Sql({ "/import.sql" })
-public class SubjectRepositoryTest {
+class SubjectRepositoryTest {
 
     @Autowired
     SubjectRepository subjectRepository;
@@ -108,17 +108,17 @@ public class SubjectRepositoryTest {
     void Should_ReturnBarGraphData_When_RequestHoursPerSubject() {
         List<Object[]> barGraphData = subjectRepository.hoursPerSubjectByTeacherAndCourse(3l, 1l, Sort.unsorted());
         assertAll(() -> assertEquals(1, barGraphData.size()),
-                () -> assertTrue(barGraphData.get(0)[0].equals("Asignatura 2")),
-                () -> assertTrue(((Integer) barGraphData.get(0)[1]) == 150),
-                () -> assertTrue(((Integer) barGraphData.get(0)[2]) == 50));
+                () -> assertEquals("Asignatura 2", barGraphData.get(0)[0]),
+                () -> assertEquals(150, ((Integer) barGraphData.get(0)[1])),
+                () -> assertEquals(50, ((Integer) barGraphData.get(0)[2])));
     }
 
     @Test
     void Should_ReturnDoughnutChartData_When_RequestPercentageHours() {
         List<Object[]> doughnutChartData = subjectRepository.percentageHoursByTeacherAndCourse(3l, 1l, 50, Sort.unsorted());
         assertAll(() -> assertEquals(1, doughnutChartData.size()),
-                () -> assertTrue(doughnutChartData.get(0)[0].equals("Asignatura 2")),
-                () -> assertTrue(((Integer) doughnutChartData.get(0)[1]) == 100));
+                () -> assertEquals("Asignatura 2", doughnutChartData.get(0)[0]),
+                () -> assertEquals(100, ((Integer) doughnutChartData.get(0)[1])));
     }
 
     @Test

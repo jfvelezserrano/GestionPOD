@@ -16,6 +16,7 @@ import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TeacherServiceTest {
+class TeacherServiceTest {
 
     @Mock
     TeacherRepository teacherRepository;
@@ -333,11 +334,14 @@ public class TeacherServiceTest {
     }
 
     @Test
-    void Should_ThrowException_When_SaveWrongFileTeachers() {
-        Optional<Course> course = Data.createCourse("2022-2023");
+    void Should_ThrowException_When_SaveWrongFileTeachers() throws IOException {
+        Optional<Course> optionalCourse = Data.createCourse("2022-2023");
+
+        InputStream inputStream = Data.createInputStreamTeacherError();
+        Course course = optionalCourse.get();
 
         assertThrows(CSVValidationException.class, () -> {
-            teacherService.saveAll(Data.createInputStreamTeacherError(), course.get());
+            teacherService.saveAll(inputStream, course);
         });
 
         verify(teacherRepository, never()).findByEmail(anyString());

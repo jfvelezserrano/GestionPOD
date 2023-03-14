@@ -18,7 +18,7 @@ export class PodsAdminComponent implements OnInit {
   public pods: Course[];
   public pod: Course;
   public currentSection: string = "Administrador";
-  public currentSubsection: string = "Administrador > Cursos";
+  public currentSubsection: string = "Administrador > PODs";
   public showLoader:boolean;
   public showLoaderCreate:boolean;
   public error:string;

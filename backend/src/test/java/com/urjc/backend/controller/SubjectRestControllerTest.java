@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SubjectRestControllerTest {
+class SubjectRestControllerTest {
 
     @Mock
     SubjectServiceImpl subjectService;

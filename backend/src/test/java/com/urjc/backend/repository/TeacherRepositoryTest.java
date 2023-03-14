@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Sql({ "/import.sql" })
-public class TeacherRepositoryTest {
+class TeacherRepositoryTest {
     @Autowired
     TeacherRepository teacherRepository;
 

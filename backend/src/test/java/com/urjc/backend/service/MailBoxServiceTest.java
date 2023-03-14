@@ -27,9 +27,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MailBoxServiceTest {
+class MailBoxServiceTest {
 
-    private static final String emailFrom = "a.merinom.2017@alumnos.urjc.es";
+    private final String emailFrom = "a.merinom.2017@alumnos.urjc.es";
 
     @InjectMocks
     MailBoxServiceImpl mailBoxService;

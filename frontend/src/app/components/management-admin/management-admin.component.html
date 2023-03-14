@@ -32,7 +32,7 @@
           <span *ngIf="admins" class="my-auto">Mostrando {{admins.length}} resultados</span>
         </div>
         <div class="col-12 content-all-cards">
-          <div id="table-admins">
+          <div id="table-admins" *ngIf="!showLoader">
             <table class="table table-borderless">
               <tbody>
                 <tr *ngFor="let admin of admins">
@@ -49,6 +49,11 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div class="row center-horizontally center-vertically" *ngIf="showLoader">
+            <div class="col-2">
+              <app-loader></app-loader>
+            </div>
           </div>
         </div>
       </div>

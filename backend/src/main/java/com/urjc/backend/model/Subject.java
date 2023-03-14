@@ -2,6 +2,7 @@ package com.urjc.backend.model;
 
 import com.urjc.backend.error.exception.CSVValidationException;
 import com.urjc.backend.validation.AssistanceCareersConstraint;
+import com.urjc.backend.validation.QuarterConstraint;
 import com.urjc.backend.validation.TurnConstraint;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,13 +53,12 @@ public class Subject {
     private String campus;
 
     @NotNull(message = "Se debe completar el año de impartición")
-    @Min(value = 0, message = "El valor mínimo es {value}")
+    @Min(value = 1, message = "El valor mínimo es {value}")
     @Max(value = 10, message = "El valor máximo es de {value}")
     @Column(nullable = false)
     private Integer year;
 
-    @NotBlank(message = "Se debe completar el cuatrimestre")
-    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @QuarterConstraint
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     @Column(nullable = false)
     private String quarter;

@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class LoginRestControllerTest {
+class LoginRestControllerTest {
 
-    private static final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
+    private final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
 
     @Mock
     TeacherServiceImpl teacherService;

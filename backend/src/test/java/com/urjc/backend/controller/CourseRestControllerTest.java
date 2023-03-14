@@ -1,10 +1,7 @@
 package com.urjc.backend.controller;
 
 import com.urjc.backend.Data;
-import com.urjc.backend.dto.CourseDTO;
-import com.urjc.backend.dto.SubjectTeacherDTO;
-import com.urjc.backend.dto.TeacherDTO;
-import com.urjc.backend.dto.TeacherJoinCourseDTO;
+import com.urjc.backend.dto.*;
 import com.urjc.backend.error.exception.CSVValidationException;
 import com.urjc.backend.error.exception.GlobalException;
 import com.urjc.backend.error.exception.RedirectException;
@@ -38,10 +35,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CourseRestControllerTest {
+class CourseRestControllerTest {
 
-    private static final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
-    private static final String nameMainAdmin = "Merino Martínez, Alicia";
+    private final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
+    private final String nameMainAdmin = "Merino Martínez, Alicia";
 
     @Mock
     SubjectServiceImpl subjectService;
@@ -68,9 +65,10 @@ public class CourseRestControllerTest {
         MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", Data.createEmptyInputStream());
         MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", Data.createEmptyInputStream());
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
-            courseRestController.createPOD(courseMapper.toCourseDTO(course.get()), fileSubjects, fileTeachers);
-        });
+        CourseDTO courseDTO = courseMapper.toCourseDTO(course.get());
+
+        GlobalException exception = assertThrows(GlobalException.class, () ->
+                courseRestController.createPOD(courseDTO, fileSubjects, fileTeachers));
 
         assertAll(() -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus()),
                 () -> assertEquals("Se deben añadir dos ficheros, uno con las asignaturas y otro con los docentes", exception.getMessage()));
@@ -90,8 +88,10 @@ public class CourseRestControllerTest {
         MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects", "text/csv", Data.createInputStreamSubject());
         MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers", "image/png", Data.createInputStreamTeacher());
 
+        CourseDTO courseDTO = courseMapper.toCourseDTO(course.get());
+
         GlobalException exception = assertThrows(GlobalException.class, () -> {
-            courseRestController.createPOD(courseMapper.toCourseDTO(course.get()), fileSubjects, fileTeachers);
+            courseRestController.createPOD(courseDTO, fileSubjects, fileTeachers);
         });
 
         assertAll(() -> assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE, exception.getStatus()),
@@ -139,8 +139,10 @@ public class CourseRestControllerTest {
 
         when(courseService.exists(anyString())).thenReturn(true);
 
+        CourseDTO courseDTO = courseMapper.toCourseDTO(course.get());
+
         GlobalException exception = assertThrows(GlobalException.class, () -> {
-            courseRestController.createPOD(courseMapper.toCourseDTO(course.get()), fileSubjects, fileTeachers);
+            courseRestController.createPOD(courseDTO, fileSubjects, fileTeachers);
         });
 
         assertAll(() -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus()),
@@ -179,8 +181,10 @@ public class CourseRestControllerTest {
         doThrow(new CSVValidationException("Algún dato es incorrecto", null))
                 .when(subjectService).saveAll(any(), any());
 
+        CourseDTO courseDTO = courseMapper.toCourseDTO(course.get());
+
         CSVValidationException exception = assertThrows(CSVValidationException.class, () -> {
-            courseRestController.createPOD(courseMapper.toCourseDTO(course.get()), fileSubjects, fileTeachers);
+            courseRestController.createPOD(courseDTO, fileSubjects, fileTeachers);
         });
 
         assertAll(() -> assertEquals("Algún dato es incorrecto", exception.getMessage()));
@@ -600,8 +604,10 @@ public class CourseRestControllerTest {
         when(courseService.findById(anyLong())).thenReturn(course);
         when(subjectService.isCodeInCourse(anyLong(), anyString())).thenReturn(true);
 
+        SubjectDTO subjectDTO = subjectMapper.toSubjectDTO(subject.get());
+
         GlobalException exception = assertThrows(GlobalException.class, () -> {
-            courseRestController.addNewSubjectToCourse(subjectMapper.toSubjectDTO(subject.get()), 1l);
+            courseRestController.addNewSubjectToCourse(subjectDTO, 1l);
         });
 
         assertAll(() -> assertEquals(HttpStatus.CONFLICT, exception.getStatus()),
@@ -619,8 +625,10 @@ public class CourseRestControllerTest {
         Optional<Subject> subject = Data.createSubject("54654643", "Estadística");
         when(courseService.findById(anyLong())).thenReturn(Optional.empty());
 
+        SubjectDTO subjectDTO = subjectMapper.toSubjectDTO(subject.get());
+
         RedirectException exception = assertThrows(RedirectException.class, () -> {
-            courseRestController.addNewSubjectToCourse(subjectMapper.toSubjectDTO(subject.get()), 1l);
+            courseRestController.addNewSubjectToCourse(subjectDTO, 1l);
         });
 
         assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),
@@ -660,7 +668,7 @@ public class CourseRestControllerTest {
         when(courseService.createContentForCSV(any())).thenReturn(Data.createBodyForCSV());
         when(courseService.writePODInCSV(any())).thenReturn(null);
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             courseRestController.exportCSV();
         });
 
@@ -676,7 +684,7 @@ public class CourseRestControllerTest {
     void Should_ThrowExceptionNoCourseYetWhen_ExportCSV() throws IOException {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             courseRestController.exportCSV();
         });
 

@@ -91,10 +91,8 @@ public interface IStatisticsMapper {
             return null;
         }
 
-        StatisticsPersonalDTO statisticsPersonalDTO = new StatisticsPersonalDTO(personalStatistics[0], personalStatistics[1],
+        return new StatisticsPersonalDTO(personalStatistics[0], personalStatistics[1],
                 personalStatistics[2], personalStatistics[3], personalStatistics[4]);
-
-        return statisticsPersonalDTO;
     }
 
     default StatisticsGlobalDTO toStatisticsGlobalDTO(Integer[] globalStatistics){
@@ -102,10 +100,7 @@ public interface IStatisticsMapper {
             return null;
         }
 
-        StatisticsGlobalDTO statisticsGlobalDTO = new StatisticsGlobalDTO(globalStatistics[0], globalStatistics[1], globalStatistics[2],
+        return new StatisticsGlobalDTO(globalStatistics[0], globalStatistics[1], globalStatistics[2],
                 globalStatistics[3], globalStatistics[4], globalStatistics[5], globalStatistics[6], globalStatistics[7], globalStatistics[8]);
-
-
-        return statisticsGlobalDTO;
     }
 }

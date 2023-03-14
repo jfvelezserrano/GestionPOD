@@ -24,7 +24,7 @@ public class DataLoader implements ApplicationRunner {
     @Value("${email.main.admin}")
     private String emailMainAdmin;
 
-    private final String nameMainAdmin = "Merino Martínez, Alicia";
+    private static final String NAME_MAIN_ADMIN = "Merino Martínez, Alicia";
 
     private TeacherService teacherService;
 
@@ -41,7 +41,7 @@ public class DataLoader implements ApplicationRunner {
         roles.add("TEACHER");
 
         if(teacher == null) {
-            teacherService.save(new Teacher(roles, nameMainAdmin, emailMainAdmin));
+            teacherService.save(new Teacher(roles, NAME_MAIN_ADMIN, emailMainAdmin));
         } else if(teacher.getRoles().size() == 1){
             teacher.setRoles(roles);
             teacherService.save(teacher);
@@ -49,7 +49,7 @@ public class DataLoader implements ApplicationRunner {
     }
 
     @Bean
-    public PropertiesFactoryBean propertiesfilemapping() {
+    public PropertiesFactoryBean propertiesFileMapping() {
         PropertiesFactoryBean factoryBean = new PropertiesFactoryBean();
         factoryBean.setFileEncoding("UTF-8");
         factoryBean.setLocation(new ClassPathResource("application.properties"));

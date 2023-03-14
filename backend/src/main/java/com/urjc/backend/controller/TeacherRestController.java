@@ -79,7 +79,7 @@ public class TeacherRestController {
         if (role == null && course.isPresent()) {
             List<Teacher> teachers = teacherService.findAllByCourse(course.get().getId(), Pageable.unpaged());
             return new ResponseEntity<>(teacherMapper.map(teachers), HttpStatus.OK);
-        } else if(role == null && course.isEmpty()){
+        } else if(role == null){
             role = "ADMIN";
         }
 
