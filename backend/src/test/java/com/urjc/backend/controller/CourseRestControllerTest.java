@@ -85,8 +85,8 @@ class CourseRestControllerTest {
     void Should_ThrowUnsupportedMediaType_When_ContentTypeIsNotCSV() throws IOException {
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects", "text/csv", Data.createInputStreamSubject());
-        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers", "image/png", Data.createInputStreamTeacher());
+        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects.csv", "text/csv", Data.createInputStreamSubject());
+        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers.png", "image/png", Data.createInputStreamTeacher());
 
         CourseDTO courseDTO = courseMapper.toCourseDTO(course.get());
 
@@ -110,8 +110,8 @@ class CourseRestControllerTest {
         ReflectionTestUtils.setField(courseRestController, "courseMapper", courseMapper);
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects", "text/csv", Data.createInputStreamSubject());
-        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers", "text/csv", Data.createInputStreamTeacher());
+        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects.csv", "text/csv", Data.createInputStreamSubject());
+        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers.csv", "text/csv", Data.createInputStreamTeacher());
 
         when(courseService.exists(anyString())).thenReturn(false);
         when(courseService.save(any())).thenReturn(Data.createCourse("2022-2023").get());
@@ -134,8 +134,8 @@ class CourseRestControllerTest {
         ReflectionTestUtils.setField(courseRestController, "courseMapper", courseMapper);
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects", "text/csv", Data.createInputStreamSubject());
-        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers", "text/csv", Data.createInputStreamTeacher());
+        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects.csv", "text/csv", Data.createInputStreamSubject());
+        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers.csv", "text/csv", Data.createInputStreamTeacher());
 
         when(courseService.exists(anyString())).thenReturn(true);
 
@@ -161,8 +161,8 @@ class CourseRestControllerTest {
         ReflectionTestUtils.setField(courseRestController, "courseMapper", courseMapper);
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects", "text/csv", Data.createInputStreamSubject());
-        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers", "text/csv", Data.createInputStreamTeacher());
+        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects.csv", "text/csv", Data.createInputStreamSubject());
+        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers.csv", "text/csv", Data.createInputStreamTeacher());
 
         when(courseService.exists(anyString())).thenReturn(false);
 
@@ -201,8 +201,8 @@ class CourseRestControllerTest {
         ReflectionTestUtils.setField(courseRestController, "courseMapper", courseMapper);
         Optional<Course> course = Data.createCourse("2022-2023");
 
-        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects", "text/csv", Data.createInputStreamSubject());
-        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers", "text/csv", Data.createInputStreamTeacher());
+        MockMultipartFile fileSubjects = new MockMultipartFile("fileSubjects", "fileSubjects.csv", "text/csv", Data.createInputStreamSubject());
+        MockMultipartFile fileTeachers = new MockMultipartFile("fileTeachers", "fileTeachers.csv", "text/csv", Data.createInputStreamTeacher());
 
         when(courseService.exists(anyString())).thenReturn(false);
 
@@ -248,35 +248,6 @@ class CourseRestControllerTest {
                 () -> assertEquals(2, result.getBody().size()));
 
         verify(courseService).findAllOrderByCreationDate();
-    }
-
-    @Test
-    void Should_ReturnCourse_When_GetCurrentCourse(){
-        ReflectionTestUtils.setField(courseRestController, "courseMapper", courseMapper);
-
-        when(courseService.findLastCourse()).thenReturn(Data.createCourse("2022-2023"));
-
-        ResponseEntity<CourseDTO> result = courseRestController.getCurrentCourse();
-
-        assertAll(() -> assertEquals(HttpStatus.OK, result.getStatusCode()),
-                () -> assertEquals(CourseDTO.class, result.getBody().getClass()),
-                () -> assertEquals("2022-2023", result.getBody().getName()));
-
-        verify(courseService).findLastCourse();
-    }
-
-    @Test
-    void Should_ThrowException_When_GetCurrentCourse(){
-        when(courseService.findLastCourse()).thenReturn(Optional.empty());
-
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
-            courseRestController.getCurrentCourse();
-        });
-
-        assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),
-                () -> assertEquals(NO_COURSE_YET, exception.getMessage()));
-
-        verify(courseService).findLastCourse();
     }
 
     @Test

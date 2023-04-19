@@ -275,15 +275,15 @@
         <h5><b>{{subjectTeacher.subject.name}}</b></h5>
         <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
             <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
-                <div class="col-12 d-flex justify-content-start">
+                <div class="col-12 justify-content-start">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-3">
                             <span class="fa-stack fa-2x">
                             <i class="fa fa-circle fa-stack-2x light-blue"></i>
                             <i class="fa fa-2xs fa-graduation-cap fa-stack-1x blue"></i>
                             </span>
                         </div>
-                        <div class="col-8">
+                        <div class="col-9">
                             <span class="course-history blue">{{item.key}}</span><br>
                             <div *ngFor="let teacherName of getValues(item.value)">
                                 <span class="teacher-history">{{teacherName}}</span><br>

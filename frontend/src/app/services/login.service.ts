@@ -38,12 +38,6 @@ export class LoginService {
       ) as Observable<TeacherRoles>;
   }
 
-  getTeacherLoggedDDBB(): Observable<TeacherRoles> {
-    return this.http.get<TeacherRoles>(environment.urlApi + "/teacherLogged", this.httpOptionsCredentials)
-    .pipe(catchError(error => this.handleError(error))
-		) as Observable<TeacherRoles>;
-  }
-
   logout() {
     this.localStorageService.removeLocalStorage("teacher");
     return this.http.get(environment.urlApi + "/logout", this.httpOptionsCredentials)

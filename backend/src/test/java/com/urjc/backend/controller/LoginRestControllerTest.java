@@ -162,44 +162,4 @@ class LoginRestControllerTest {
         verify(authenticationManager).authenticate(any());
         verify(jwt).createJWT(anyString());
     }
-
-    @Test
-    void Should_ReturnTeacher_When_GetTeacherLogged(){
-        ReflectionTestUtils.setField(loginRestController, "teacherMapper", teacherMapper);
-        Teacher teacher = Data.createTeacher("Luis Rodriguez", "ejemplo@ejemplo.com").get();
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(teacher.getEmail(), null,
-                teacher.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(teacherService.findByEmail(anyString())).thenReturn(Data.createTeacher("Luis Rodriguez", "ejemplo@ejemplo.com").get());
-
-        ResponseEntity<TeacherDTO> result = loginRestController.getTeacherLogged();
-
-        assertAll(() -> assertEquals(HttpStatus.OK, result.getStatusCode()),
-                () -> assertEquals(TeacherDTO.class, result.getBody().getClass()),
-                () -> assertEquals("Luis Rodriguez", result.getBody().getName()),
-                () -> assertEquals("ejemplo@ejemplo.com", result.getBody().getEmail()));
-
-        verify(teacherService).findByEmail(anyString());
-    }
-
-    @Test
-    void Should_ThrowException_When_NoTeacherLogged(){
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(null);
-        SecurityContextHolder.setContext(securityContext);
-
-        GlobalException exception = assertThrows(GlobalException.class, () -> {
-            loginRestController.getTeacherLogged();
-        });
-
-        assertAll(() -> assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus()),
-                () -> assertEquals("Acceso denegado", exception.getMessage()));
-
-        verify(securityContext).getAuthentication();
-        verify(teacherService, never()).findByEmail(anyString());
-    }
 }

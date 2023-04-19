@@ -45,7 +45,7 @@ public class CourseRestController {
     interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
 
-    private static final String TYPE_FILE = "text/csv";
+    private static final String TYPE_FILE = "csv";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;
@@ -74,11 +74,11 @@ public class CourseRestController {
                                                      @RequestPart("fileSubjects") MultipartFile fileSubjects,
                                                      @RequestPart("fileTeachers") MultipartFile fileTeachers){
 
-
         if(fileSubjects.isEmpty() || fileTeachers.isEmpty()){
             throw new GlobalException(HttpStatus.BAD_REQUEST, "Se deben añadir dos ficheros, uno con las asignaturas y otro con los docentes");
         }
-        else if (!TYPE_FILE.equals(fileSubjects.getContentType()) || !TYPE_FILE.equals(fileTeachers.getContentType())) {
+        else if (!TYPE_FILE.equals(fileSubjects.getOriginalFilename().substring(fileSubjects.getOriginalFilename().length() - 3))
+                || !TYPE_FILE.equals(fileTeachers.getOriginalFilename().substring(fileTeachers.getOriginalFilename().length() - 3))) {
             throw new GlobalException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Solo se permiten archivos csv");
         }
 
@@ -118,16 +118,6 @@ public class CourseRestController {
     public ResponseEntity<List<CourseDTO>> getCourses(){
         List<Course> courses = courseService.findAllOrderByCreationDate();
         return new ResponseEntity<>(courseMapper.map(courses), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/currentCourse", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CourseDTO> getCurrentCourse(){
-        Optional<Course> course = courseService.findLastCourse();
-        if(course.isPresent()) {
-            return new ResponseEntity<>(courseMapper.toCourseDTO(course.get()), HttpStatus.OK);
-        } else{
-            throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
-        }
     }
 
     @JsonView(SubjectTeacherDTOBase.class)
