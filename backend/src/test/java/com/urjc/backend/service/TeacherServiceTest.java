@@ -42,7 +42,7 @@ class TeacherServiceTest {
     @InjectMocks
     TeacherServiceImpl teacherService;
 
-    private final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
+    private final String emailMainAdmin = "aliciaejemplo74@gmail.com";
     private final String nameMainAdmin = "Merino Martínez, Alicia";
 
     @Test

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class LoginRestControllerTest {
 
-    private final String emailMainAdmin = "a.merinom.2017@alumnos.urjc.es";
+    private final String emailMainAdmin = "aliciaejemplo74@gmail.com";
 
     @Mock
     TeacherServiceImpl teacherService;

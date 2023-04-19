@@ -95,8 +95,9 @@ class CourseServiceTest {
     @Test
     void Should_ReturnCourse_When_FindById() {
         when(courseRepository.findById(anyLong())).thenReturn(Data.createCourse("2022-2023"));
-        Optional<Course> result = courseService.findById(anyLong());
+        Optional<Course> result = courseService.findById(1l);
         assertAll(() -> assertTrue(result.isPresent()),
+                () -> assertEquals(1l, result.get().getId()),
                 () -> assertEquals("2022-2023", result.get().getName()));
         verify(courseRepository).findById(anyLong());
     }

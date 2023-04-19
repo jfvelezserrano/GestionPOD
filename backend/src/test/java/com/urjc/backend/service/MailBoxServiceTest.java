@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MailBoxServiceTest {
 
-    private final String emailFrom = "a.merinom.2017@alumnos.urjc.es";
+    private final String emailFrom = "aliciaejemplo74@gmail.com";
 
     @InjectMocks
     MailBoxServiceImpl mailBoxService;
@@ -56,7 +56,6 @@ class MailBoxServiceTest {
     @Test
     void Should_CreateSecureCode_When_GenerateCodeEmail() {
         String result = mailBoxService.generateCodeEmail();
-        System.out.println(result);
         Pattern pattern = Pattern.compile("(\\w){8}-(\\w){4}-(\\w){4}-(\\w){4}-(\\w){8,12}-{1,2}(\\d)*");
         assertAll(() -> assertTrue(pattern.matcher(result).matches()));
     }
@@ -75,7 +74,6 @@ class MailBoxServiceTest {
 
         mailBoxService.generateCodeEmail();
         assertAll(() -> assertTrue(mailBoxService.getCodesMap().isEmpty()));
-
     }
 
     @Test
