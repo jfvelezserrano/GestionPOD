@@ -68,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/api/verify")
                 .and().logout()
                 .logoutSuccessHandler((rq, rs, a) -> {	})
-                .deleteCookies("token","XSRF-TOKEN")
+                .deleteCookies("token")
                 .clearAuthentication(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout")).permitAll();
 

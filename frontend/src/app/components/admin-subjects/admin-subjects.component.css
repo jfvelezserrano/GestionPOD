@@ -23,9 +23,7 @@
     height: 50px;
     width: 360px;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
+}
 
 #turns-group .option{
     font-weight: bold;
@@ -45,4 +43,12 @@
 #turns-group .option:hover{
     border: 1px solid var(--blue);
     transition: all .4s ease-in;
+}
+
+@media (max-width: 415px){
+    #turns-group{
+        display: inline-block;
+        height: auto;
+        width: auto;
+    }
 }

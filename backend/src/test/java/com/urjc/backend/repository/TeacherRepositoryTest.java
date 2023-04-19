@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Sql({ "/import.sql" })
-public class TeacherRepositoryTest {
+class TeacherRepositoryTest {
     @Autowired
     TeacherRepository teacherRepository;
 
@@ -32,7 +32,7 @@ public class TeacherRepositoryTest {
     void Should_ReturnTeachers_When_FindByCourse() {
         List<Teacher> teachers = teacherRepository.findByCourse(1l);
         assertAll(() -> assertEquals(2, teachers.size()),
-                () -> assertEquals("aliciaholi36@gmail.com", teachers.get(0).getEmail()));
+                () -> assertEquals("aliciaejemplo@gmail.com", teachers.get(0).getEmail()));
     }
 
     @Test
@@ -40,14 +40,14 @@ public class TeacherRepositoryTest {
         Pageable pageable = PageRequest.of(0, 12, Sort.unsorted());
         List<Teacher> teachers = teacherRepository.findByCoursePage(1l, pageable).stream().toList();
         assertAll(() -> assertEquals(2, teachers.size()),
-                () -> assertEquals("aliciaholi36@gmail.com", teachers.get(0).getEmail()));
+                () -> assertEquals("aliciaejemplo@gmail.com", teachers.get(0).getEmail()));
     }
 
     @Test
     void Should_ReturnTeachers_When_FindByRole() {
         List<Teacher> teachers = teacherRepository.findByRole("ADMIN");
         assertAll(() -> assertEquals(1, teachers.size()),
-                () -> assertEquals("aliciaholi36@gmail.com", teachers.get(0).getEmail()));
+                () -> assertEquals("aliciaejemplo@gmail.com", teachers.get(0).getEmail()));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class TeacherRepositoryTest {
                 .findFirst().get()[1]);
 
         CourseTeacher ct2 = ((CourseTeacher) teachers.stream()
-                .filter(t -> ((Teacher) t[0]).getEmail().equals("aliciaholi36@gmail.com"))
+                .filter(t -> ((Teacher) t[0]).getEmail().equals("aliciaejemplo@gmail.com"))
                 .findFirst().get()[1]);
 
         assertAll(() -> assertEquals(2, teachers.size()),
@@ -87,7 +87,7 @@ public class TeacherRepositoryTest {
                         .anyMatch(t -> ((Teacher) t[0]).getEmail().equals("ejemplo@gmail.com") && ct1.getCorrectedHours() == 115
                         && ct1.getObservation().equals("Tengo horas de más") && ct1.getOriginalHours() == 90)),
                 () -> assertTrue(teachers.stream()
-                        .anyMatch(t -> ((Teacher) t[0]).getEmail().equals("aliciaholi36@gmail.com") && ct2.getCorrectedHours() == 130
+                        .anyMatch(t -> ((Teacher) t[0]).getEmail().equals("aliciaejemplo@gmail.com") && ct2.getCorrectedHours() == 130
                                 && ct2.getObservation().equals("Elegir una asigmatura más") && ct2.getOriginalHours() == 100)));
     }
 

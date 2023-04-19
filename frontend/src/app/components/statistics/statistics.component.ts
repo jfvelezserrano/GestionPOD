@@ -65,6 +65,7 @@ export class StatisticsComponent implements OnInit {
 
   getFirstTeachers(){
     this.page = 0;
+    this.isMore = true;
     
     this.statisticsService.getAllTeachersStatistics(this.page, this.typeSort).subscribe({
       next: (data) => {

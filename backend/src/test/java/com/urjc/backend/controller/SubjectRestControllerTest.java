@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SubjectRestControllerTest {
+class SubjectRestControllerTest {
 
     @Mock
     SubjectServiceImpl subjectService;
@@ -73,7 +73,7 @@ public class SubjectRestControllerTest {
     void Should_ThrowGlobalException_When_RequestGetCurrentTitles() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             subjectRestController.getTitlesCurrentCourse();
         });
 
@@ -82,6 +82,36 @@ public class SubjectRestControllerTest {
 
         verify(courseService).findLastCourse();
         verify(subjectService, never()).getTitlesByCourse(anyLong());
+    }
+
+    @Test
+    void Should_ReturnSubjectsNameInLastCourse_When_RequestGetCurrentSubjects() {
+        when(courseService.findLastCourse()).thenReturn(Data.createCourse("2022-2023"));
+        when(subjectService.getSubjectsByCourse(anyLong())).thenReturn(Data.createListStrings("Estadística", "Multimedia"));
+        ResponseEntity<List<String>> result = subjectRestController.getSubjectsCurrentCourse();
+
+        assertAll(() -> assertEquals(HttpStatus.OK, result.getStatusCode()),
+                () -> assertEquals(2, result.getBody().size()),
+                () -> assertEquals("Estadística", result.getBody().get(0)),
+                () -> assertEquals("Multimedia", result.getBody().get(1)));
+
+        verify(courseService).findLastCourse();
+        verify(subjectService).getSubjectsByCourse(anyLong());
+    }
+
+    @Test
+    void Should_ThrowGlobalException_When_RequestGetCurrentSubjects() {
+        when(courseService.findLastCourse()).thenReturn(Optional.empty());
+
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
+            subjectRestController.getSubjectsCurrentCourse();
+        });
+
+        assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),
+                () -> assertEquals(NO_COURSE_YET, exception.getMessage()));
+
+        verify(courseService).findLastCourse();
+        verify(subjectService, never()).getSubjectsByCourse(anyLong());
     }
 
     @Test
@@ -134,7 +164,7 @@ public class SubjectRestControllerTest {
     void Should_ThrowGlobalException_When_NotExistsLastCourse() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             subjectRestController.getByIdInCurrentCourse(1l);
         });
 
@@ -150,7 +180,7 @@ public class SubjectRestControllerTest {
         when(courseService.findLastCourse()).thenReturn(Data.createCourse("2022-2023"));
         when(subjectService.findById(1l)).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             subjectRestController.getByIdInCurrentCourse(1l);
         });
 
@@ -182,7 +212,7 @@ public class SubjectRestControllerTest {
     void Should_ThrowException_When_FindAllAndNotExistsLastCourse() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             subjectRestController.findAllInCurrentCourse();
         });
 
@@ -212,7 +242,7 @@ public class SubjectRestControllerTest {
     void Should_ThrowException_When_RequestRecordSubjectAndNotExists() {
         when(subjectService.findById(anyLong())).thenReturn(Optional.empty());
 
-        RedirectException exception= assertThrows(RedirectException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             subjectRestController.recordSubject(1l);
         });
 
@@ -229,10 +259,10 @@ public class SubjectRestControllerTest {
         when(courseService.findLastCourse()).thenReturn(Data.createCourse("2022-2023"));
         List<Object[]> search = Data.createResultSearch();
 
-        when(subjectService.searchByCourse(any(), anyString(), anyString(), anyChar(), anyString(), anyString(), any())).thenReturn(search);
+        when(subjectService.searchByCourse(any(), anyString(), anyString(), anyChar(), anyString(), anyString(), anyString(), any())).thenReturn(search);
 
         ResponseEntity<List<SubjectTeacherDTO>> result = subjectRestController.search("",
-                "Segundo Cuatrimestre", 'M', "", "", "name");
+                "Segundo Cuatrimestre", 'M', "", "", "", "name");
 
         assertAll(() -> assertEquals(HttpStatus.OK, result.getStatusCode()),
                 () -> assertEquals(SubjectTeacherDTO.class, result.getBody().get(0).getClass()),
@@ -241,21 +271,21 @@ public class SubjectRestControllerTest {
                 () -> assertTrue(result.getBody().stream().allMatch(s -> s.getSubject().getQuarter().equals("Segundo Cuatrimestre"))));
 
         verify(courseService).findLastCourse();
-        verify(subjectService).searchByCourse(any(), anyString(), anyString(), anyChar(), anyString(), anyString(), any());
+        verify(subjectService).searchByCourse(any(), anyString(), anyString(), anyChar(), anyString(), anyString(), anyString(), any());
     }
 
     @Test
     void Should_ThrowException_When_SearchAndNotExistsLastCourse() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
-            subjectRestController.search("", "Segundo Cuatrimestre", 'M', "", "", "name");
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
+            subjectRestController.search("", "Segundo Cuatrimestre", 'M', "", "", "", "name");
         });
 
         assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),
                 () -> assertEquals(NO_COURSE_YET, exception.getMessage()));
 
         verify(courseService).findLastCourse();
-        verify(subjectService, never()).searchByCourse(any(), anyString(),anyString(), anyChar(), anyString(), anyString(), any());
+        verify(subjectService, never()).searchByCourse(any(), anyString(),anyString(), anyChar(), anyString(), anyString(), anyString(), any());
     }
 }

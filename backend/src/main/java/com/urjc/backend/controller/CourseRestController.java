@@ -45,7 +45,7 @@ public class CourseRestController {
     interface SubjectTeacherDTOBase extends SubjectTeacherDTO.Base{
     }
 
-    public static final String TYPE_FILE = "text/csv";
+    private static final String TYPE_FILE = "text/csv";
 
     @Value("${email.main.admin}")
     private String emailMainAdmin;
@@ -60,13 +60,13 @@ public class CourseRestController {
     private TeacherService teacherService;
 
     @Autowired
-    ITeacherMapper teacherMapper;
+    private ITeacherMapper teacherMapper;
 
     @Autowired
-    ICourseMapper courseMapper;
+    private ICourseMapper courseMapper;
 
     @Autowired
-    ISubjectMapper subjectMapper;
+    private ISubjectMapper subjectMapper;
 
 
     @PostMapping(value = "", consumes = { "multipart/form-data"})
@@ -270,7 +270,7 @@ public class CourseRestController {
         if(course.isPresent()) {
             Sort sort = Sort.unsorted();
             List<Object[]> subjectsAndTeachersCurrentCourse =
-                    subjectService.searchByCourse(course.get(), "", "", null, "", "", sort);
+                    subjectService.searchByCourse(course.get(), "", "", null, "", "", "", sort);
 
             List<String[]> body = courseService.createContentForCSV(subjectsAndTeachersCurrentCourse);
 
@@ -281,7 +281,7 @@ public class CourseRestController {
             try {
                  resource = new InputStreamResource(courseService.writePODInCSV(body));
             }catch (Exception e){
-                throw new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "No se ha podido descargar el POD actual");
+                throw new RedirectException(HttpStatus.INTERNAL_SERVER_ERROR, "No se ha podido descargar el POD actual");
             }
 
             return ResponseEntity.ok()
@@ -291,6 +291,6 @@ public class CourseRestController {
                     .body(resource);
         }
 
-        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
+        throw new RedirectException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
     }
 }

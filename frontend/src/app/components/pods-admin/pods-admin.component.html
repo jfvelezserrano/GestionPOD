@@ -7,7 +7,7 @@
                 <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
                     <div class="mb-3">
                     <label for="curso" class="form-label section-title">Curso</label>
-                        <input required #course="ngModel" ngModel name="course" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
+                        <input required #course="ngModel" ngModel name="course" placeholder="Nombre del curso" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
                         [ngClass]="!course.valid && course.touched ? 'border-error' : ''">
                         <span class="error-message-txt m-0" role="alert" *ngIf="course.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
                     </div>
@@ -37,8 +37,8 @@
         <div class="col-12 col-xl-6">
             <div class="row">
                 <div class="col-12 d-flex justify-content-between">
-                    <span *ngIf="!pods" class="my-auto">Mostrando 0 resultados</span>
-                    <span *ngIf="pods" class="my-auto">Mostrando {{pods.length}} resultados</span>
+                    <span *ngIf="!pods" class="my-auto d-none d-sm-block">Mostrando 0 resultados</span>
+                    <span *ngIf="pods" class="my-auto d-none d-sm-block">Mostrando {{pods.length}} resultados</span>
                     <div>
                         <span class="my-auto"><small>Ordenar por </small></span>
                         <select class="form-select-sm text-muted select-sort my-auto">
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="col-12 content-all-cards">
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-4" *ngIf="pods && pods.length != 0">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-4" *ngIf="pods && pods.length != 0 && !showLoader">
                         <div class="col" *ngFor="let pod of pods">
                             <div class="card card-subject-blue h-100 w-100 shadow">
                                 <div class="row g-0">
@@ -60,8 +60,8 @@
                                         </ul>
                                         <div class="card-footer text-muted">
                                             <button (click)="open(deletePOD, pod)" type="button" placement="bottom" ngbTooltip="Eliminar POD" class="col-4 my-auto btn blue"><i class="fa fa-trash fa-lg"></i></button>
-                                            <button [routerLink]="['/pods', pod.id, 'subjects']" type="button" placement="bottom" ngbTooltip="CSV Asignaturas" class="col-4 my-auto btn button-blue"><i class="fa fa-book-open fa-lg"></i></button>
-                                            <button [routerLink]="['/pods', pod.id, 'teachers']" type="button" placement="bottom" ngbTooltip="CSV Profesores" class="col-4 my-auto btn button-blue"><i class="fa fa-user-alt fa-lg"></i></button>
+                                            <button [routerLink]="['/pods', pod.id, 'subjects']" type="button" placement="bottom" ngbTooltip="Asignaturas" class="col-4 my-auto btn button-blue"><i class="fa fa-book-open fa-lg"></i></button>
+                                            <button [routerLink]="['/pods', pod.id, 'teachers']" type="button" placement="bottom" ngbTooltip="Profesores" class="col-4 my-auto btn button-blue"><i class="fa fa-user-alt fa-lg"></i></button>
                                         </div>
                                         </div>
                                     </div>
@@ -69,8 +69,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row justify-content-center mt-5" *ngIf="showLoader">
-                        <div class="col-2 mt-5">
+                    <div class="row center-horizontally center-vertically" *ngIf="showLoader">
+                        <div class="col-2">
                         <app-loader></app-loader>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
             </div>
             <div class="modal-body">
               <div class="px-4 center">
-                <img src="assets/images/img-borrar.png" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
+                <img src="assets/images/delete.webp" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
                 <h4 class="modal-title"><b>Eliminar {{pod.name}}</b></h4>
                 <span>¿Desea realmente eliminar el curso {{pod.name}} del Plan Docente Actual?</span>
               </div>

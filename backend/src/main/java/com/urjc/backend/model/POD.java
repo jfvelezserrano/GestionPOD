@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class POD {
 
     @EmbeddedId
-    PODKey id = new PODKey();
+    private PODKey id = new PODKey();
 
     @ManyToOne
     @MapsId("subjectId")

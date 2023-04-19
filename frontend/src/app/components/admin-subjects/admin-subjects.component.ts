@@ -20,7 +20,7 @@ export class AdminSubjectsComponent implements OnInit {
   public subjectsTeachersBase: Array<SubjectTeacherBase> = [];
   public idPod: number;
   public currentSection: string = "Administrador";
-  public currentSubsection: string = "Administrador > Cursos > Asignaturas";
+  public currentSubsection: string = "Administrador > PODs > Asignaturas";
   public subject: Subject;
   public titles: string[];
   public allCampus: string[];
@@ -73,13 +73,11 @@ export class AdminSubjectsComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.subjectsTeachersBase = data;
-        this.isCourse = true;
       },
       error: (error) => {
         this.showLoader = false;
         let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
-          this.isCourse = false;
         }
       }
     });

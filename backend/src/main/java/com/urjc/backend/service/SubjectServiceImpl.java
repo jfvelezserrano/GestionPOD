@@ -59,13 +59,15 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title, String emailTeacher, Sort sort) {
+    public List<Object[]> searchByCourse(Course course, String occupation, String quarter, Character turn, String title,
+                                         String emailTeacher, String subjectName, Sort sort) {
 
         if(quarter.equals("")){ quarter = null; }
         if(title.equals("")){ title = null; }
         if(emailTeacher.equals("")){ emailTeacher = null; }
+        if(subjectName.equals("")){ subjectName = null; }
 
-        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, emailTeacher, sort);
+        List<Subject> subjectsSearched = subjectRepository.search(course.getId(), quarter, turn, title, emailTeacher, subjectName, sort);
 
         //generate result to return and get teachers joined to each subject of a specific course
         List<Object[]> resultList = new ArrayList<>();
@@ -129,7 +131,7 @@ public class SubjectServiceImpl implements SubjectService{
 
             for (Subject subject : mySubjects) {
                 for (Schedule schedule : subject.getSchedules()) {
-                    Object[] item = {subject.getName(), schedule, subject.getQuarter()};
+                    Object[] item = {subject.getCode(), schedule, subject.getQuarter(), subject.getName()};
                     schedulesFromAllMySubjects.add(item);
                 }
             }
@@ -170,10 +172,10 @@ public class SubjectServiceImpl implements SubjectService{
         for (Schedule schedule: subject.getSchedules()) {
             for (Object[] item: allSchedulesFromMySubjects) {
                 Schedule scheduleToCompare = ((Schedule) item[1]);
-                if(!subject.getName().equals(item[0]) && (subject.getQuarter().equals(item[2]))
+                if(!subject.getCode().equals(item[0]) && (subject.getQuarter().equals(item[2]))
                         && (schedule.getDayWeek().equals(scheduleToCompare.getDayWeek()))) {
                     String result = compareBothSchedules(schedule, scheduleToCompare);
-                    if(!result.isEmpty()) { resultConflicts.add(item[0] + " - " + result); }
+                    if(!result.isEmpty()) { resultConflicts.add(item[3] + " - " + result); }
                 }
             }
         }
@@ -216,7 +218,7 @@ public class SubjectServiceImpl implements SubjectService{
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
             String[] values = line.split(";", -1);
 
-            if (!(line.isBlank()) && !(values[0].equals("Codigo"))) {
+            if (!(line.isBlank()) && !(values[0].equals("Código"))) {
 
                 if(values.length != 12){
                     throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de una asignatura en la linea: " + line);
@@ -315,6 +317,11 @@ public class SubjectServiceImpl implements SubjectService{
     @Override
     public List<String> getTitlesByCourse(Long idCourse) {
         return subjectRepository.getTitlesByCourse(idCourse);
+    }
+
+    @Override
+    public List<String> getSubjectsByCourse(Long idCourse) {
+        return subjectRepository.getSubjectsByCourse(idCourse);
     }
 
     @Override

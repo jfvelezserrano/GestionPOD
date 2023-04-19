@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Sql({ "/import.sql" })
-public class CourseRepositoryTest {
+class CourseRepositoryTest {
 
     @Autowired
     CourseRepository courseRepository;
@@ -21,7 +21,7 @@ public class CourseRepositoryTest {
     void Should_ReturnCourses_When_FindCoursesTakenByTeacher() {
         List<Course> courses = courseRepository.findCoursesTakenByTeacher(3l);
         assertAll(() -> assertEquals(2, courses.size()),
-                () -> assertTrue(courses.get(0).getName().equals("2022-2023")),
-                () -> assertTrue(courses.get(1).getName().equals("2021-2022")));
+                () -> assertEquals("2022-2023", courses.get(0).getName()),
+                () -> assertEquals("2021-2022", courses.get(1).getName()));
     }
 }

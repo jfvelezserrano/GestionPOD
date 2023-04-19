@@ -205,9 +205,9 @@ public class TeacherServiceImpl implements TeacherService{
         br = new BufferedReader(new InputStreamReader(inputStream));
         while ((line = br.readLine()) != null) {
             line = line.replaceAll("[\\[\\]<>'\"!=]", "");
+            String[] values = line.split(";", -1);
 
-            if(!line.isBlank()){
-                String[] values = line.split(";", -1);
+            if(!line.isBlank() && !(values[0].equals("Nombre"))){
 
                 if(values.length != 3){
                     throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de un docente en la linea: " + line);

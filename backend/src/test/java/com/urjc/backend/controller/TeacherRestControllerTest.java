@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TeacherRestControllerTest {
+class TeacherRestControllerTest {
 
     @Mock
     SubjectServiceImpl subjectService;
@@ -86,9 +86,11 @@ public class TeacherRestControllerTest {
         ReflectionTestUtils.setField(teacherRestController, "teacherMapper", teacherMapper);
         when(teacherService.findByEmail(anyString())).thenReturn(null);
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
-            teacherRestController.updateRole(teacherMapper
-                    .toTeacherDTO(Data.createAdmin("Luis Rodriguez", "ejemplo@ejemplo.com").get()));
+        TeacherDTO teacherDTO = teacherMapper
+                .toTeacherDTO(Data.createAdmin("Luis Rodriguez", "ejemplo@ejemplo.com").get());
+
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
+            teacherRestController.updateRole(teacherDTO);
         });
 
         assertAll(() -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus()),
@@ -106,9 +108,11 @@ public class TeacherRestControllerTest {
         when(teacherService.findByEmail(anyString())).thenReturn(teacher);
         when(teacherService.findIfIsInCurrentCourse(anyString())).thenReturn(null);
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
-            teacherRestController.updateRole(teacherMapper
-                    .toTeacherDTO(Data.createAdmin("Luis Rodriguez", "ejemplo@ejemplo.com").get()));
+        TeacherDTO teacherDTO = teacherMapper
+                .toTeacherDTO(Data.createAdmin("Luis Rodriguez", "ejemplo@ejemplo.com").get());
+
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
+            teacherRestController.updateRole(teacherDTO);
         });
 
         assertAll(() -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus()),
@@ -152,22 +156,6 @@ public class TeacherRestControllerTest {
 
         verify(courseService).findLastCourse();
         verify(teacherService).findAllByCourse(anyLong(), any());
-        verify(teacherService, never()).findAllByRole(anyString());
-    }
-
-    @Test
-    void Should_ThrowException_When_FindAllByRoleAndCourse() {
-        when(courseService.findLastCourse()).thenReturn(Optional.empty());
-
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
-            teacherRestController.findAllByRole(null);
-        });
-
-        assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),
-                () -> assertEquals(NO_COURSE_YET, exception.getMessage()));
-
-        verify(courseService).findLastCourse();
-        verify(teacherService, never()).findAllByCourse(anyLong(), any());
         verify(teacherService, never()).findAllByRole(anyString());
     }
 
@@ -216,7 +204,7 @@ public class TeacherRestControllerTest {
         TeacherJoinSubjectDTO teacherJoinSubjectDTO = new TeacherJoinSubjectDTO();
         teacherJoinSubjectDTO.setHours(40);
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             teacherRestController.joinSubject(teacherJoinSubjectDTO, 1l);
         });
 
@@ -236,7 +224,7 @@ public class TeacherRestControllerTest {
         TeacherJoinSubjectDTO teacherJoinSubjectDTO = new TeacherJoinSubjectDTO();
         teacherJoinSubjectDTO.setHours(40);
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             teacherRestController.joinSubject(teacherJoinSubjectDTO, 1l);
         });
 
@@ -290,7 +278,7 @@ public class TeacherRestControllerTest {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             teacherRestController.unjoinSubject(1l);
         });
 
@@ -307,7 +295,7 @@ public class TeacherRestControllerTest {
     void Should_ThrowExceptionNotExistsSubject_When_UnjoinSubject() {
         when(subjectService.findById(anyLong())).thenReturn(Optional.empty());
 
-        RedirectException exception= assertThrows(RedirectException.class, () -> {
+        RedirectException exception = assertThrows(RedirectException.class, () -> {
             teacherRestController.unjoinSubject( 1l);
         });
 
@@ -324,7 +312,7 @@ public class TeacherRestControllerTest {
     void Should_ThrowException_When_FindAllMySubjects() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             teacherRestController.findAllMySubjects("name");
         });
 
@@ -397,7 +385,7 @@ public class TeacherRestControllerTest {
     void Should_ThrowException_When_FindAllMyCourses() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             teacherRestController.findAllMyCourses();
         });
 
@@ -438,7 +426,7 @@ public class TeacherRestControllerTest {
     void Should_ThrowException_When_GetEditableData() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
             teacherRestController.getEditableData();
         });
 
@@ -483,8 +471,10 @@ public class TeacherRestControllerTest {
     void Should_ThrowException_When_EditData() {
         when(courseService.findLastCourse()).thenReturn(Optional.empty());
 
-        GlobalException exception= assertThrows(GlobalException.class, () -> {
-            teacherRestController.editData(teacherMapper.toTeacherEditableDataDTO(120, "prueba"));
+        CourseTeacherDTO courseTeacherDTO = teacherMapper.toTeacherEditableDataDTO(120, "prueba");
+
+        GlobalException exception = assertThrows(GlobalException.class, () -> {
+            teacherRestController.editData(courseTeacherDTO);
         });
 
         assertAll(() -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus()),

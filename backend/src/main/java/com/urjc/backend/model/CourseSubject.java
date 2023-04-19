@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "courseSubject")
 public class CourseSubject {
     @EmbeddedId
-    CourseSubjectKey id = new CourseSubjectKey();
+    private CourseSubjectKey id = new CourseSubjectKey();
 
     @ManyToOne
     @MapsId("courseId")

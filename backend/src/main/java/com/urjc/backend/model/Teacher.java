@@ -17,16 +17,15 @@ public class Teacher{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<CourseTeacher> courseTeachers;
 
+    @Column(nullable = false)
     @NotNull(message = "Se deben añadir roles")
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
