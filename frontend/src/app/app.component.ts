@@ -11,7 +11,7 @@ export class AppComponent implements OnInit{
   public subscription: Subscription;
   
   ngOnInit(): void {
-    const intervalTime = interval(600000);
+    const intervalTime = interval(1200000);
     this.subscription = intervalTime.subscribe(val => this.reloadWindow());
   }
 

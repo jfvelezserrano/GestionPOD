@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CourseServiceTest {
+class CourseServiceTest {
     @Mock
     CourseRepository courseRepository;
 
@@ -95,8 +95,9 @@ public class CourseServiceTest {
     @Test
     void Should_ReturnCourse_When_FindById() {
         when(courseRepository.findById(anyLong())).thenReturn(Data.createCourse("2022-2023"));
-        Optional<Course> result = courseService.findById(anyLong());
+        Optional<Course> result = courseService.findById(1l);
         assertAll(() -> assertTrue(result.isPresent()),
+                () -> assertEquals(1l, result.get().getId()),
                 () -> assertEquals("2022-2023", result.get().getName()));
         verify(courseRepository).findById(anyLong());
     }
@@ -163,8 +164,8 @@ public class CourseServiceTest {
         when(subjectRepository.getSumTotalHoursAndSubjectsNumber(anyLong())).thenReturn(Data.createListIntegers(1200, 400));
         when(teacherRepository.findSumCorrectedHoursByCourse(anyLong())).thenReturn(1000);
         when(teacherRepository.findSumChosenHoursByCourse(anyLong())).thenReturn(150);
-        when(subjectService.searchByCourse(any(), eq("Conflicto"), anyString(), any(), anyString(), anyString(), any())).thenReturn(Collections.emptyList());
-        when(subjectService.searchByCourse(any(), eq("Completa"), anyString(), any(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
+        when(subjectService.searchByCourse(any(), eq("Conflicto"), anyString(), any(), anyString(), anyString(), anyString(), any())).thenReturn(Collections.emptyList());
+        when(subjectService.searchByCourse(any(), eq("Completa"), anyString(), any(), anyString(), anyString(), anyString(), any())).thenReturn(Data.createResultSearch());
 
 
         Integer[] result = courseService.getGlobalStatistics(course.get());
@@ -183,7 +184,7 @@ public class CourseServiceTest {
         verify(subjectRepository).getSumTotalHoursAndSubjectsNumber(anyLong());
         verify(teacherRepository).findSumCorrectedHoursByCourse(anyLong());
         verify(teacherRepository).findSumChosenHoursByCourse(anyLong());
-        verify(subjectService, times(2)).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), any());
+        verify(subjectService, times(2)).searchByCourse(any(), anyString(), anyString(),  any(), anyString(), anyString(), anyString(), any());
     }
 
    @Test
@@ -196,8 +197,8 @@ public class CourseServiceTest {
        while((line = bufferedReader.readLine()) != null){
            String[] values = line.split(";", -1);
            if(count == 0){
-               assertTrue(values[1].equals("Titulación"));
-               assertTrue(values[2].equals("Campus"));
+               assertEquals("Titulación", values[1]);
+               assertEquals("Campus", values[2]);
            } else{
                assertTrue(values[0].equals("4564654") && values[2].equals("Móstoles"));
            }

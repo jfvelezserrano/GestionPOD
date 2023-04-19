@@ -17,7 +17,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @NotNull(message = "Se debe completar el día de la semana")
     @DayWeekConstraint

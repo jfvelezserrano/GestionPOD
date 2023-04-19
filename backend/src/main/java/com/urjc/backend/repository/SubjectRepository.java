@@ -26,9 +26,10 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
             "LEFT JOIN pods.course pc LEFT JOIN pods.teacher pt WHERE c.id = :idCourse AND " +
             "(:quarter IS NULL OR subject.quarter = :quarter) AND (:turn IS NULL OR subject.turn = :turn) " +
             "AND (:title IS NULL OR subject.title = :title) AND (:emailTeacher IS NULL OR (pt.email = :emailTeacher AND pc.id=:idCourse)) " +
+            "AND (:subjectName IS NULL OR subject.name = :subjectName) " +
             "group by subject ")
     List<Subject> search(@Param("idCourse") Long idCourse, @Param("quarter") String quarter, @Param("turn") Character turn,
-                         @Param("title") String title, @Param("emailTeacher") String emailTeacher, Sort sort);
+                         @Param("title") String title, @Param("emailTeacher") String emailTeacher, String subjectName, Sort sort);
 
     @Query("SELECT subject FROM Subject subject JOIN subject.courseSubjects cs JOIN cs.course c WHERE c.id = :id ")
     List<Subject> findByCourse(@Param("id") Long id);
@@ -45,6 +46,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>{
 
     @Query("SELECT DISTINCT subject.title FROM Subject subject JOIN subject.courseSubjects cs WHERE cs.course.id = :idCourse")
     List<String> getTitlesByCourse(@Param("idCourse") Long idCourse);
+
+    @Query("SELECT DISTINCT subject.name FROM Subject subject JOIN subject.courseSubjects cs WHERE cs.course.id = :idCourse")
+    List<String> getSubjectsByCourse(@Param("idCourse") Long idCourse);
 
     @Query("SELECT DISTINCT subject.campus FROM Subject subject")
     List<String> getCampus();

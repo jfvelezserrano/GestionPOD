@@ -53,11 +53,11 @@
 
     </div>
 
-    <div class="row justify-content-center" *ngIf="isCourse">
+    <div class="row justify-content-center" *ngIf="isCourse && !showLoaderCourse">
 
         <div class="col-12 col-xl-8 d-flex justify-content-between">
-            <span *ngIf="!teachersStatistics" class="my-auto">Mostrando 0 resultados</span>
-            <span *ngIf="teachersStatistics" class="my-auto">Mostrando {{teachersStatistics.length}} resultados</span>
+            <span *ngIf="!teachersStatistics" class="my-auto d-none d-sm-block">Mostrando 0 resultados</span>
+            <span *ngIf="teachersStatistics" class="my-auto d-none d-sm-block">Mostrando {{teachersStatistics.length}} resultados</span>
             <div>
                 <span class="my-auto me-2"><small>Ordenar por</small></span>
                 <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getFirstTeachers()">
@@ -72,12 +72,12 @@
                     <div class="row justify-content-around">
                         <h4><b>{{teacherStatistics.name}}</b></h4>       
                         <span>
-                            <span class="truncate ms-0" placement="bottom" ngbTooltip="Fuerza original"><i class="fa-solid fa-calendar fa-sm blue me-1"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
-                            <span class="truncate" placement="bottom" ngbTooltip="Fuerza corregida"><i class="fa-solid fa-calendar-check fa-sm blue me-1"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
+                            <span class="truncate me-3" placement="bottom" ngbTooltip="Fuerza original"><i class="fa-solid fa-calendar fa-sm blue me-1"></i><small>{{teacherStatistics.originalHours}} horas</small></span>
+                            <span class="truncate me-3" placement="bottom" ngbTooltip="Fuerza corregida"><i class="fa-solid fa-calendar-check fa-sm blue me-1"></i><small>{{teacherStatistics.correctedHours}} horas</small></span>
                             <span class="truncate" placement="bottom" ngbTooltip="Asignaturas asignadas"><i class="fa fa-book-open fa-sm blue me-1"></i><small>{{teacherStatistics.numSubjects}} asignatura(s)</small></span>
                         </span>
 
-                        <div class="row justify-content-start">
+                        <div class="row justify-content-start mt-2 p-0">
                             <div class="col-12 col-xl-12">
                                 <div class="d-flex justify-content-between">
                                     <span><small>Carga Docente</small></span>
@@ -94,8 +94,8 @@
                             </div>
                         </div>
 
-                        <hr class="mt-2">
-                        <span class="section-title">OBSERVACIONES</span>
+                        <hr class="my-2">
+                        <span class="section-title mb-1">OBSERVACIONES</span>
                         <p class="content-observations">
                             <small *ngIf="teacherStatistics.observation == null || teacherStatistics.observation == ''">No hay observaciones</small>
                             <small *ngIf="teacherStatistics.observation">{{teacherStatistics.observation}}</small>

@@ -10,11 +10,6 @@ import { catchError } from 'rxjs/operators';
 })
 export class CourseService {
 
-  public httpOptionsContentType = {
-    headers: new HttpHeaders().set( 'Content-Type', "application/json"),
-    withCredentials: true
-  };
-
   public httpOptionsCredentials = {
     withCredentials: true
   };

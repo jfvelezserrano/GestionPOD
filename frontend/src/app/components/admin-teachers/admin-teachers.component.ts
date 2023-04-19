@@ -20,13 +20,12 @@ export class AdminTeachersComponent implements OnInit {
   public teachers: Teacher[];
   public id: number;
   public currentSection: string = "Administrador";
-  public currentSubsection: string = "Administrador > Cursos > Profesores";
+  public currentSubsection: string = "Administrador > PODs > Profesores";
   public idTeacher: number;
   public teacher:Teacher;
   public page: number;
   public typeSort: string;
   public isMore: boolean;
-  public isCourse: boolean;
   public error: string;
   public mainAdmin: string = environment.main_admin;
   public showLoader:boolean = false;
@@ -63,13 +62,11 @@ export class AdminTeachersComponent implements OnInit {
       next: (data) => {
         this.showLoader = false;
         this.teachers = data;
-        this.isCourse = true;
       },
       error: (error) => {
         this.showLoader = false;
         let splitted = error.split("\\"); 
         if(splitted[0] == '404'){
-          this.isCourse = false;
         }
       }
     });
@@ -83,9 +80,6 @@ export class AdminTeachersComponent implements OnInit {
       next: (data) => {
         this.teachers = this.teachers.concat(data);
         this.isMore = Object.keys(data).length == 12;
-      },
-      error: (error) => {
-        
       }
     });
   }
@@ -104,9 +98,6 @@ export class AdminTeachersComponent implements OnInit {
     this.courseService.deleteTeacherInPod(this.id, idTeacherToDelete).subscribe({
       next: (_) => {
         this.getTeachersInPod();
-      },
-      error: (error) => {
-        
       }
     });
   }
@@ -117,6 +108,7 @@ export class AdminTeachersComponent implements OnInit {
   }
 
   openCreateTeacher(model:any) {
+    this.error = '';
     this.modalService.open(model, {});
   }
 

@@ -18,24 +18,21 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
-    String name;
+    private String name;
 
     @Column(nullable = false)
-    Date creationDate;
+    private Date creationDate;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<POD> pods;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL,  orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<@Valid CourseTeacher> courseTeachers = new HashSet<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<CourseSubject> courseSubjects = new HashSet<>();
 
     public Course() {}

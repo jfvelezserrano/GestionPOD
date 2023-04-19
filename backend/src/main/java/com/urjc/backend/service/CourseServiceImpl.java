@@ -58,8 +58,8 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public void delete(Course course){
-            courseRepository.delete(course);
-            courseRepository.flush();
+        courseRepository.delete(course);
+        courseRepository.flush();
     }
 
     @Override
@@ -77,14 +77,15 @@ public class CourseServiceImpl implements CourseService{
         Integer totalCorrectHours = teacherRepository.findSumCorrectedHoursByCourse(course.getId());
         Integer totalChosenHours = teacherRepository.findSumChosenHoursByCourse(course.getId());
 
+        totalCharge = totalCharge != null ? totalCharge : 0;
         totalChosenHours = totalChosenHours != null ? totalChosenHours : 0;
 
-        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", null, "", "", Sort.unsorted()).size();
-        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", null, "", "", Sort.unsorted()).size();
+        Integer numConflicts = subjectService.searchByCourse(course, "Conflicto", "", null, "", "", "", Sort.unsorted()).size();
+        Integer numCompletations = subjectService.searchByCourse(course, "Completa", "", null, "", "", "", Sort.unsorted()).size();
 
-        return new Integer[]{ (totalChosenHours * 100/totalCharge), totalChosenHours,
-                totalCharge, (totalChosenHours * 100/totalCorrectHours), totalCorrectHours,
-                (numCompletations * 100/numSubjects), numCompletations, numSubjects, numConflicts};
+        return new Integer[]{ (totalCharge == 0 ? 0 : totalChosenHours * 100/totalCharge), totalChosenHours,
+                totalCharge, (totalCorrectHours == 0 ? 0 : totalChosenHours * 100/totalCorrectHours), totalCorrectHours,
+                (numSubjects == 0 ? 0 : numCompletations * 100/numSubjects), numCompletations, numSubjects, numConflicts};
     }
 
     @Override

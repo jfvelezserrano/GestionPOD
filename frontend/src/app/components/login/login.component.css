@@ -1,24 +1,22 @@
 .login{
     position: relative;
     background: rgba(201, 200, 200, 0.541);
-    max-width: 450px;
+    max-width: 500px;
+    max-height: 500px;
 }
 
 #background-login{
-  background-image: url("src/assets/images/universidadURJC.webp");
+  background-image: url("src/assets/images/urjc.webp");
   background-position: center center;
+  background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-size: cover;
-  height:100%;
+  height: auto;
+  min-height: 100vh;
 }
 
 h3{
   font-size: .83em;
-}
-
-.page-login{
-  margin-top: 180px;
 }
 
 #login-title{
@@ -44,30 +42,44 @@ h3{
 }
 
 .background-black-opacity{
-  height:100%;
+  height: auto;
+  min-height: 100vh;
   background-color: rgba(22, 22, 22, 0.39);
 }
 
 .progress-loader {
     background: var(--white);
     height: 5px;
+}
+
+.progress {
+  content: '';
+  width: 0px;
+  height: 5px;
+  background: var(--light-red);
+  transition: 1s;
+  animation: loading 300s normal;
+}
+
+main{
+  margin-top:5%;
+}
+
+@keyframes loading {
+  0% {
+    width: 0%;
   }
-  
-  .progress {
-    content: '';
-    width: 0px;
-    height: 5px;
-    background: var(--light-red);
-    transition: 1s;
-    animation: loading 300s normal;
+
+  100% {
+    width: 100%;
   }
-  
-  @keyframes loading {
-    0% {
-      width: 0%;
-    }
-  
-    100% {
-      width: 100%;
-    }
+}
+
+@media (max-width: 575px){
+  .access-content [type="button"]{
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    color: var(--white);
   }
+}

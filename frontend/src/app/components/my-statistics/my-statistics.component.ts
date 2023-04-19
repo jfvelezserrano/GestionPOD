@@ -118,7 +118,12 @@ export class MyStatisticsComponent implements OnInit {
       next: (data) => {
         this.getEditableData();
         this.personalStatistics.correctedHours = this.editableData.correctedHours;
-        this.personalStatistics.percentage = Math.trunc(this.personalStatistics.charge * 100 / this.personalStatistics.correctedHours);
+        if(this.personalStatistics.correctedHours == 0){
+          this.personalStatistics.percentage = 0;
+        } else{
+          this.personalStatistics.percentage = Math.trunc(this.personalStatistics.charge * 100 / this.personalStatistics.correctedHours);
+        }
+        
       }
     });
   }

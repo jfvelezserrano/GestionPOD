@@ -2,6 +2,7 @@ package com.urjc.backend.model;
 
 import com.urjc.backend.error.exception.CSVValidationException;
 import com.urjc.backend.validation.AssistanceCareersConstraint;
+import com.urjc.backend.validation.QuarterConstraint;
 import com.urjc.backend.validation.TurnConstraint;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,13 +53,12 @@ public class Subject {
     private String campus;
 
     @NotNull(message = "Se debe completar el año de impartición")
-    @Min(value = 0, message = "El valor mínimo es {value}")
+    @Min(value = 1, message = "El valor mínimo es {value}")
     @Max(value = 10, message = "El valor máximo es de {value}")
     @Column(nullable = false)
     private Integer year;
 
-    @NotBlank(message = "Se debe completar el cuatrimestre")
-    @Pattern(regexp = "[^\\[\\]<>'\";!=]*", message = "Los siguientes caracteres no están permitidos: []<>'\";!=")
+    @QuarterConstraint
     @Size(max = 255, message = "El texto permite un máximo de {max} caracteres")
     @Column(nullable = false)
     private String quarter;
@@ -84,7 +84,6 @@ public class Subject {
     private Set<POD> pods;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(unique = true, nullable = false)
     private Set<CourseSubject> courseSubjects;
 
     @AssistanceCareersConstraint
@@ -144,15 +143,17 @@ public class Subject {
 
     public void setAssistanceCareersByString(String assistanceCareer) {
         if(!assistanceCareer.equals("")) {
-            List<String> values = List.of(assistanceCareer.split(", "));
-            this.assistanceCareers = values;
+            this.assistanceCareers = List.of(assistanceCareer.split(", "));
         }
     }
 
     public Map<String, List<String>> recordSubject(){
-        Map<String, List<String>> recordMap = new HashMap<>();
+        Map<String, List<String>> recordMap = new LinkedHashMap<>();
 
-        for (POD pod:this.getPods()) {
+        List<POD> podsList = new ArrayList<>(this.getPods());
+        Collections.sort(podsList, Comparator.comparing(p -> p.getCourse().getCreationDate()));
+
+        for (POD pod:podsList) {
             List<String> values = new ArrayList<>();
             String courseName = pod.getCourse().getName();
             if(recordMap.containsKey(courseName)){

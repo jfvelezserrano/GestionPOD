@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Sql({ "/import.sql" })
-public class SubjectRepositoryTest {
+class SubjectRepositoryTest {
 
     @Autowired
     SubjectRepository subjectRepository;
@@ -38,7 +38,7 @@ public class SubjectRepositoryTest {
 
     @Test
     void Should_ReturnSubjects_When_SearchSubjectsBySpecificValues() {
-        List<Subject> subjects = subjectRepository.search(1l, "Segundo Cuatrimestre", 'T', null, null, Sort.unsorted());
+        List<Subject> subjects = subjectRepository.search(1l, "Segundo Cuatrimestre", 'T', null, null, null, Sort.unsorted());
         assertAll(() -> assertEquals(1, subjects.size()),
                 () -> assertEquals(5l, subjects.get(0).getId()));
     }
@@ -73,6 +73,22 @@ public class SubjectRepositoryTest {
     }
 
     @Test
+    void Should_ReturnTitles_When_RequestAllTitlesByCourse() {
+        List<String> titles = subjectRepository.getTitlesByCourse(1l);
+        assertAll(() -> assertEquals(2, titles.size()),
+                () -> assertTrue(titles.stream().anyMatch(t -> t.equals("(2034) Grado Ingeniería Software (M)"))),
+                () -> assertTrue(titles.stream().anyMatch(t -> t.equals("(2034) Grado Ingeniería Informática (T)"))));
+    }
+
+    @Test
+    void Should_ReturnSubjectsName_When_RequestAllSubjectsByCourse() {
+        List<String> subjectsName = subjectRepository.getSubjectsByCourse(1l);
+        assertAll(() -> assertEquals(2, subjectsName.size()),
+                () -> assertTrue(subjectsName.stream().anyMatch(s -> s.equals("Asignatura 1"))),
+                () -> assertTrue(subjectsName.stream().anyMatch(s -> s.equals("Asignatura 2"))));
+    }
+
+    @Test
     void Should_ReturnCampus_When_RequestAllCampus() {
         List<String> campus = subjectRepository.getCampus();
         assertAll(() -> assertEquals(2, campus.size()),
@@ -92,17 +108,17 @@ public class SubjectRepositoryTest {
     void Should_ReturnBarGraphData_When_RequestHoursPerSubject() {
         List<Object[]> barGraphData = subjectRepository.hoursPerSubjectByTeacherAndCourse(3l, 1l, Sort.unsorted());
         assertAll(() -> assertEquals(1, barGraphData.size()),
-                () -> assertTrue(barGraphData.get(0)[0].equals("Asignatura 2")),
-                () -> assertTrue(((Integer) barGraphData.get(0)[1]) == 150),
-                () -> assertTrue(((Integer) barGraphData.get(0)[2]) == 50));
+                () -> assertEquals("Asignatura 2", barGraphData.get(0)[0]),
+                () -> assertEquals(150, ((Integer) barGraphData.get(0)[1])),
+                () -> assertEquals(50, ((Integer) barGraphData.get(0)[2])));
     }
 
     @Test
     void Should_ReturnDoughnutChartData_When_RequestPercentageHours() {
         List<Object[]> doughnutChartData = subjectRepository.percentageHoursByTeacherAndCourse(3l, 1l, 50, Sort.unsorted());
         assertAll(() -> assertEquals(1, doughnutChartData.size()),
-                () -> assertTrue(doughnutChartData.get(0)[0].equals("Asignatura 2")),
-                () -> assertTrue(((Integer) doughnutChartData.get(0)[1]) == 100));
+                () -> assertEquals("Asignatura 2", doughnutChartData.get(0)[0]),
+                () -> assertEquals(100, ((Integer) doughnutChartData.get(0)[1])));
     }
 
     @Test

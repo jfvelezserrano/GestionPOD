@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class CourseTeacher {
 
     @EmbeddedId
-    CourseTeacherKey id = new CourseTeacherKey();
+    private CourseTeacherKey id = new CourseTeacherKey();
 
     @ManyToOne
     @MapsId("courseId")
@@ -32,7 +32,7 @@ public class CourseTeacher {
 
     @Column(nullable = false)
     @NotNull(message = "Se debe completar la fuerza del docente")
-    @Min(value = 0, message = "El valor mínimo es {value}")
+    @Min(value = 1, message = "El valor mínimo es {value}")
     @Max(value = 400, message = "El valor máximo es {value}")
     private Integer originalHours;
 

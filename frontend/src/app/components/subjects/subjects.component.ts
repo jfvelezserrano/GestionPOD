@@ -15,11 +15,13 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./subjects.component.css']
 })
 export class SubjectsComponent implements OnInit {
+  public subjects: string[];
   public currentSection: string = "Asignaturas";
   public currentSubsection: string = "Asignaturas";
   public occupation: string;
   public quarter: string;
   public titleChosen: string;
+  public subjectChosen: string;
   public subjectsTeachersStatus: SubjectTeacherStatus[];
   public subjectToShow: SubjectTeacherStatus;
   public titles: string[];
@@ -59,6 +61,7 @@ export class SubjectsComponent implements OnInit {
       this.testEmitter.subscribe(data => {
         if(data != undefined && data){
           this.getAllTeachers();
+          this.getAllSubjects();
           this.searchSubjects();
         };
       })
@@ -67,7 +70,7 @@ export class SubjectsComponent implements OnInit {
 
   searchSubjects(){
     this.showLoader = true;
-    this.subjectService.search(this.typeSort, this.occupation, this.quarter, this.turn, this.titleChosen, this.emailTeacherChosen)
+    this.subjectService.search(this.typeSort, this.occupation, this.quarter, this.turn, this.titleChosen, this.subjectChosen, this.emailTeacherChosen)
     .subscribe({
       next: (data) => {
         this.showLoader = false;
@@ -100,6 +103,14 @@ export class SubjectsComponent implements OnInit {
     this.teacherService.getAllTeachersCurrentCourse().subscribe({
       next: (data) => {
         this.teachers = data;
+      }
+    });
+  }
+
+  getAllSubjects(){
+    this.subjectService.getSubjectsCurrentCourse().subscribe({
+      next: (data) => {
+        this.subjects = data;
       }
     });
   }

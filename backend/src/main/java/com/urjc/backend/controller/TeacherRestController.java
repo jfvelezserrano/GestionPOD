@@ -49,13 +49,13 @@ public class TeacherRestController {
     private SubjectService subjectService;
 
     @Autowired
-    ITeacherMapper teacherMapper;
+    private ITeacherMapper teacherMapper;
 
     @Autowired
-    ISubjectMapper subjectMapper;
+    private ISubjectMapper subjectMapper;
 
     @Autowired
-    ICourseMapper courseMapper;
+    private ICourseMapper courseMapper;
 
     @PutMapping(value = "/role", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> updateRole(@RequestBody @Valid TeacherDTO teacherDTO) {
@@ -79,11 +79,12 @@ public class TeacherRestController {
         if (role == null && course.isPresent()) {
             List<Teacher> teachers = teacherService.findAllByCourse(course.get().getId(), Pageable.unpaged());
             return new ResponseEntity<>(teacherMapper.map(teachers), HttpStatus.OK);
-        } else if (role != null){
-            List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
-            return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
+        } else if(role == null){
+            role = "ADMIN";
         }
-        throw new GlobalException(HttpStatus.NOT_FOUND, NO_COURSE_YET);
+
+        List<Teacher> teachersWithRole = teacherService.findAllByRole(role);
+        return new ResponseEntity<>(teacherMapper.map(teachersWithRole), HttpStatus.OK);
     }
 
     @PostMapping("/join/{idSubject}")

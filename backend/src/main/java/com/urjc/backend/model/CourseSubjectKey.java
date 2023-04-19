@@ -15,10 +15,10 @@ import java.util.Objects;
 class CourseSubjectKey implements Serializable {
 
     @Column(name = "subject_id")
-    Long subjectId;
+    private Long subjectId;
 
     @Column(name = "course_id")
-    Long courseId;
+    private Long courseId;
 
     @Override
     public boolean equals(Object o) {

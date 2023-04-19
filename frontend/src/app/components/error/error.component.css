@@ -38,7 +38,7 @@ p span{
 }
 
 #background-error{
-    background-image: url("src/assets/images/urjc-page-error.jpg");
+    background-image: url("src/assets/images/page-error.webp");
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;

@@ -1,7 +1,7 @@
 INSERT INTO course (id, name, creation_date) VALUES (1l, '2021-2022', '2022-12-12 00:00:00');
 INSERT INTO course (id, name, creation_date) VALUES (2l, '2022-2023', '2022-12-15 00:00:00');
 
-INSERT INTO teacher (id, email, name) VALUES (3l, 'aliciaholi36@gmail.com', 'Alicia Merino Martínez');
+INSERT INTO teacher (id, email, name) VALUES (3l, 'aliciaejemplo@gmail.com', 'Merino Martínez, Alicia');
 INSERT INTO teacher_roles (teacher_id, roles) VALUES (3l, 'TEACHER');
 INSERT INTO teacher_roles (teacher_id, roles) VALUES (3l, 'ADMIN');
 INSERT INTO teacher (id, email, name) VALUES (6l, 'ejemplo@gmail.com', 'Luis Rodriguez');
