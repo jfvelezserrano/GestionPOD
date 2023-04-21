@@ -75,6 +75,7 @@ public class MailBoxServiceImpl implements MailBoxService {
         return code;
     }
 
+    @Override
     public boolean isCorrect(String code, String ip) {
         if (existsCode(code)) {
             List<String> values = this.codesMap.get(code);
@@ -84,6 +85,7 @@ public class MailBoxServiceImpl implements MailBoxService {
         return false;
     }
 
+    @Override
     public void addCode(String code, String email, String ip) {
         if (!existsCode(code)) {
             this.codesMap.put(code, new ArrayList<>());
@@ -93,10 +95,12 @@ public class MailBoxServiceImpl implements MailBoxService {
         }
     }
 
+    @Override
     public void removeCode(String code) {
         this.codesMap.remove(code);
     }
 
+    @Override
     public String getEmailByCode(String code) {
         return this.codesMap.get(code).get(0);
     }

@@ -30,12 +30,6 @@ export class CourseService {
 		) as Observable<Course[]>;
   }
 
-  getCurrentCourse(): Observable<Course>{
-    return this.http.get<Course>(environment.urlApi + "/pods/currentCourse", this.httpOptionsCredentials)
-    .pipe(catchError(error => this.handleError(error))
-		) as Observable<Course>;
-  }
-
   deleteTeacherInPod(idPod:number, idTeacher:number){
     return this.http.delete(environment.urlApi + "/pods/" + idPod + "/teachers/" + idTeacher, this.httpOptionsCredentials)
     .pipe(catchError(error => this.handleError(error))

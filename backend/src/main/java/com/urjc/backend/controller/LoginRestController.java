@@ -96,17 +96,4 @@ public class LoginRestController {
         }
         throw new GlobalException(HttpStatus.UNAUTHORIZED, "Acceso denegado");
     }
-
-    @GetMapping(value = "/teacherLogged", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TeacherDTO> getTeacherLogged() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication == null){
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Acceso denegado");
-        }
-
-        Teacher teacherLogged = teacherService.findByEmail(authentication.getName());
-        return new ResponseEntity<>(teacherMapper.toTeacherDTO(teacherLogged),HttpStatus.OK);
-    }
 }

@@ -51,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/access").permitAll()
                 .antMatchers("/api/verify/**").permitAll()
+                .antMatchers("/api/pods/exportCSV").hasRole(TEACHER)
                 .antMatchers("/api/pods/**").hasRole(ADMIN)
                 .antMatchers("/api/subjects/**").hasRole(TEACHER)
                 .antMatchers(HttpMethod.PUT,"/api/teachers/role").hasRole(ADMIN)
