@@ -22,7 +22,7 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=M1!&bqP3
       - API_PORT=8080
-      - APP_URL=https://app.gestionpod.aliciamm.xyz/
+      - APP_URL=https://app.gestionpod.aliciamm.xyz
       - SMTP_HOST=smtp-mail.outlook.com
       - SMTP_PASSWORD=H6Er4tWqpi2
       - SMTP_USER=gestionpod@outlook.com
