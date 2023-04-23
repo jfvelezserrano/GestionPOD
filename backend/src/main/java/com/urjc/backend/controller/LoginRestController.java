@@ -86,6 +86,7 @@ public class LoginRestController {
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
             cookie.setDomain("");
+            cookie.setSecure(true);
             cookie.setPath("/");
             cookie.setMaxAge(60 * 60 * 24);
             response.addCookie(cookie);
