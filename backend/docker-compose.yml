@@ -25,6 +25,6 @@ services:
       - SMTP_PASSWORD=H6Er4tWqpi2
       - SMTP_USER=gestionpod@outlook.com
       - SMTP_PORT=587
-      - JWT_SECRET=%aWR&1Zmh=vaXkzO$DkyM==3VyZmhvc2l&=kaIm%
+      - JWT_SECRET="%aWR&1Zmh=vaXkzO$DkyM==3VyZmhvc2l&=kaIm%"
     volumes:
       - .m2:/root/.m2
