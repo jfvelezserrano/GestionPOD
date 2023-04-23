@@ -8,6 +8,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=M1!&bqP3
       - MYSQL_DATABASE=pod_urjc
+    volumes:
+      - db:/var/lib/mysql
   app:
     depends_on:
       - mysqldb
@@ -28,3 +30,14 @@ services:
       - JWT_SECRET="%aWR&1Zmh=vaXkzO$DkyM==3VyZmhvc2l&=kaIm%"
     volumes:
       - .m2:/root/.m2
+
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
+
+networks:
+  default:
+    external:
+      name: proxied-containers
