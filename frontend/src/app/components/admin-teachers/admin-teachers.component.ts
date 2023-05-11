@@ -84,16 +84,6 @@ export class AdminTeachersComponent implements OnInit {
     });
   }
 
-  @HostListener("window:scroll", ["$event"])
-  onTeachersScroll() {
-    let pos = window.scrollY + window.innerHeight;
-    let max = document.documentElement.scrollHeight;
-
-    if(pos == max  && this.isMore){
-      this.loadMoreTeachers();
-    }
-  }
-
   deleteTeacherInPod(idTeacherToDelete:any){
     this.courseService.deleteTeacherInPod(this.id, idTeacherToDelete).subscribe({
       next: (_) => {

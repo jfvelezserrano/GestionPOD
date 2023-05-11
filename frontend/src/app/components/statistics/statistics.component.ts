@@ -84,15 +84,4 @@ export class StatisticsComponent implements OnInit {
       }
     });
   }
-
-  @HostListener("window:scroll", ["$event"])
-  onStatisticsScroll() {
-    let pos = window.scrollY + window.innerHeight;
-    let max = document.documentElement.scrollHeight;
-
-    if(pos == max && this.isMore){
-      this.loadMoreTeachers();
-    }
-  }
-
 }

@@ -95,16 +95,6 @@ export class AdminSubjectsComponent implements OnInit {
     });
   }
 
-  @HostListener("window:scroll", ["$event"])
-  onSubjectsScroll() {
-    let pos = window.scrollY + window.innerHeight;
-    let max = document.documentElement.scrollHeight;
-
-    if(pos == max && this.isMore){
-      this.loadMoreSubjects();
-    }
-  }
-
   deleteSubjectInPod(idSubjectToDelete:any){
 
     this.courseService.deleteSubjectInPod(this.idPod, idSubjectToDelete).subscribe({
