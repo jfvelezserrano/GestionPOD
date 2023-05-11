@@ -97,7 +97,7 @@ export class AdminSubjectsComponent implements OnInit {
 
   @HostListener("window:scroll", ["$event"])
   onSubjectsScroll() {
-    let pos = window.scrollY + document.documentElement.offsetHeight;
+    let pos = window.scrollY + window.innerHeight;
     let max = document.documentElement.scrollHeight;
 
     if(pos == max && this.isMore){
