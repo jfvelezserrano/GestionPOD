@@ -70,6 +70,11 @@
               <p>No hay asignaturas aún</p>
             </div>
           </div>
+
+          <div class="center-horizontally mt-4" *ngIf="isMore">
+            <button type="button" (click)="loadMoreSubjects()" class="btn mx-auto btn-global theme-red">Cargar más</button>
+          </div>
+
         </div>
       </div>
     </div>
