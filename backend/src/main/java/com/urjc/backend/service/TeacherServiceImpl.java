@@ -209,8 +209,14 @@ public class TeacherServiceImpl implements TeacherService{
 
             if(!line.isBlank() && !(values[0].equals("Nombre"))){
 
-                if(values.length != 3){
+                if(values.length != 3 || values[2].isBlank()){
                     throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de un docente en la linea: " + line);
+                }
+
+                try{
+                    Integer.parseInt(values[2]);
+                } catch (NumberFormatException e) {
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "Hay datos incorrectos y/o incompletos en el siguiente docente: " + line);
                 }
 
                 Teacher teacher = setEntryValuesToTeacher(values);
