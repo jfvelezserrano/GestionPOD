@@ -113,6 +113,8 @@ public class Subject {
         this.career = career;
         this.pods = new HashSet<>();
         this.courseSubjects = new HashSet<>();
+        this.assistanceCareers = new ArrayList<>();
+        this.schedules = new ArrayList<>();
     }
 
     public void setSchedulesByString(String schedules) {

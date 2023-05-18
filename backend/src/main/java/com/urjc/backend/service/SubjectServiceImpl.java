@@ -220,8 +220,15 @@ public class SubjectServiceImpl implements SubjectService{
 
             if (!(line.isBlank()) && !(values[0].equals("Código"))) {
 
-                if(values.length != 12){
+                if(values.length != 12 || values[3].isBlank() || values[7].isBlank()){
                     throw new GlobalException(HttpStatus.BAD_REQUEST, "Faltan datos de una asignatura en la linea: " + line);
+                }
+
+                try{
+                    Integer.parseInt(values[3]);
+                    Integer.parseInt(values[7]);
+                } catch (NumberFormatException e) {
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "Hay datos incorrectos y/o incompletos en la siguiente asignatura: " + line);
                 }
 
                 Subject subject = setEntryValuesToSubject(values);
@@ -282,23 +289,22 @@ public class SubjectServiceImpl implements SubjectService{
         boolean isEqual = storedSubject != null;
 
         if(isEqual) {
-            isEqual = ((storedSubject.getAssistanceCareers().size() == 0) && (subject.getAssistanceCareers() == null)) ||
-                    storedSubject.getAssistanceCareers().size() == subject.getAssistanceCareers().size();
+            isEqual = storedSubject.getAssistanceCareers().size() == subject.getAssistanceCareers().size();
 
             int i = 0;
             while(isEqual && i < storedSubject.getAssistanceCareers().size()){
-                isEqual = subject.getAssistanceCareers().get(i).equals(storedSubject.getAssistanceCareers().get(i));
+                isEqual = subject.getAssistanceCareers().contains((storedSubject.getAssistanceCareers().get(i)));
                 i++;
             }
 
-            boolean isEqualSchedules = ((storedSubject.getSchedules().size() == 0) && (subject.getSchedules() == null)) ||
-                    storedSubject.getSchedules().size() == subject.getSchedules().size();
+            boolean isEqualSchedules = storedSubject.getSchedules().size() == subject.getSchedules().size();
 
             i = 0;
             while(isEqual && isEqualSchedules && i < storedSubject.getSchedules().size()){
-                isEqual = subject.getSchedules().get(i).getDayWeek().equals(storedSubject.getSchedules().get(i).getDayWeek()) &&
-                        subject.getSchedules().get(i).getStartTime().equals(storedSubject.getSchedules().get(i).getStartTime()) &&
-                        subject.getSchedules().get(i).getEndTime().equals(storedSubject.getSchedules().get(i).getEndTime());
+                Schedule storedSchedule = storedSubject.getSchedules().get(i);
+                isEqual = subject.getSchedules().stream().anyMatch(s -> s.getDayWeek().equals(storedSchedule.getDayWeek()) &&
+                        s.getStartTime().equals(storedSchedule.getStartTime()) &&
+                        s.getEndTime().equals(storedSchedule.getEndTime()));
                 i++;
             }
 

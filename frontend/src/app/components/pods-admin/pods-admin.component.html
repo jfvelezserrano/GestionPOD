@@ -19,7 +19,7 @@
                         <label for="profesores-file" class="form-label section-title">Profesores CSV</label>
                         <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=null;" accept=".csv">
                     </div>
-                    <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                    <span class="error-message-txt error-pod m-0" role="alert" *ngIf="error != ''">{{error}}</span>
                     <div class="d-flex justify-content-center pt-3">
                         <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!createPODform.form.valid">Añadir</button>
                     </div>
