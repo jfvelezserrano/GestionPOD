@@ -6,20 +6,21 @@
                 <h3><b>Añadir POD</b></h3>
                 <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
                     <div class="mb-3">
-                    <label for="curso" class="form-label section-title">Curso</label>
-                        <input required #course="ngModel" ngModel name="course" placeholder="Nombre del curso" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
+                    <label for="course-file" class="form-label section-title">Curso</label>
+                        <input required #course="ngModel" id="course-file" ngModel name="course" placeholder="Nombre del curso" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
                         [ngClass]="!course.valid && course.touched ? 'border-error' : ''">
                         <span class="error-message-txt m-0" role="alert" *ngIf="course.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
                     </div>
                     <div class="mb-3">
-                        <label for="asignaturas-file" class="form-label section-title">Asignaturas CSV</label>
-                        <input required #fileSubjects ngModel name="fileSubjects" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=null;" accept=".csv">
+                        <label for="subjects-file" class="form-label section-title">Asignaturas CSV</label>
+                        <input required #fileSubjects ngModel id="subjects-file" name="fileSubjects" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=undefined;" accept=".csv">
                     </div>
                     <div class="mb-3">
-                        <label for="profesores-file" class="form-label section-title">Profesores CSV</label>
-                        <input required #fileTeachers ngModel name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=null;" accept=".csv">
+                        <label for="teachers-file" class="form-label section-title">Profesores CSV</label>
+                        <input required #fileTeachers ngModel id="teachers-file" name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=undefined;" accept=".csv">
                     </div>
-                    <span class="error-message-txt error-pod m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                    <span class="error-message-txt error-pod m-0" role="alert" *ngIf="error == 'undefined'">Seleccione de nuevo los archivos.</span>
+                    <span class="error-message-txt error-pod m-0" role="alert" *ngIf="error != '' && error != 'undefined'">{{error}}</span>
                     <div class="d-flex justify-content-center pt-3">
                         <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!createPODform.form.valid">Añadir</button>
                     </div>
@@ -95,7 +96,7 @@
               <div class="px-4 center">
                 <img src="assets/images/delete.webp" width="90" height="90" class="mb-4" alt="imagen de advertencia borrado">
                 <h4 class="modal-title"><b>Eliminar {{pod.name}}</b></h4>
-                <span>¿Desea realmente eliminar el curso {{pod.name}} del Plan Docente Actual?</span>
+                <span>¿Desea realmente eliminar el POD {{pod.name}}?</span>
               </div>
             </div>
             <div class="modal-footer mb-3">

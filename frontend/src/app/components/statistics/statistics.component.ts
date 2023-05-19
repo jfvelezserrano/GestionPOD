@@ -65,11 +65,12 @@ export class StatisticsComponent implements OnInit {
 
   getFirstTeachers(){
     this.page = 0;
-    this.isMore = true;
+    this.isMore = false;
     
     this.statisticsService.getAllTeachersStatistics(this.page, this.typeSort).subscribe({
       next: (data) => {
         this.teachersStatistics = data;
+        this.isMore = Object.keys(data).length == 12;
       }
     });
   }
