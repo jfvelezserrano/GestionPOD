@@ -67,18 +67,16 @@ export class AdminSubjectsComponent implements OnInit {
   getSubjectsInPod(){
     this.showLoader = true;
     this.page = 0;
-    this.isMore = true;
+    this.isMore = false;
 
     this.subjectService.getSubjectsByPOD(this.idPod, this.page,this.typeSort).subscribe({
       next: (data) => {
         this.showLoader = false;
         this.subjectsTeachersBase = data;
+        this.isMore = Object.keys(data).length == 12;
       },
       error: (error) => {
         this.showLoader = false;
-        let splitted = error.split("\\"); 
-        if(splitted[0] == '404'){
-        }
       }
     });
   }
