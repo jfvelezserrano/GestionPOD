@@ -70,9 +70,7 @@ export class PodsAdminComponent implements OnInit {
       error: (error) => {
         this.showLoaderCreate = false;
         let splitted = error.split("\\"); 
-        if(splitted[0] == '400'){
-          this.error = splitted[1];
-        }
+        this.error = splitted[1];
       }
     });
   }
