@@ -45,7 +45,7 @@
                                                 <p class="label-subject-groups"><small class="me-2"><b>GRUPO</b></small><span class="badge">{{mySubject.subject.career}}</span></p>
                                                 <p class="label-subject-groups"><small class="me-2"><b>GRUPOS ASISTENCIA</b></small>
                                                     <span  class="badge my-1" *ngIf="mySubject.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                                    <span class="badge my-1" *ngFor="let career of mySubject.subject.assistanceCareers">{{career}}</span>
+                                                    <span class="badge my-1" *ngFor="let career of mySubject.subject.assistanceCareers">{{career.split(' ').join('') ? career : '...'}}</span>
                                                 </p>
                                             </li>
                                             <li class="list-group-item" *ngIf="mySubject.joinedTeachers">
@@ -107,13 +107,13 @@
                             <div class="col-2">
                                 <button type="button" placement="bottom" ngbTooltip="Buscar" class="btn button-actions-red" [disabled]="!codeChosenSubject || code.errors?.['pattern']" (click)="getSubjectById()"><i class="fa fa-search fa-sm"></i></button>
                             </div>
+                            <div class="mt-2" *ngIf="code.errors?.['pattern']">
+                                <span class="error-message-txt" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                            </div>
+                            <div class="mt-2" *ngIf="error != ''">
+                                <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-center mt-2" *ngIf="code.errors?.['pattern']">
-                        <span class="error-message-txt text-center" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
-                    </div>
-                    <div class="text-center mt-2" *ngIf="error != ''">
-                        <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
                     </div>
                     <div class="card" *ngIf="subjectTeacher && error == ''">
                         <div class="row g-0">
@@ -129,7 +129,7 @@
                                             <p class="label-subject-groups"><small class="me-2"><b>GRUPO</b></small><span class="badge">{{subjectTeacher.subject.career}}</span></p>
                                             <p class="label-subject-groups"><small class="me-2"><b>GRUPOS ASISTENCIA</b></small>
                                                 <span  class="badge my-1" *ngIf="subjectTeacher.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                                <span class="badge my-1" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
+                                                <span class="badge my-1" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career.split(' ').join('') ? career : '...'}}</span>
                                             </p>
                                         </li>
                                         <li class="list-group-item" *ngIf="subjectTeacher.joinedTeachers">
@@ -201,7 +201,7 @@
 </ng-template>
 
 <ng-template #deletePOD let-modal>
-    <div class="modal-dialog-centered" role="document">
+    <div class="modal-dialog-centered break-word" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
@@ -221,7 +221,7 @@
 </ng-template>
 
 <ng-template #editPOD let-modal>
-    <div class="modal-dialog-centered" role="document">
+    <div class="modal-dialog-centered break-word" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
@@ -271,7 +271,7 @@
         <h4 class="offcanvas-title">Historial</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
     </div>
-    <div class="offcanvas-body px-4">
+    <div class="offcanvas-body px-4 break-word">
         <h5><b>{{subjectTeacher.subject.name}}</b></h5>
         <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
             <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
