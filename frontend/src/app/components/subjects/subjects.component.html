@@ -144,7 +144,7 @@
                                             <p class="label-subject-groups"><small class="me-2"><b>GRUPO</b></small><span class="badge">{{subjectTeacher.subject.career}}</span></p>
                                             <p class="label-subject-groups"><small class="me-2"><b>GRUPOS ASISTENCIA</b></small>
                                                 <span  class="badge my-1" *ngIf="subjectTeacher.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                                                <span class="badge my-1" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career}}</span>
+                                                <span class="badge my-1" *ngFor="let career of subjectTeacher.subject.assistanceCareers">{{career.split(' ').join('') ? career : '...'}}</span>
                                             </p>
                                         </li>
                                         <li class="list-group-item" *ngIf="subjectTeacher.joinedTeachers">
@@ -195,7 +195,7 @@
       <h4 class="offcanvas-title">Historial</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body break-word">
         <h5><b>{{subjectToShow.subject.name}}</b></h5>
         <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
             <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">

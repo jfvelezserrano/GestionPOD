@@ -36,7 +36,7 @@
                         <p class="label-subject-groups"><small class="me-2"><b>GRUPO</b></small><span class="badge">{{subjectTeacherBase.subject.career}}</span></p>
                         <p class="label-subject-groups"><small class="me-2"><b>GRUPOS ASISTENCIA</b></small>
                           <span  class="badge my-1" *ngIf="subjectTeacherBase.subject.assistanceCareers.length == 0">No hay grupos de asistencia</span>
-                          <span class="badge my-1" *ngFor="let career of subjectTeacherBase.subject.assistanceCareers">{{career}}</span>
+                          <span class="badge my-1" *ngFor="let career of subjectTeacherBase.subject.assistanceCareers">{{career.split(' ').join('') ? career : '...'}}</span>
                         </p>
                       </li>
                       <li class="list-group-item" *ngIf="subjectTeacherBase.joinedTeachers">
@@ -87,7 +87,7 @@
     <h4 class="offcanvas-title">Historial</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss()"></button>
   </div>
-  <div class="offcanvas-body px-4">
+  <div class="offcanvas-body px-4 break-word">
     <h5><b>{{subject.name}}</b></h5>
     <ul class="list-group list-group-flush mt-4" *ngIf="(records | json) != '{}'">
       <li class="list-group-item" *ngFor="let item of records | keyvalue: asIsOrder">
@@ -129,20 +129,20 @@
                   <legend>Identificación</legend>
                   <div class="row">
                     <div class="form-group col-lg-8">
-                      <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" maxlength="255" class="form-control" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Nombre"
+                      <input type="text" #name="ngModel" name="name" [(ngModel)]="newSubject.name" maxlength="255" class="form-control" required pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" placeholder="Nombre"
                       [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                      <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                     </div>
                     <div class="form-group col-lg-4">
-                      <input type="text" class="form-control" #code="ngModel" name="code" maxlength="255" [(ngModel)]="newSubject.code" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Código"
+                      <input type="text" class="form-control" #code="ngModel" name="code" maxlength="255" [(ngModel)]="newSubject.code" required pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" placeholder="Código"
                       [ngClass]="!code.valid && code.touched ? 'border-error' : ''">
-                      <span class="error-message-txt m-0" role="alert" *ngIf="code.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="code.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                       <span class="error-message-txt m-0" role="alert" *ngIf="error != ''">{{error}}</span>
                     </div>
                     <div class="form-group">
-                      <input type="text" class="form-control" list="titleList" required maxlength="255" pattern="[^\]\[&lt;&gt;&quot;';!=]*" placeholder="Grado"
+                      <input type="text" class="form-control" list="titleList" required maxlength="255" pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" placeholder="Grado"
                       #title="ngModel" name="title" [(ngModel)]="newSubject.title" [ngClass]="!title.valid && title.touched ? 'border-error' : ''">
-                      <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="title.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                       <datalist id="titleList">
                         <option *ngFor="let title of titles" [value]="title">{{title}}</option>
                       </datalist>
@@ -161,9 +161,9 @@
                     </div>
                     
                     <div class="form-group col-lg-6">
-                      <input type="text" class="form-control" list="campusList" maxlength="255" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #campus="ngModel" name="campus" [(ngModel)]="newSubject.campus" 
+                      <input type="text" class="form-control" list="campusList" maxlength="255" pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" #campus="ngModel" name="campus" [(ngModel)]="newSubject.campus" 
                       required placeholder="Campus" [ngClass]="!campus.valid && campus.touched ? 'border-error' : ''">
-                      <span class="error-message-txt m-0" role="alert" *ngIf="campus.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="campus.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                       <datalist id="campusList">
                         <option *ngFor="let item of allCampus" [value]="item">{{item}}</option>
                       </datalist>
@@ -186,9 +186,9 @@
                     </div>
 
                     <div class="form-group col-lg-7">
-                      <input type="text" class="form-control" list="typesList" maxlength="255" placeholder="Tipo" pattern="[^\]\[&lt;&gt;&quot;';!=]*" #type="ngModel"
+                      <input type="text" class="form-control" list="typesList" maxlength="255" placeholder="Tipo" pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" #type="ngModel"
                       name="type" [(ngModel)]="newSubject.type" required [ngClass]="!type.valid && type.touched ? 'border-error' : ''">
-                      <span class="error-message-txt m-0" role="alert" *ngIf="type.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="type.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                       <datalist id="typesList">
                         <option *ngFor="let item of types" [value]="item">{{item}}</option>
                       </datalist>
@@ -216,9 +216,9 @@
                 <legend class="border-top py-2 my-2 ml-3">Grupo</legend>
                 <div class="row">
                   <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Grupo" maxlength="255" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" #career="ngModel" [(ngModel)]="newSubject.career" name="career"
+                      <input type="text" class="form-control" placeholder="Grupo" maxlength="255" required pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" #career="ngModel" [(ngModel)]="newSubject.career" name="career"
                       [ngClass]="!career.valid && career.touched ? 'border-error' : ''">
-                      <span class="error-message-txt m-0" role="alert" *ngIf="career.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                      <span class="error-message-txt m-0" role="alert" *ngIf="career.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                   </div>
                 </div>
               </fieldset>
@@ -227,7 +227,7 @@
                 <legend class="border-top py-2 my-2 ml-3">Grupos Asistencia (Opcional)</legend>
                 <div class="row">
                   <div class="form-group col-12 col-sm-11" style="padding-top: 1px;">
-                      <input type="text" class="form-control" maxlength="255" placeholder="Grupos Asistencia" pattern="[^\]\[&lt;&gt;&quot;';!=]*"
+                      <input type="text" class="form-control" maxlength="40" placeholder="Grupos Asistencia" pattern="[^\]\[&lt;&gt;&quot;';!=]*"
                       #assistanceCareers="ngModel" ngModel name="assistanceCareers" [ngClass]="!assistanceCareers.valid && assistanceCareers.touched ? 'border-error' : ''">
                       <span class="error-message-txt m-0" role="alert" *ngIf="assistanceCareers.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
                   </div>
@@ -283,7 +283,7 @@
 </ng-template>
 
 <ng-template  #deleteSubject let-modal>
-  <div class="modal-dialog-centered" role="document">
+  <div class="modal-dialog-centered break-word" role="document">
       <div class="modal-content">
           <div class="modal-header">
               <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>

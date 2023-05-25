@@ -67,6 +67,10 @@ export class ManagementAdminComponent implements OnInit {
         next: (data) => {
           this.getAdmins();
           form.reset();
+        },
+        error: (error) => {
+          let splitted = error.split("\\"); 
+          this.error = splitted[1];
         }
       });
     } else{

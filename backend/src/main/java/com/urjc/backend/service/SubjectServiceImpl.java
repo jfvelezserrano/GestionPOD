@@ -292,19 +292,25 @@ public class SubjectServiceImpl implements SubjectService{
             isEqual = storedSubject.getAssistanceCareers().size() == subject.getAssistanceCareers().size();
 
             int i = 0;
+            List<String> listToCompareAssistanceCareers = new ArrayList<>();
+            listToCompareAssistanceCareers.addAll(subject.getAssistanceCareers());
+
             while(isEqual && i < storedSubject.getAssistanceCareers().size()){
-                isEqual = subject.getAssistanceCareers().contains((storedSubject.getAssistanceCareers().get(i)));
+                isEqual = listToCompareAssistanceCareers.remove((storedSubject.getAssistanceCareers().get(i)));
                 i++;
             }
 
             boolean isEqualSchedules = storedSubject.getSchedules().size() == subject.getSchedules().size();
 
             i = 0;
+            List<Schedule> listToCompareSchedules = new ArrayList<>();
+            listToCompareSchedules.addAll(subject.getSchedules());
+
             while(isEqual && isEqualSchedules && i < storedSubject.getSchedules().size()){
                 Schedule storedSchedule = storedSubject.getSchedules().get(i);
-                isEqual = subject.getSchedules().stream().anyMatch(s -> s.getDayWeek().equals(storedSchedule.getDayWeek()) &&
-                        s.getStartTime().equals(storedSchedule.getStartTime()) &&
-                        s.getEndTime().equals(storedSchedule.getEndTime()));
+                isEqual = listToCompareSchedules.removeIf((s -> s.getDayWeek().equals(storedSchedule.getDayWeek()) &&
+                            s.getStartTime().equals(storedSchedule.getStartTime()) &&
+                            s.getEndTime().equals(storedSchedule.getEndTime())));
                 i++;
             }
 
