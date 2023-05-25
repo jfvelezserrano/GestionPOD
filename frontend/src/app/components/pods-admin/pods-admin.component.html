@@ -7,9 +7,9 @@
                 <form #createPODform="ngForm" (ngSubmit)="onSubmit(createPODform)" >
                     <div class="mb-3">
                     <label for="course-file" class="form-label section-title">Curso</label>
-                        <input required #course="ngModel" id="course-file" ngModel name="course" placeholder="Nombre del curso" maxlength="255" type="text" pattern="[^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
+                        <input required #course="ngModel" id="course-file" ngModel name="course" placeholder="Nombre del curso" maxlength="255" type="text" pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" class="form-control"
                         [ngClass]="!course.valid && course.touched ? 'border-error' : ''">
-                        <span class="error-message-txt m-0" role="alert" *ngIf="course.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        <span class="error-message-txt m-0" role="alert" *ngIf="course.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                     </div>
                     <div class="mb-3">
                         <label for="subjects-file" class="form-label section-title">Asignaturas CSV</label>
@@ -19,8 +19,8 @@
                         <label for="teachers-file" class="form-label section-title">Profesores CSV</label>
                         <input required #fileTeachers ngModel id="teachers-file" name="fileTeachers" class="form-control" ngf-max-size="2MB" type="file" onclick="this.value=undefined;" accept=".csv">
                     </div>
-                    <span class="error-message-txt error-pod m-0" role="alert" *ngIf="error == 'undefined'">Seleccione de nuevo los archivos.</span>
-                    <span class="error-message-txt error-pod m-0" role="alert" *ngIf="error != '' && error != 'undefined'">{{error}}</span>
+                    <span class="error-message-txt m-0" role="alert" *ngIf="error == 'undefined'">Seleccione de nuevo los archivos.</span>
+                    <span class="error-message-txt break-word m-0" role="alert" *ngIf="error != '' && error != 'undefined'">{{error}}</span>
                     <div class="d-flex justify-content-center pt-3">
                         <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="!createPODform.form.valid">Añadir</button>
                     </div>
@@ -87,7 +87,7 @@
 <app-scroll-up></app-scroll-up>
 
 <ng-template #deletePOD let-modal>
-    <div class="modal-dialog-centered" role="document">
+    <div class="modal-dialog-centered break-word" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>

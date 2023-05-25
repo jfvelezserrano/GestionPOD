@@ -335,13 +335,16 @@ html, body {
 .label-subject-groups span{
     width: auto;
     height: auto;
-    padding:5px;
+    padding: 5px;
     font-size: 11px;
     padding-right: 10px;
     padding-left: 10px;
     color: var(--font);
     background: var(--darker-white);
     border-radius: 1000px;
+    text-overflow: ellipsis;
+    overflow: clip;
+    max-width:200px;
 }
 
 .label-subject-groups{
@@ -493,6 +496,10 @@ label span{
 
 .border-error{
     border: 0.11em solid var(--light-red);
+}
+
+.break-word{
+    word-wrap: break-word;
 }
 
 @media (max-width: 575px){  

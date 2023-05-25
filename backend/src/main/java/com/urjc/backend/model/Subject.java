@@ -118,14 +118,15 @@ public class Subject {
     }
 
     public void setSchedulesByString(String schedules) {
-        if(!schedules.equals("")) {
-            String[] values = schedules.split(", ");
+        if(!schedules.isBlank()) {
+            String[] values = schedules.split(",");
             List<Schedule> schedulesSet = new ArrayList<>();
 
             for (String value : values) {
                 String result  = value.replaceAll("[()-]", "");
                 result = result.replace(" ", "");
 
+                if(result.length() < 6){result = result.concat("concat");}
                 Schedule schedule = new Schedule(result.charAt(0), result.substring(1, 6), result.substring(6));
                 schedulesSet.add(schedule);
             }
@@ -144,8 +145,8 @@ public class Subject {
     }
 
     public void setAssistanceCareersByString(String assistanceCareer) {
-        if(!assistanceCareer.equals("")) {
-            this.assistanceCareers = List.of(assistanceCareer.split(", "));
+        if(!assistanceCareer.isBlank()) {
+            this.assistanceCareers = List.of(assistanceCareer.split(","));
         }
     }
 

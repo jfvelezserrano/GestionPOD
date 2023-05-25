@@ -16,7 +16,7 @@
                 <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
                   <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
-                <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
+                <button type="button" placement="bottom" ngbTooltip="Añadir docente" class="ms-2 btn button-actions-red my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
               </div>
             </div>
             <div class="col-12 content-all-cards">
@@ -32,10 +32,10 @@
                       </ul>
                     </div>
                     <div class="card-footer text-muted">
-                      <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
+                      <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Eliminar" class="btn button-blue">
                         <i class="fa fa-trash fa-lg"></i>
                       </button>
-                      <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
+                      <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Eliminar" class="btn button-blue">
                         <i class="fa fa-trash fa-lg"></i>
                       </button>
                     </div>
@@ -72,9 +72,9 @@
                     <fieldset>
                       <legend>Identificación</legend>
                       <div class="form-group col-12">
-                        <input type="text" class="form-control" required pattern="[^\]\[&lt;&gt;&quot;';!=]*" maxlength="255" placeholder="Nombre" #name="ngModel" name="name" ngModel
+                        <input type="text" class="form-control" required pattern="[^\s\]\[&lt;&gt;&quot;';!=][^\]\[&lt;&gt;&quot;';!=]*" maxlength="255" placeholder="Nombre" #name="ngModel" name="name" ngModel
                         [ngClass]="!name.valid && name.touched ? 'border-error' : ''">
-                        <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">Los siguientes caracteres no están permitidos: []&lt;&gt;'";!=</span>
+                        <span class="error-message-txt m-0" role="alert" *ngIf="name.errors?.['pattern']">No se permiten espacios en blanco al principio ni: []&lt;&gt;'";!=</span>
                       </div>
                       <div class="form-group col-12">
                         <input type="email" class="form-control" required email aria-describedby="email" maxlength="255" placeholder="Correo Electrónico" #email="ngModel" name="email" ngModel
@@ -91,7 +91,7 @@
                     </fieldset>
                   </div>
                 <span class="error-message-txt m-0 text-center" role="alert" *ngIf="error != ''">{{error}}</span>
-                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="email.errors?.['required'] || !hours.valid || name.errors?.['required'] || hours.errors?.['required']">Añadir</button>
+                <button type="submit" class="btn mx-auto btn-global theme-blue" [disabled]="email.errors?.['required'] || !hours.valid || name.errors?.['required'] || !name.valid || hours.errors?.['required']">Añadir</button>
             </form>
           </div>
       </div>
@@ -99,7 +99,7 @@
 </ng-template>
 
 <ng-template #deleteTeacher let-modal>
-  <div class="modal-dialog-centered" role="document">
+  <div class="modal-dialog-centered break-word" role="document">
       <div class="modal-content">
           <div class="modal-header">
               <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
