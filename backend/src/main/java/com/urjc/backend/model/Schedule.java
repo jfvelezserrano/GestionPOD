@@ -24,12 +24,12 @@ public class Schedule {
     @Column(nullable = false)
     private Character dayWeek;
 
-    @Pattern(regexp = "\\d{2}:\\d{2}", message = "La hora de inicio se debe escribir con el siguiente formato numérico: 00:00")
+    @Pattern(regexp = "([01]?[0-9]|2[0-3]):[0-5][0-9]", message = "La hora de inicio se debe escribir con el siguiente formato numérico: 00:00")
     @NotBlank(message = "Se debe completar la hora de inicio")
     @Column(nullable = false)
     private String startTime;
 
-    @Pattern(regexp = "\\d{2}:\\d{2}", message = "La hora de fin se debe escribir con el siguiente formato numérico: 00:00")
+    @Pattern(regexp = "([01]?[0-9]|2[0-3]):[0-5][0-9]", message = "La hora de fin se debe escribir con el siguiente formato numérico: 00:00")
     @NotBlank(message = "Se debe completar la hora de fin")
     @Column(nullable = false)
     private String endTime;
