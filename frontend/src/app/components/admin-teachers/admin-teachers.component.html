@@ -16,7 +16,7 @@
                 <select class="form-select-sm text-muted select-sort my-auto" [(ngModel)]="typeSort" (change)="getTeachersInPod()">
                   <option *ngFor="let item of valuesSorting" [ngValue]="item.value">{{item.name}}</option>
                 </select>
-                <button type="button" placement="bottom" ngbTooltip="Añadir asignatura" class="ms-2 btn button-actions-red my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
+                <button type="button" placement="bottom" ngbTooltip="Añadir docente" class="ms-2 btn button-actions-red my-auto" (click)="openCreateTeacher(modalCreateTeacher)"><i class="fa fa-plus fa-sm"></i></button>
               </div>
             </div>
             <div class="col-12 content-all-cards">
@@ -32,10 +32,10 @@
                       </ul>
                     </div>
                     <div class="card-footer text-muted">
-                      <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
+                      <button type="button" (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email != mainAdmin" placement="bottom" ngbTooltip="Eliminar" class="btn button-blue">
                         <i class="fa fa-trash fa-lg"></i>
                       </button>
-                      <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Borrar" class="btn button-blue">
+                      <button type="button" disabled (click)="openToDelete(deleteTeacher, teacher)" *ngIf="teacher.email == mainAdmin" placement="bottom" ngbTooltip="Eliminar" class="btn button-blue">
                         <i class="fa fa-trash fa-lg"></i>
                       </button>
                     </div>
