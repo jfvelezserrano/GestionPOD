@@ -69,34 +69,18 @@ public class Course {
                 break;
             }
         }
-
-        for (POD pod : pods) {
-            if (pod.getCourse().equals(this) && pod.getTeacher().equals(teacher)) {
-                POD podToDelete = pod;
-                pods.remove(podToDelete);
-                break;
-            }
-        }
+        pods.removeIf((s -> s.getCourse().equals(this) && s.getTeacher().equals(teacher)));
     }
 
     public void deleteSubject(Subject subject) {
-        CourseSubject courseSubjectToDelete = new CourseSubject();
         for (CourseSubject courseSubject : courseSubjects) {
             if (courseSubject.getCourse().equals(this) && courseSubject.getSubject().equals(subject)) {
-                courseSubjectToDelete = courseSubject;
+                CourseSubject courseSubjectToDelete = courseSubject;
+                courseSubjects.remove(courseSubjectToDelete);
                 break;
             }
         }
-        courseSubjects.remove(courseSubjectToDelete);
-
-        POD podToDelete = new POD();
-        for (POD pod : pods) {
-            if (pod.getCourse().equals(this) && pod.getSubject().equals(subject)) {
-                podToDelete = pod;
-                break;
-            }
-        }
-        pods.remove(podToDelete);
+        pods.removeIf((s -> s.getCourse().equals(this) && s.getSubject().equals(subject)));
     }
 
     public boolean isTeacherInCourse(Teacher teacher){
