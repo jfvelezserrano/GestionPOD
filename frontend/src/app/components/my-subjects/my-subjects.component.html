@@ -30,7 +30,7 @@
                                         <ul class="list-group list-group-flush font-card">
                                             <li class="list-group-item">
                                                 <h4 class="card-title"><b>{{mySubject.subject.name}} ({{mySubject.subject.code}})</b>
-                                                    <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Alerta conflicto" class="p-1 btn light-red" (click)="openAlert(alertConflicts, mySubject)">
+                                                    <button *ngIf="mySubject.conflicts.length > 0" type="button" placement="bottom" ngbTooltip="Conflicto de horario" class="p-1 btn light-red" (click)="openAlert(alertConflicts, mySubject)">
                                                         <i class="fa fa-exclamation-circle fa-lg"></i>
                                                     </button>
                                                 </h4>
