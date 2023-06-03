@@ -86,6 +86,10 @@ export class ManagementAdminComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.getAdmins();
+      },
+      error: (error) => {
+        let splitted = error.split("\\"); 
+        this.error = splitted[1];
       }
     });
   }
