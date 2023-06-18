@@ -79,7 +79,7 @@ public class MailBoxServiceImpl implements MailBoxService {
     public boolean isCorrect(String code, String ip) {
         if (existsCode(code)) {
             List<String> values = this.codesMap.get(code);
-
+            System.out.println(values.get(1));
             return (values.get(1).equals(ip) && !isDateExpired(values.get(2)));
         }
         return false;

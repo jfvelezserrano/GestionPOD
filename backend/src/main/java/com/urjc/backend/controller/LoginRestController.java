@@ -54,6 +54,7 @@ public class LoginRestController {
         }
 
         String ip = request.getRemoteAddr();
+        System.out.println(ip);
 
         String code = mailBoxService.generateCodeEmail();
 
@@ -69,6 +70,7 @@ public class LoginRestController {
 
     @GetMapping(value = "/verify/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TeacherDTO> verify(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(request.getRemoteAddr());
        if(mailBoxService.isCorrect(code, request.getRemoteAddr())){
             String email = mailBoxService.getEmailByCode(code);
 
